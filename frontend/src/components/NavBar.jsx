@@ -1,22 +1,25 @@
+import { Link } from "react-router-dom";
+
 function NavBar() {
   return (
     <>
       <div className="logo">Logo</div>
-      <button className="btn" id="MainArea">
+      <Link to="/" className="btn" id="MainArea">
         Kezdőlap
-      </button>
-      <button className="btn" id="Drinks">
+      </Link>
+      <Link to="/italok" className="btn" id="Drinks">
         Italok
-      </button>
-      <button className="btn" id="Games">
+      </Link>
+      <Link to="/tarsasjatekok" className="btn" id="BoardGames">
         Társasok
-      </button>
-      <button className="btn" id="Reservation">
+      </Link>
+      <Link to="/foglalas" className="btn" id="Reservation">
         Foglalás
-      </button>
-      <button className="btn" id="Contact">
+      </Link>
+      <Link to="/kapcsolat" className="btn" id="Contact">
         Kapcsolat
-      </button>
+      </Link>
+
       <div className="loginDiv">
         <button className="smallBtn" id="UserLogin">
           Fiók Bejelentkezés
