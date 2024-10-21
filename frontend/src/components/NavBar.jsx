@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 function NavBar() {
   return (
-    <>
+    <div className="navbar">
       <div className="logo">Logo</div>
       <Link to="/" className="btn" id="MainArea">
         Kezdőlap
@@ -20,15 +20,10 @@ function NavBar() {
         Kapcsolat
       </Link>
 
-      <div className="loginDiv">
-        <button className="smallBtn" id="UserLogin">
-          Fiók Bejelentkezés
-        </button>
-        <button className="smallBtn" id="RoomLogin">
-          Szoba Bejelentkezés
-        </button>
-      </div>
-    </>
+      <button className="smallBtn" id="UserLogin">
+        Fiók Bejelentkezés
+      </button>
+    </div>
   );
 }
 
