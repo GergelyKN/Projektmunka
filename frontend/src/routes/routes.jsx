@@ -1,9 +1,11 @@
-import MainPage from "../components/MainPage";
-import Drinks from "../components/Drinks";
-import ErrorPage from "../components/ErrorPage";
-import BoardGames from "../components/BoardGames";
-import Reservation from "../components/Reservation";
-import Contact from "../components/Contact";
+import MainPage from "../components/MainPage/MainPage";
+import Drinks from "../components/Drinks/Drinks";
+import ErrorPage from "../components/Helper_Components/ErrorPage";
+import BoardGames from "../components/BoardGames/BoardGames";
+import Reservation from "../components/Reservations/Reservation";
+import Contact from "../components/Contact/Contact";
+import Registration from "../components/Registration/Registration";
+import Login from "../components/Login/Login";
 
 const routes = [
   {
@@ -23,10 +25,17 @@ const routes = [
     path: "/foglalas",
     element: <Reservation />,
   },
-
   {
     path: "/kapcsolat",
     element: <Contact />,
+  },
+  {
+    path: "/bejelentkezes",
+    element: <Login />,
+  },
+  {
+    path: "/regisztracio",
+    element: <Registration />,
   },
 ];
 
