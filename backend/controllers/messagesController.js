@@ -5,17 +5,23 @@ async function postNewMessage(req, res) {
     req.body;
 
   if (!ContactFirstName || !ContactLastName || !ContactEmail || !ContactText) {
-    return res.status(400).json({ error: "Missing required fields" });
+    return res.status(400).json({ error: "Hiányzó mezők" });
   }
+  try {
+    await db.postNewMessage({
+      ContactFirstName,
+      ContactLastName,
+      ContactEmail,
+      ContactText,
+    });
 
-  await db.postNewMessage({
-    ContactFirstName,
-    ContactLastName,
-    ContactEmail,
-    ContactText,
-  });
-
-  res.status(201).json({ message: "Message saved successfully" });
+    return res.status(201).json({ message: "Üzenet sikeresen rögzítve" });
+  } catch (error) {
+    console.error("Sikertelen rögzítés: ", error);
+    return res
+      .status(500)
+      .json({ error: "Hiba történt az üzenet rögzítésekor" });
+  }
 }
 
 module.exports = {
