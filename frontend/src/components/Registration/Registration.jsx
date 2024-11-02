@@ -26,11 +26,52 @@ function Registration() {
     setVerPassword(event.target.value);
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const user = {
+      regFirstName: firstName,
+      regLastName: lastName,
+      regEmail: email,
+      regPassword: password,
+    };
+    try {
+      const response = await fetch(
+        "http://localhost:3000/api/users/registration",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(user),
+        }
+      );
+      if (response.ok) {
+        const data = await response.json();
+        alert(data.message);
+      } else {
+        const errorData = await response.json();
+        alert(errorData.error);
+      }
+    } catch (error) {
+      console.log("Hiba történt a kapcsolódáskor: ", error);
+    } finally {
+      setFirstName("");
+      setLastName("");
+      setEmail("");
+      setPassword("");
+      setVerPassword("");
+    }
+  };
+
   return (
     <>
       <NavBar />
       <div className="registrationMain">
-        <form>
+        <form
+          action="/api/users/registration"
+          method="POST"
+          onSubmit={handleSubmit}
+        >
           <fieldset>
             <Link to="/" className="exitLink">
               <div className="exitIcon">X</div>
@@ -83,7 +124,9 @@ function Registration() {
               onChange={handleVerPasswordChange}
               required
             />
-            <button>Fiók Létrehozása</button>
+            <button id="regSendForm" type="submit">
+              Fiók Létrehozása
+            </button>
             <Link to="/bejelentkezes" className="loginLink">
               Már van fiókom
             </Link>
