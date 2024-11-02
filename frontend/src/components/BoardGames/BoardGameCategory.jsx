@@ -2,14 +2,15 @@ import BoardGame from "./BoardGame";
 
 function BoardGameCategory({ boardgames }) {
   return (
-    <div className={boardgames[0].category}>
-      <h2 id="boardGameCategory">{boardgames[0].category}</h2>
+    <div className={"boardgamecategory-" + boardgames[0].categoryid}>
+      <h2 id={"categoryname-" + boardgames[0].categoryid}>
+        {boardgames[0].categoryname}
+      </h2>
       {boardgames.map((boardgame) => (
         <BoardGame
-          id={"boardgame" + boardgame.id}
-          key={boardgame.id}
+          id={"boardgame-" + boardgame.boardgameid}
+          key={boardgame.boardgameid}
           name={boardgame.name}
-          language={boardgame.language}
         />
       ))}
     </div>

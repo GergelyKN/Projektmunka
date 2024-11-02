@@ -1,70 +1,110 @@
 import NavBar from "../Helper_Components/NavBar";
 import Footer from "../Helper_Components/Footer";
 import BoardGameCategory from "./BoardGameCategory";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function BoardGames() {
   const [boardGameName, setBoardGameName] = useState("");
-  const [boardGameLength, setBoardGameLength] = useState(60);
-  const [boardGamePlayerNumber, setBoardGamePlayerNumber] = useState(4);
+  // const [boardGameLength, setBoardGameLength] = useState(60);
+  const [boardGamePlayerNumber, setBoardGamePlayerNumber] = useState(12);
+  const [boardgames, setBoardGames] = useState([]);
+  const [groupedBoardGames, setGroupedBoardGames] = useState([]);
+  const [languages, setLanguages] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [difficulties, setDifficulties] = useState([]);
+
+  const [selectedLanguage, setSelectedLanguage] = useState("all");
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedDifficulty, setSelectedDifficulty] = useState("all");
+
   const handleBoardGameSearch = (event) => {
     setBoardGameName(event.target.value);
   };
 
-  const handleLengthChange = (event) => {
-    setBoardGameLength(event.target.value);
-  };
+  // const handleLengthChange = (event) => {
+  //   setBoardGameLength(event.target.value);
+  // };
 
   const handlePlayerNumberChange = (event) => {
-    setBoardGamePlayerNumber(event.target.value);
+    setBoardGamePlayerNumber(Number(event.target.value));
   };
 
-  const boardgames = [
-    {
-      id: 1,
-      name: "Bang",
-      category: "lovoldozos",
-      language: "magyar",
-      difficulty: "konnyu",
-    },
-    {
-      id: 2,
-      name: "Monopoly",
-      category: "penz",
-      language: "angol",
-      difficulty: "kozepes",
-    },
-    {
-      id: 3,
-      name: "Ticket To Ride",
-      category: "epitos",
-      language: "angol",
-      difficulty: "konnyu",
-    },
-    {
-      id: 4,
-      name: "Ticket To Ride 2 ",
-      category: "epitos",
-      language: "francia",
-      difficulty: "konnyu",
-    },
-  ];
+  const handleLanguageChange = (event) => {
+    setSelectedLanguage(event.target.value);
+  };
+  const handleCategoryChange = (event) => {
+    setSelectedCategory(event.target.value);
+  };
+  const handleDifficultyChange = (event) => {
+    setSelectedDifficulty(event.target.value);
+  };
 
-  //Kategória alapján csoportosítás
-  const groupedBoardGames = boardgames.reduce((acc, bg) => {
-    if (!acc[bg.category]) {
-      acc[bg.category] = [];
-    }
-    acc[bg.category].push(bg);
-    return acc;
-  }, {});
+  useEffect(() => {
+    const fetchBoardGames = async () => {
+      try {
+        const response = await fetch("http://localhost:3000/api/boardgames", {
+          mode: "cors",
+        });
 
-  //Minden elérhető nyelv-, kategória-, nehézségi szint alapján szűrés
-  const languages = [...new Set(boardgames.map((bg) => bg.language))].sort();
-  const categories = [...new Set(boardgames.map((bg) => bg.category))].sort();
-  const difficulties = [
-    ...new Set(boardgames.map((bg) => bg.difficulty)),
-  ].sort();
+        if (response.status >= 400) {
+          throw new Error("Server Error");
+        }
+        const data = await response.json();
+
+        const groupedData = data.reduce((acc, bg) => {
+          if (!acc[bg.categoryname]) {
+            acc[bg.categoryname] = [];
+          }
+          acc[bg.categoryname].push(bg);
+          return acc;
+        }, {});
+
+        setBoardGames(data);
+        setGroupedBoardGames(groupedData);
+        if (data) {
+          setLanguages(
+            Array.from(new Set(data.map((bg) => bg.language))).sort()
+          );
+          setCategories(
+            Array.from(new Set(data.map((bg) => bg.categoryname))).sort()
+          );
+          setDifficulties(
+            Array.from(new Set(data.map((bg) => bg.difficulty))).sort()
+          );
+        }
+      } catch (error) {
+        console.error("Error fetching boardgames: ", error);
+      }
+    };
+    fetchBoardGames();
+  }, []);
+  useEffect(() => {
+    const filteredBoardGames = boardgames.reduce((acc, bg) => {
+      if (
+        bg.maxplayernum <= boardGamePlayerNumber &&
+        (selectedLanguage === "all" || bg.language === selectedLanguage) &&
+        (selectedCategory === "all" || bg.categoryname === selectedCategory) &&
+        (selectedDifficulty === "all" ||
+          bg.difficulty === selectedDifficulty) &&
+        (boardGameName === "" ||
+          bg.name.toUpperCase().includes(boardGameName.toUpperCase()))
+      ) {
+        if (!acc[bg.categoryname]) {
+          acc[bg.categoryname] = [];
+        }
+        acc[bg.categoryname].push(bg);
+      }
+      return acc;
+    }, {});
+    setGroupedBoardGames(filteredBoardGames);
+  }, [
+    boardgames,
+    boardGameName,
+    boardGamePlayerNumber,
+    selectedLanguage,
+    selectedCategory,
+    selectedDifficulty,
+  ]);
 
   return (
     <>
@@ -78,44 +118,52 @@ function BoardGames() {
           value={boardGameName}
           onChange={handleBoardGameSearch}
         />
+
         <label htmlFor="language">Nyelv: </label>
-        <select name="language" id="language">
+        <select
+          name="language"
+          id="language"
+          value={selectedLanguage}
+          onChange={handleLanguageChange}
+        >
+          <option value="all">Összes Nyelv</option>
           {languages.map((language) => (
             <option key={language} value={language}>
               {language}
             </option>
           ))}
         </select>
+
         <label htmlFor="category">Kategória: </label>
-        <select name="category" id="category">
+        <select
+          name="category"
+          id="category"
+          value={selectedCategory}
+          onChange={handleCategoryChange}
+        >
+          <option value="all">Összes Kategória</option>
           {categories.map((category) => (
             <option key={category} value={category}>
               {category}
             </option>
           ))}
         </select>
+
         <label htmlFor="difficulty">Nehézség: </label>
-        <select name="difficulty" id="difficulty">
+        <select
+          name="difficulty"
+          id="difficulty"
+          value={selectedDifficulty}
+          onChange={handleDifficultyChange}
+        >
+          <option value="all">Összes Nehézség</option>
           {difficulties.map((difficulty) => (
             <option key={difficulty} value={difficulty}>
               {difficulty}
             </option>
           ))}
         </select>
-        {/* Megoldani, hogy egy csúszkán 2 input legyen,
-          amivel a min és max hosszat lehet állítani    */}
-        <label htmlFor="length">Játék maximális hossza: </label>
-        <input
-          type="range"
-          name="length"
-          id="length"
-          min="10"
-          max="240"
-          value={boardGameLength}
-          step={5}
-          onChange={handleLengthChange}
-        />
-        <p>{boardGameLength} perc</p>
+
         <label htmlFor="length">Játékosok maximális száma: </label>
         <input
           type="range"
@@ -129,15 +177,20 @@ function BoardGames() {
         />
         <p>{boardGamePlayerNumber} fő</p>
       </div>
+
       <div className="everyBoardGame">
-        {Object.keys(groupedBoardGames)
-          .sort()
-          .map((category) => (
-            <BoardGameCategory
-              key={category}
-              boardgames={groupedBoardGames[category]}
-            />
-          ))}
+        {Object.keys(groupedBoardGames).length > 0 ? (
+          Object.keys(groupedBoardGames)
+            .sort()
+            .map((categoryname) => (
+              <BoardGameCategory
+                key={categoryname}
+                boardgames={groupedBoardGames[categoryname]}
+              />
+            ))
+        ) : (
+          <p>Nincs ilyen társasjáték</p>
+        )}
       </div>
 
       <Footer />
