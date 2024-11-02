@@ -1,35 +1,65 @@
 import NavBar from "../Helper_Components/NavBar";
 import Footer from "../Helper_Components/Footer";
 import DrinkCategory from "./DrinkCategory";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function Drinks() {
-  const [price, setPrice] = useState(2500);
+  const [price, setPrice] = useState(20000);
   const [containsAlcohol, setContainsAlcohol] = useState(false);
   const [searchedDrinkName, setSearchedDrinkName] = useState("");
+  const [drinks, setDrinks] = useState([]);
+  const [groupedDrinks, setGroupedDrinks] = useState([]);
 
-  //dummy adat, később adatbázisból kérjük le
-  const drinks = [
-    { id: 1, name: "Pilsner", category: "sor" },
-    { id: 2, name: "Cola", category: "udito" },
-    { id: 5, name: "Valami", category: "uj" },
-    { id: 3, name: "Ice Tea", category: "udito" },
-    { id: 4, name: "Pálinka", category: "rovidital" },
-    { id: 9, name: "fdsfsdsd", category: "alkohol" },
-    { id: 10, name: "fsdoasfhuasfd", category: "sor" },
-  ];
+  useEffect(() => {
+    const fetchDrinks = async () => {
+      try {
+        const response = await fetch("http://localhost:3000/api/drinks", {
+          mode: "cors",
+        });
 
-  //Kategórianév alapján csoportosítás
-  const groupedDrinks = drinks.reduce((acc, drink) => {
-    if (!acc[drink.category]) {
-      acc[drink.category] = [];
-    }
-    acc[drink.category].push(drink);
-    return acc;
-  }, {});
+        if (response.status >= 400) {
+          throw new Error("Server Error");
+        }
+        const data = await response.json();
+
+        const groupedData = data.reduce((acc, drink) => {
+          if (!acc[drink.categoryname]) {
+            acc[drink.categoryname] = [];
+          }
+          acc[drink.categoryname].push(drink);
+          return acc;
+        }, {});
+
+        setDrinks(data);
+        setGroupedDrinks(groupedData);
+      } catch (error) {
+        console.error("Error fetching drinks: ", error);
+      }
+    };
+
+    fetchDrinks();
+  }, []);
+  useEffect(() => {
+    const filteredDrinks = drinks.reduce((acc, drink) => {
+      if (
+        drink.containsalcohol === containsAlcohol &&
+        drink.price <= price &&
+        (searchedDrinkName === "" ||
+          drink.name.toUpperCase().includes(searchedDrinkName.toUpperCase()))
+      ) {
+        if (!acc[drink.categoryname]) {
+          acc[drink.categoryname] = [];
+        }
+        acc[drink.categoryname].push(drink);
+      }
+      return acc;
+    }, {});
+
+    setGroupedDrinks(filteredDrinks);
+  }, [price, containsAlcohol, searchedDrinkName, drinks]);
 
   const handlePriceChange = (event) => {
-    setPrice(event.target.value);
+    setPrice(Number(event.target.value));
   };
 
   const handleAlcoholChange = (event) => {
@@ -58,29 +88,38 @@ function Drinks() {
           type="range"
           name="drinksPrice"
           id="drinksPrice"
-          min="600"
+          min="200"
           max="20000"
           value={price}
           step={100}
           onChange={handlePriceChange}
         />
         <p>{price}</p>
-        <label htmlFor="containsAlcohol">Alkoholos Italok</label>
+        <label htmlFor="containsAlcohol">Italok fajtája</label>
         <input
           type="checkbox"
           name="containsAlcohol"
           id="containsAlcohol"
           onChange={handleAlcoholChange}
+          checked={containsAlcohol}
         />
         {containsAlcohol ? "Alkoholos" : "Nem alkoholos"}
       </div>
 
       <div className="drinks">
-        {Object.keys(groupedDrinks)
-          .sort()
-          .map((category) => (
-            <DrinkCategory key={category} drinks={groupedDrinks[category]} />
-          ))}
+        {Object.keys(groupedDrinks).length > 0 ? (
+          Object.keys(groupedDrinks)
+            .filter((categoryname) => groupedDrinks[categoryname].length > 0)
+            .sort()
+            .map((categoryname) => (
+              <DrinkCategory
+                key={categoryname}
+                drinks={groupedDrinks[categoryname]}
+              />
+            ))
+        ) : (
+          <p>Nincs ilyen ital</p>
+        )}
       </div>
 
       <Footer />

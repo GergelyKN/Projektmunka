@@ -2,10 +2,16 @@ import Drink from "./Drink";
 
 const DrinkCategory = ({ drinks }) => {
   return (
-    <div className={drinks[0].category}>
-      <h2 id="drinkcategory">{drinks[0].category}</h2>
+    <div className={"drinkcategory-" + drinks[0].categoryid}>
+      <h2 id={"categoryname-" + drinks[0].categoryid}>
+        {drinks[0].categoryname}
+      </h2>
       {drinks.map((drink) => (
-        <Drink drinkid={"drink" + drink.id} key={drink.id} name={drink.name} />
+        <Drink
+          drinkID={"drink-" + drink.drinkid}
+          key={drink.drinkid}
+          name={drink.name}
+        />
       ))}
     </div>
   );
