@@ -45,15 +45,14 @@ function Registration() {
           body: JSON.stringify(user),
         }
       );
+      const data = await response.json();
       if (response.ok) {
-        const data = await response.json();
         alert(data.message);
       } else {
-        const errorData = await response.json();
-        alert(errorData.error);
+        alert(data.error);
       }
-    } catch (error) {
-      console.log("Hiba történt a kapcsolódáskor: ", error);
+    } catch (err) {
+      console.error("Hiba történt a kapcsolódáskor: ", err);
     } finally {
       setFirstName("");
       setLastName("");
