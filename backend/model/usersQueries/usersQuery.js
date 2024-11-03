@@ -7,10 +7,17 @@ async function postNewUser(user) {
       user.regFirstName,
       user.regLastName,
       user.regEmail,
-      user.regPassword,
+      user.hashedPassword,
       false,
     ]
   );
 }
 
-module.exports = { postNewUser };
+async function getUserByEmail(email) {
+  const { rows } = await pool.query("SELECT * FROM Users WHERE email = $1 ", [
+    email,
+  ]);
+  return rows;
+}
+
+module.exports = { postNewUser, getUserByEmail };
