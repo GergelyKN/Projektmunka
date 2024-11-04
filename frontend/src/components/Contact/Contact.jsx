@@ -63,7 +63,7 @@ function Contact() {
       <div className="informaciok">
         <p>Cím: 9024 Győr, Mária Terézia út 25/B </p>
         <p>Telefon: +36 10 100 1000</p>
-        <p>E-mail: tabletopbar@tabletopbar.hu </p>
+        <p>E-mail: tabletopbaruni@gmail.com </p>
         <table>
           <thead>
             <tr>
