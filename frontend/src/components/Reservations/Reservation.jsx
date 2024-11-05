@@ -1,6 +1,7 @@
 import NavBar from "../Helper_Components/NavBar";
 import Footer from "../Helper_Components/Footer";
 import { useState } from "react";
+import { Navigate } from "react-router-dom";
 
 function Reservation() {
   const [dateForReservation, setDateForReservation] = useState(
@@ -33,6 +34,14 @@ function Reservation() {
   ];
   const startHours = [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
   const endHours = [11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 0o0];
+
+  const user = localStorage.getItem("user")
+    ? JSON.parse(localStorage.getItem("user"))
+    : null;
+
+  if (!user) {
+    return <Navigate to="/bejelentkezes" />;
+  }
 
   return (
     <>
