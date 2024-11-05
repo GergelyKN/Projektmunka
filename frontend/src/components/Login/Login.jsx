@@ -2,67 +2,65 @@ import NavBar from "../Helper_Components/NavBar";
 import Footer from "../Helper_Components/Footer";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { isAuthenticated } from "../../functions/Login_Functions/LoginHelperFunctions";
 
 function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [loginEmail, setLoginEmail] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
   const [user, setUser] = useState({});
   const [userLoggedIn, setUserLoggedIn] = useState(false);
 
   const handleEmailChange = (event) => {
-    setEmail(event.target.value);
+    setLoginEmail(event.target.value);
   };
   const handlePasswordChange = (event) => {
-    setPassword(event.target.value);
+    setLoginPassword(event.target.value);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const user = { loginEmail: email, loginPassword: password };
+    const loginUserData = { loginEmail, loginPassword };
     try {
       const response = await fetch("http://localhost:3000/api/users/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(user),
+        body: JSON.stringify(loginUserData),
       });
       const data = await response.json();
       if (response.ok) {
         alert(data.message);
-        setUser(data.user[0]);
         localStorage.setItem("authToken", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user[0]));
       } else {
         alert(data.error);
       }
     } catch (err) {
       console.error("Hiba történt a kapcsolódáskor: ", err);
     } finally {
-      setEmail("");
-      setPassword("");
+      setLoginEmail("");
+      setLoginPassword("");
     }
   };
 
-  function isTokenExpired(token) {
-    const payload = JSON.parse(atob(token.split(".")[1]));
-    const currentTime = Math.floor(Date.now() / 1000);
-    return payload.exp < currentTime;
-  }
-  const isAuthenticated = () => {
-    const token = localStorage.getItem("authToken");
-    return token && !isTokenExpired(token);
-  };
   const handleLogOut = () => {
     localStorage.removeItem("authToken");
+    localStorage.removeItem("user");
     setUserLoggedIn(false);
     setUser({});
   };
 
   useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    const parsedUser = storedUser
+      ? JSON.parse(localStorage.getItem("user"))
+      : null;
+    setUser(parsedUser);
     if (isAuthenticated()) {
       setUserLoggedIn(true);
     }
-  }, [user]);
+  }, [loginEmail]);
 
   return (
     <>
@@ -73,6 +71,12 @@ function Login() {
           <button onClick={handleLogOut}>Kijelentkezés</button>
         </>
       )}
+      {userLoggedIn && user.isadmin && (
+        <>
+          <Link to="/admin/italok">Admin Italok felület</Link>
+        </>
+      )}
+
       <div className="loginMain">
         <form action="/api/users/login" method="POST" onSubmit={handleSubmit}>
           <fieldset>
@@ -85,7 +89,7 @@ function Login() {
               type="email"
               name="loginEmail"
               id="loginEmail"
-              value={email}
+              value={loginEmail}
               placeholder="email@email.com"
               onChange={handleEmailChange}
               required
@@ -95,7 +99,7 @@ function Login() {
               type="password"
               name="loginPassword"
               id="loginPassword"
-              value={password}
+              value={loginPassword}
               onChange={handlePasswordChange}
               required
             />
