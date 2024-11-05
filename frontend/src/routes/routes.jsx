@@ -6,6 +6,8 @@ import Reservation from "../components/Reservations/Reservation";
 import Contact from "../components/Contact/Contact";
 import Registration from "../components/Registration/Registration";
 import Login from "../components/Login/Login";
+import AdminPage from "../components/Admin/AdminPage/AdminPage";
+import AdminRoute from "../components/Admin/AdminRoute/AdminRoute";
 
 const routes = [
   {
@@ -36,6 +38,14 @@ const routes = [
   {
     path: "/regisztracio",
     element: <Registration />,
+  },
+  {
+    path: "/admin/italok",
+    element: (
+      <AdminRoute>
+        <AdminPage />
+      </AdminRoute>
+    ),
   },
 ];
 
