@@ -19,5 +19,20 @@ async function getUserByEmail(email) {
   ]);
   return rows;
 }
+async function updateUser(email, newemail, newHashedpassword) {
+  try {
+    const { rowCount } = await pool.query(
+      `UPDATE users SET email = $1, hashedpassword = $2 WHERE email = $3 `,
+      [newemail, newHashedpassword, email]
+    );
+    if (rowCount === 0) {
+      return { success: false };
+    }
+    return { success: true };
+  } catch (err) {
+    console.error("Hiba történt a felhasználó frissítésekor:", err);
+    throw err;
+  }
+}
 
-module.exports = { postNewUser, getUserByEmail };
+module.exports = { postNewUser, getUserByEmail, updateUser };

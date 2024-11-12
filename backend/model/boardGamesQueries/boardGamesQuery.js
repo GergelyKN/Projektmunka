@@ -5,5 +5,17 @@ async function getAllBoardGames() {
   );
   return rows;
 }
+async function getAllBoardGameCategory() {
+  const { rows } = await pool.query("SELECT * FROM boardgamecategory");
+  return rows;
+}
+async function getAllBoardGameLanguage() {
+  const { rows } = await pool.query("SELECT * FROM boardgamelanguage");
+  return rows;
+}
 
-module.exports = { getAllBoardGames };
+module.exports = {
+  getAllBoardGames,
+  getAllBoardGameCategory,
+  getAllBoardGameLanguage,
+};
