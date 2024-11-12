@@ -66,5 +66,25 @@ async function postLogin(req, res) {
     return res.status(500).json({ error: "Hiba történt a bejelentkezéskor" });
   }
 }
+async function updateUser(req, res) {
+  const { email, newemail, newhashedpassword } = req.body;
+  if (!newemail || !newhashedpassword) {
+    return res.status(400).json({ error: "Hiányzó adatok a kliens felől" });
+  }
+  try {
+    const newHashedpassword = await bcrypt.hash(newhashedpassword, 10);
+    const { success } = await db.updateUser(email, newemail, newHashedpassword);
+    if (!success) {
+      return res.status(404).json({ error: "Nem található a felhasználó!" });
+    } else {
+      return res.status(200).json({ message: "Sikeres frissítés!" });
+    }
+  } catch (err) {
+    console.error("Sikertelen frissítés: ", err);
+    return res
+      .status(500)
+      .json({ error: "Hiba történt a felhasználó frissítésekor!" });
+  }
+}
 
-module.exports = { postNewUser, postLogin };
+module.exports = { postNewUser, postLogin, updateUser };
