@@ -4,12 +4,15 @@ import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 
 //Megoldani, hogy ha csak az egyik értéket frissítem, akkor is működjön
+//Kötelező mező jelölése *-gal
+
 function EditProfile() {
   const user = localStorage.getItem("user")
     ? JSON.parse(localStorage.getItem("user"))
     : null;
-  const [newEmail, setNewEmail] = useState("");
+  const [newEmail, setNewEmail] = useState(user.email);
   const [newPassword, setNewPassword] = useState("");
+  const [changeEmail, setChangeEmail] = useState(true);
 
   const handleNewEmailChange = (event) => {
     setNewEmail(event.target.value);
@@ -23,6 +26,11 @@ function EditProfile() {
     setNewPassword("");
   };
   const updatedUserAPI = import.meta.env.VITE_API_UPDATEUSER_URL;
+
+  const handleEmailChange = (e) => {
+    e.preventDefault();
+    setChangeEmail(!changeEmail);
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -58,36 +66,42 @@ function EditProfile() {
     }
   };
 
-  useEffect(() => {});
-
   if (!user) {
     return <Navigate to="/bejelentkezes" />;
   }
   return (
     <>
       <NavBar />
-      <h1>Profil Szerkesztése</h1>
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="updatedEmail">Email cím: </label>
-        <input
-          type="email"
-          id="updatedEmail"
-          name="updatedEmail"
-          value={newEmail}
-          onChange={handleNewEmailChange}
-          required
-        />
 
-        <label htmlFor="updatedPassword">Jelszó: </label>
-        <input
-          type="password"
-          id="updatedPassword"
-          name="updatedPassword"
-          value={newPassword}
-          onChange={handleNewPasswordChange}
-          required
-        />
-        <button type="submit">Elküldés</button>
+      <form onSubmit={handleSubmit}>
+        <fieldset>
+          <h1>Profil Szerkesztése</h1>
+
+          <label htmlFor="updatedEmail">Email cím: </label>
+          <input
+            type="email"
+            id="updatedEmail"
+            name="updatedEmail"
+            value={newEmail}
+            onChange={handleNewEmailChange}
+            disabled={changeEmail}
+            required
+          />
+          <button onClick={handleEmailChange}>
+            {changeEmail ? "Email cím változtatás" : String.fromCharCode(10004)}
+          </button>
+
+          <label htmlFor="updatedPassword">Jelszó: </label>
+          <input
+            type="password"
+            id="updatedPassword"
+            name="updatedPassword"
+            value={newPassword}
+            onChange={handleNewPasswordChange}
+            required
+          />
+          <button type="submit">Elküldés</button>
+        </fieldset>
       </form>
       <Footer />
     </>
