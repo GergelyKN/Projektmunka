@@ -468,7 +468,7 @@ function AdminDrinks() {
     try {
       const response = await fetch(updateCategoryAPI, {
         mode: "cors",
-        method: "DELETE",
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
@@ -685,6 +685,7 @@ function AdminDrinks() {
               min={0.0}
               max={90}
               step={0.01}
+              disabled={!addContainsAlcohol}
             />
             <label htmlFor="addedImagePath">Elérés: </label>
             <input
@@ -770,6 +771,7 @@ function AdminDrinks() {
               min={0.0}
               max={90}
               step={0.1}
+              disabled={!updateContainsAlcohol}
             />
             <label htmlFor="updatedImagePath">Elérés: </label>
             <input
