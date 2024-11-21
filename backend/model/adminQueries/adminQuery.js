@@ -110,7 +110,6 @@ async function updateDrinkCategory(categoryname, updatedname) {
     throw err;
   }
 }
-
 async function addBoardGameCategory(categoryname) {
   try {
     const { rowCount } = await pool.query(
@@ -221,6 +220,85 @@ async function updateBoardGame(boardgame) {
     throw err;
   }
 }
+async function getAllReservations() {
+  try {
+    const { rows } = await pool.query(
+      "SELECT reservationid,users.userid,reservations.roomid,date,reservedfrom,reservedto,users.firstname,users.lastname,roomprofile.capacity FROM Reservations INNER JOIN users ON users.userid = reservations.userid INNER JOIN roomprofile ON roomprofile.roomid = reservations.roomid ORDER BY date;"
+    );
+    if (rows.length === 0) {
+      return { success: false, rows };
+    }
+
+    return { success: true, rows };
+  } catch (err) {
+    console.error("Hiba történt a foglalások lekérdezése közben:", err);
+    throw err;
+  }
+}
+async function deleteReservation(reservationid) {
+  try {
+    const { rowCount } = await pool.query(
+      "DELETE FROM reservations WHERE reservationid = $1",
+      [reservationid]
+    );
+
+    if (rowCount === 0) {
+      return { success: false };
+    }
+    return { success: true };
+  } catch (err) {
+    console.error("Hiba történt a foglalás törlésekor:", err);
+    throw err;
+  }
+}
+
+async function addClosedDate(dateForClose) {
+  try {
+    //Ellenőrízni, hogy az adott dátum már szerepel-e a listában
+    const { rowCount } = await pool.query(
+      "INSERT INTO closeddate (date) VALUES ($1)",
+      [dateForClose]
+    );
+    if (rowCount === 0) {
+      return { success: false };
+    }
+    return { success: true };
+  } catch (err) {
+    console.error("Hiba történt a nap hozzáadásakor: ", err);
+    throw err;
+  }
+}
+
+async function deleteClosedDate(dateid) {
+  try {
+    const { rowCount } = await pool.query(
+      "DELETE FROM closeddate WHERE dateid = $1",
+      [dateid]
+    );
+
+    if (rowCount === 0) {
+      return { success: false };
+    }
+    return { success: true };
+  } catch (err) {
+    console.error("Hiba történt a nap törlésekor:", err);
+    throw err;
+  }
+}
+
+async function getReservationsByReservationID(reservationid) {
+  try {
+    const { rows } = await pool.query(
+      "SELECT reservationid,users.userid,date,reservedfrom,reservedto, users.email, roomprofile.roomid FROM Reservations INNER JOIN users ON users.userid = reservations.userid INNER JOIN roomprofile ON roomprofile.roomid = reservations.roomid WHERE reservations.reservationid = $1 ORDER BY date;",
+      [reservationid]
+    );
+    return { rows };
+  } catch (err) {
+    console.error("Hiba történt a foglalások lekérdezése közben:", err);
+    throw err;
+  }
+}
+
 module.exports = {
   deleteDrink,
   updateDrink,
@@ -234,4 +312,9 @@ module.exports = {
   deleteBoardGame,
   updateBoardGame,
   addBoardGame,
+  getAllReservations,
+  deleteReservation,
+  addClosedDate,
+  deleteClosedDate,
+  getReservationsByReservationID,
 };

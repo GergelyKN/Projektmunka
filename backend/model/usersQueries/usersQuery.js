@@ -35,4 +35,28 @@ async function updateUser(email, newemail, newHashedpassword) {
   }
 }
 
-module.exports = { postNewUser, getUserByEmail, updateUser };
+//Két esetben van hiba, ezeket később kezelni
+async function resetPassword(email, generatedPassword) {
+  try {
+    const { rows } = await pool.query(
+      "SELECT * FROM users WHERE users.email = $1",
+      [email]
+    );
+    if (rows) {
+      const { rowCount } = await pool.query(
+        "UPDATE users SET hashedpassword = $1 WHERE email = $2",
+        [generatedPassword, email]
+      );
+      if (rowCount === 0) {
+        return { success: false };
+      }
+      return { success: true };
+    }
+    return { success: false };
+  } catch (err) {
+    console.error("Hiba történt a jelszó frissítésekor: ", err);
+    throw err;
+  }
+}
+
+module.exports = { postNewUser, getUserByEmail, updateUser, resetPassword };
