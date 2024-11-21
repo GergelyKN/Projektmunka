@@ -1,4 +1,4 @@
-const { text } = require("express");
+// const { text } = require("express");
 const db = require("../model/messagesQueries/messagesQuery");
 const nodemailer = require("nodemailer");
 require("dotenv").config();

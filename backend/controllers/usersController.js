@@ -1,6 +1,7 @@
 const db = require("../model/usersQueries/usersQuery");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const nodemailer = require("nodemailer");
 require("dotenv").config();
 
 async function postNewUser(req, res) {
@@ -69,7 +70,7 @@ async function postLogin(req, res) {
 async function updateUser(req, res) {
   const { email, newemail, newhashedpassword } = req.body;
   if (!newemail || !newhashedpassword) {
-    return res.status(400).json({ error: "Hiányzó adatok a kliens felől" });
+    return res.status(400).json({ error: "Hiányzó adatok a kliens felől!" });
   }
   try {
     const newHashedpassword = await bcrypt.hash(newhashedpassword, 10);
@@ -87,4 +88,68 @@ async function updateUser(req, res) {
   }
 }
 
-module.exports = { postNewUser, postLogin, updateUser };
+async function sendEmail(password) {
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.EMAIL,
+      pass: process.env.EMAILPASSWORD,
+    },
+  });
+
+  const mailOptions = {
+    from: process.env.EMAIL,
+    to: "nagy.gergely.koppany@gmail.com",
+    subject: `Új jelszó`,
+    text: `
+Az ideiglenes jelszavad, kérünk minél hamarabb változtasd meg!
+${password}
+
+Üdvözlettel,
+TableTop Bár Vezetőség`,
+    replyTo: process.env.EMAIL,
+  };
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log("Email sikeresen elküldve!");
+  } catch (err) {
+    console.error("Email küldési hiba: ", err);
+  }
+}
+
+async function resetPassword(req, res) {
+  const { email } = req.body;
+  if (!email) {
+    return res.status(400).json({ error: "Hiányzó adatok a kliens felől!" });
+  }
+  try {
+    const chars =
+      "0123456789abcdefghijklmnopqrstuvwxyz!@#$%^&*()ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const passwordLength = 12;
+    let password = "";
+    for (var i = 0; i <= passwordLength; i++) {
+      var randomNumber = Math.floor(Math.random() * chars.length);
+      password += chars.substring(randomNumber, randomNumber + 1);
+    }
+    const generatedPassword = await bcrypt.hash(password, 10);
+    const { success } = await db.resetPassword(email, generatedPassword);
+    if (!success) {
+      return res.status(404).json({ error: "Nem található az email cím!" });
+    } else {
+      await sendEmail(password);
+      return res.status(200).json({ message: "Sikeres frissítés!", password });
+    }
+  } catch (err) {
+    console.error("Sikertelen frissítés: ", err);
+    return res
+      .status(500)
+      .json({ error: "Hiba történt a jelszó frissítése közben!" });
+  }
+}
+
+module.exports = {
+  postNewUser,
+  postLogin,
+  updateUser,
+  resetPassword,
+};

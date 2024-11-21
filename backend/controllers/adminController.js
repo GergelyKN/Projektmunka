@@ -1,4 +1,33 @@
 const db = require("../model/adminQueries/adminQuery");
+const nodemailer = require("nodemailer");
+
+async function sendEmail(date, roomNumber, from, to) {
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.EMAIL,
+      pass: process.env.EMAILPASSWORD,
+    },
+  });
+
+  const mailOptions = {
+    from: process.env.EMAIL,
+    to: "nagy.gergely.koppany@gmail.com",
+    subject: `Foglalását Töröltük!!`,
+    text: `
+A ${date} napon ${from}:00-tól ${to}:00-ig
+${roomNumber}. szobába történt foglalása törlésre került!
+Üdvözlettel,
+TableTop Bár Vezetőség`,
+    replyTo: process.env.EMAIL,
+  };
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log("Email sikeresen elküldve!");
+  } catch (err) {
+    console.error("Email küldési hiba: ", err);
+  }
+}
 
 //Többi Controllerben is átírni hibakezelésesre ez a minta alapján
 async function deleteDrink(req, res) {
@@ -124,7 +153,6 @@ async function updateDrinkCategory(req, res) {
       .json({ error: "Hiba történt a kategória frissítésekor!" });
   }
 }
-
 async function addBoardGameCategory(req, res) {
   const { categoryname } = req.body;
   if (!categoryname) {
@@ -253,6 +281,99 @@ async function addBoardGame(req, res) {
       .json({ error: "Hiba történt az ital hozzáadásakor!" });
   }
 }
+async function getAllReservations(req, res) {
+  try {
+    const { success, rows } = await db.getAllReservations();
+    if (!success) {
+      return res.status(404).json({ error: "Nem található foglalás!" });
+    }
+    return res.status(200).json({ rows });
+  } catch (err) {
+    console.error("Hiba történt a foglalások lekérdezése közben!");
+    return res
+      .status(500)
+      .json({ error: "Hiba történt a foglalások lekérdezése közben!" });
+  }
+}
+
+async function deleteReservation(req, res) {
+  const { reservationid } = req.body;
+
+  if (!reservationid) {
+    return res
+      .status(400)
+      .json({ error: "Nem érkezett reservationid a kliens felől!" });
+  }
+  try {
+    const { rows } = await db.getReservationsByReservationID(reservationid);
+
+    const { success } = await db.deleteReservation(reservationid);
+    if (!success) {
+      return res.status(404).json({ error: "Nem található a foglalás!" });
+    }
+    if (rows && success) {
+      await sendEmail(
+        new Date(rows[0]["date"]).toLocaleDateString("hu-HU"),
+        rows[0]["roomid"],
+        rows[0]["reservedfrom"],
+        rows[0]["reservedto"]
+      );
+      return res.status(200).json({ message: "Sikeres törlés!" });
+    }
+  } catch (err) {
+    console.error("Hiba történt a foglalás törlése közben!");
+    return res
+      .status(500)
+      .json({ error: "Hiba történt a foglalás törlése közben!" });
+  }
+}
+
+async function addClosedDate(req, res) {
+  const { dateForClose } = req.body;
+
+  if (!dateForClose) {
+    return res.status(400).json({ error: "Nem érkezett adat a kliens felől!" });
+  }
+  try {
+    const { success } = await db.addClosedDate(dateForClose);
+
+    if (success) {
+      return res
+        .status(200)
+        .json({ message: "Új nap sikeresen hozzáadva a táblához!" });
+    }
+    return res
+      .status(500)
+      .json({ error: "Hiba történt a nap hozzáadása közben!" });
+  } catch (err) {
+    console.error("Hiba történt a nap hozzáadása közben!");
+    return res
+      .status(500)
+      .json({ error: "Hiba történt a nap hozzáadása közben!" });
+  }
+}
+
+async function deleteClosedDate(req, res) {
+  const { dateid } = req.body;
+
+  if (!dateid) {
+    return res.status(400).json({ error: "Nem érkezett adat a kliens felől!" });
+  }
+  try {
+    const { success } = await db.deleteClosedDate(dateid);
+    if (!success) {
+      return res.status(404).json({ error: "Nem található a nap!" });
+    }
+
+    return res.status(200).json({ message: "Sikeres törlés!" });
+  } catch (err) {
+    console.error("Hiba történt a nap törlése közben!");
+    return res
+      .status(500)
+      .json({ error: "Hiba történt a nap törlése közben!" });
+  }
+}
+
 module.exports = {
   deleteDrink,
   updateDrink,
@@ -266,4 +387,8 @@ module.exports = {
   deleteBoardGame,
   addBoardGame,
   updateBoardGame,
+  getAllReservations,
+  deleteReservation,
+  addClosedDate,
+  deleteClosedDate,
 };
