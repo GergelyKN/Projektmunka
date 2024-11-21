@@ -87,6 +87,7 @@ function AdminBoardGames() {
         throw new Error("Szerver Error");
       }
       const data = await response.json();
+
       const categoriesObject = data.reduce((acc, category) => {
         acc[category.categoryid] = category.categoryname;
         return acc;
@@ -141,6 +142,7 @@ function AdminBoardGames() {
         acc[bg.categoryname].push(bg);
         return acc;
       }, {});
+      console.log(groupedData);
       Object.keys(groupedData).forEach((category) => {
         groupedData[category].sort((a, b) => a.name.localeCompare(b.name));
       });
@@ -170,6 +172,7 @@ function AdminBoardGames() {
       setUpdateCategoryName(firstCategoryValue);
     }
   }, [groupedCategories]);
+
   useEffect(() => {
     const firstLanguageValue = Object.entries(groupedLanguages)[0]?.[1];
     if (firstLanguageValue) {
@@ -177,6 +180,7 @@ function AdminBoardGames() {
       setUpdateLanguage(firstLanguageValue);
     }
   }, [groupedLanguages]);
+
   useEffect(() => {
     const firstDifficultyValue = difficulties[0];
     if (firstDifficultyValue) {

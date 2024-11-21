@@ -1,6 +1,6 @@
 function AdminBoardGame({ boardgame, handleDelete, handleShowUpdateForm }) {
   return (
-    <div className={"drink-" + boardgame.boardgameid}>
+    <div className={"boardgame-" + boardgame.boardgameid}>
       <h4>
         {boardgame.name +
           " -- " +
