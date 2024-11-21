@@ -7,11 +7,7 @@ function BoardGameCategory({ boardgames }) {
         {boardgames[0].categoryname}
       </h2>
       {boardgames.map((boardgame) => (
-        <BoardGame
-          id={"boardgame-" + boardgame.boardgameid}
-          key={boardgame.boardgameid}
-          name={boardgame.name}
-        />
+        <BoardGame key={boardgame.boardgameid} boardgame={boardgame} />
       ))}
     </div>
   );

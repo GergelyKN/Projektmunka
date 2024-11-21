@@ -4,9 +4,11 @@ import BoardGameCategory from "./BoardGameCategory";
 import { useEffect, useState } from "react";
 
 function BoardGames() {
+  const GETBOARDGAMEAPI = import.meta.env.VITE_API_BOARDGAME_URL;
+
   const [boardGameName, setBoardGameName] = useState("");
-  // const [boardGameLength, setBoardGameLength] = useState(60);
-  const [boardGamePlayerNumber, setBoardGamePlayerNumber] = useState(12);
+  const [boardGameMinPlayerNumber, setBoardGameMinPlayerNumber] = useState(1);
+  const [boardGameMaxPlayerNumber, setBoardGameMaxPlayerNumber] = useState(12);
   const [boardgames, setBoardGames] = useState([]);
   const [groupedBoardGames, setGroupedBoardGames] = useState([]);
   const [languages, setLanguages] = useState([]);
@@ -21,12 +23,11 @@ function BoardGames() {
     setBoardGameName(event.target.value);
   };
 
-  // const handleLengthChange = (event) => {
-  //   setBoardGameLength(event.target.value);
-  // };
-
-  const handlePlayerNumberChange = (event) => {
-    setBoardGamePlayerNumber(Number(event.target.value));
+  const handleMinPlayerNumberChange = (event) => {
+    setBoardGameMinPlayerNumber(Number(event.target.value));
+  };
+  const handleMaxPlayerNumberChange = (event) => {
+    setBoardGameMaxPlayerNumber(Number(event.target.value));
   };
 
   const handleLanguageChange = (event) => {
@@ -42,7 +43,7 @@ function BoardGames() {
   useEffect(() => {
     const fetchBoardGames = async () => {
       try {
-        const response = await fetch("http://localhost:3000/api/boardgames", {
+        const response = await fetch(GETBOARDGAMEAPI, {
           mode: "cors",
         });
 
@@ -77,11 +78,12 @@ function BoardGames() {
       }
     };
     fetchBoardGames();
-  }, []);
+  }, [GETBOARDGAMEAPI]);
   useEffect(() => {
     const filteredBoardGames = boardgames.reduce((acc, bg) => {
       if (
-        bg.maxplayernum <= boardGamePlayerNumber &&
+        bg.minplayernum <= boardGameMaxPlayerNumber &&
+        bg.maxplayernum >= boardGameMinPlayerNumber &&
         (selectedLanguage === "all" || bg.language === selectedLanguage) &&
         (selectedCategory === "all" || bg.categoryname === selectedCategory) &&
         (selectedDifficulty === "all" ||
@@ -100,7 +102,8 @@ function BoardGames() {
   }, [
     boardgames,
     boardGameName,
-    boardGamePlayerNumber,
+    boardGameMinPlayerNumber,
+    boardGameMaxPlayerNumber,
     selectedLanguage,
     selectedCategory,
     selectedDifficulty,
@@ -164,18 +167,30 @@ function BoardGames() {
           ))}
         </select>
 
-        <label htmlFor="length">Játékosok maximális száma: </label>
+        <label htmlFor="boardgameMinPlayer">Játékosok minimális száma: </label>
         <input
           type="range"
-          name="length"
-          id="length"
+          name="boardgameMinPlayer"
+          id="boardgameMinPlayer"
           min="1"
-          max="12"
-          value={boardGamePlayerNumber}
+          max={boardGameMaxPlayerNumber}
+          value={boardGameMinPlayerNumber}
           step={1}
-          onChange={handlePlayerNumberChange}
+          onChange={handleMinPlayerNumberChange}
         />
-        <p>{boardGamePlayerNumber} fő</p>
+        <p>Minimum {boardGameMinPlayerNumber} fő</p>
+        <label htmlFor="boardgameMaxPlayer">Játékosok maximális száma: </label>
+        <input
+          type="range"
+          name="boardgameMaxPlayer"
+          id="boardgameMaxPlayer"
+          min={boardGameMinPlayerNumber}
+          max="12"
+          value={boardGameMaxPlayerNumber}
+          step={1}
+          onChange={handleMaxPlayerNumberChange}
+        />
+        <p>Maximum {boardGameMaxPlayerNumber} fő</p>
       </div>
 
       <div className="everyBoardGame">
