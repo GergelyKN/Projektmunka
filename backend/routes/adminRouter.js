@@ -33,4 +33,18 @@ adminRouter.delete("/boardgames", adminController.deleteBoardGame);
 adminRouter.put("/boardgames", adminController.updateBoardGame);
 adminRouter.post("/boardgames", adminController.addBoardGame);
 
+//Foglalások
+adminRouter.get("/reservations", adminController.getAllReservations);
+adminRouter.delete(
+  "/reservations/removereservation",
+  adminController.deleteReservation
+);
+
+//Zárt napok
+adminRouter.post("/closeddates/addcloseddate", adminController.addClosedDate);
+adminRouter.delete(
+  "/closeddates/deletecloseddate",
+  adminController.deleteClosedDate
+);
+
 module.exports = adminRouter;
