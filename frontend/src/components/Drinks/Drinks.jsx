@@ -4,6 +4,8 @@ import DrinkCategory from "./DrinkCategory";
 import { useEffect, useState } from "react";
 
 function Drinks() {
+  const GETDRINKAPI = import.meta.env.VITE_API_DRINK_URL;
+
   const [price, setPrice] = useState(20000);
   const [containsAlcohol, setContainsAlcohol] = useState(false);
   const [searchedDrinkName, setSearchedDrinkName] = useState("");
@@ -13,7 +15,7 @@ function Drinks() {
   useEffect(() => {
     const fetchDrinks = async () => {
       try {
-        const response = await fetch("http://localhost:3000/api/drinks", {
+        const response = await fetch(GETDRINKAPI, {
           mode: "cors",
         });
 
@@ -38,7 +40,7 @@ function Drinks() {
     };
 
     fetchDrinks();
-  }, []);
+  }, [GETDRINKAPI]);
   useEffect(() => {
     const filteredDrinks = drinks.reduce((acc, drink) => {
       if (

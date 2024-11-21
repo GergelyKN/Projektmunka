@@ -7,11 +7,7 @@ const DrinkCategory = ({ drinks }) => {
         {drinks[0].categoryname}
       </h2>
       {drinks.map((drink) => (
-        <Drink
-          drinkID={"drink-" + drink.drinkid}
-          key={drink.drinkid}
-          name={drink.name}
-        />
+        <Drink key={drink.drinkid} drink={drink} />
       ))}
     </div>
   );
