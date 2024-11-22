@@ -3,8 +3,6 @@ const adminController = require("../controllers/adminController.js");
 
 const adminRouter = Router();
 
-//#region Ellenőrtés Input mezőket ellenőrízni a kontrollerben a megfelelő adattípus érdekében
-
 //Italok
 adminRouter.delete("/drinks", adminController.deleteDrink);
 adminRouter.put("/drinks", adminController.updateDrink);
