@@ -1,37 +1,99 @@
 import NavBar from "../Helper_Components/NavBar";
 import Footer from "../Helper_Components/Footer";
+import getDayOfWeek, {
+  dateComparison,
+} from "../../functions/Reservation_Functions/ReservationHelperFunctions";
+
+import { useState, useEffect } from "react";
+import "./MainPage.css";
 
 function MainPage() {
+  const GETCLOSEDDATESAPI = import.meta.env.VITE_API_GETCLOSEDDATES_URL;
+  const [closedDates, setClosedDates] = useState([]);
+
+  useEffect(() => {
+    const fetchClosedDates = async () => {
+      try {
+        const response = await fetch(GETCLOSEDDATESAPI, {
+          mode: "cors",
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP hiba: ${response.status}`);
+        }
+
+        const data = await response.json();
+        const today = new Date().toLocaleDateString("hu-HU");
+
+        for (const reservation of data["rows"]) {
+          reservation["date"] = new Date(
+            reservation["date"]
+          ).toLocaleDateString("hu-HU");
+        }
+
+        setClosedDates(
+          data["rows"].filter((x) => dateComparison(today, x["date"]))
+        );
+      } catch (err) {
+        console.error("Hiba történt a foglalások lekérdezése közben: ", err);
+      }
+    };
+    fetchClosedDates();
+  }, [GETCLOSEDDATESAPI]);
+
   return (
     <>
       <NavBar />
+      {closedDates.length > 0 && (
+        <div className="closedDateContainer">
+          <h3>Az alábbi napokon zárva tartunk!</h3>
+          {closedDates.map((x) => (
+            <p key={x.dateid} className="closedDate">
+              {x["date"] + " - " + getDayOfWeek(x["date"])}
+            </p>
+          ))}
+        </div>
+      )}
+
       <article>
+        <h1>
+          Üdvözlünk a TableTop Bárban – ahol az italfogyasztás és a
+          társasjátékok találkoznak!
+        </h1>
+
         <p>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique
-          suscipit beatae assumenda quibusdam neque in impedit asperiores illum
-          animi, est tempora ullam, autem magni veniam repudiandae repellat!
-          Quam, cumque? Minima. Lorem ipsum dolor sit amet, consectetur
-          adipisicing elit. Quo nisi esse ducimus sequi voluptates voluptate
-          recusandae vero ex dignissimos soluta, illum quasi sapiente, fugit
-          amet ullam tempora totam saepe impedit. Lorem ipsum dolor sit amet
-          consectetur adipisicing elit. Laudantium eos nisi esse, dignissimos
-          dolorem consequuntur a temporibus expedita voluptate commodi culpa
-          optio facere earum aliquam sed veritatis itaque ipsa id. Lorem ipsum
-          dolor sit amet consectetur, adipisicing elit. Aperiam tempora dolor
-          sequi voluptate? At ratione id, asperiores tempora dolorum voluptatum!
-          Odit itaque officiis neque hic eveniet tempora a mollitia similique?
-          Lorem ipsum dolor, sit amet consectetur adipisicing elit. Blanditiis
-          sequi enim cumque sunt, unde dolorem ad consectetur iste voluptates
-          architecto? Tenetur repudiandae maiores nemo fugit neque earum
-          repellat ab beatae? Lorem ipsum dolor sit amet consectetur adipisicing
-          elit. Voluptates accusantium nulla exercitationem nemo reiciendis id
-          tempore aspernatur provident magni asperiores fugiat fuga dolores,
-          similique ratione quia hic, pariatur laudantium sunt. Lorem ipsum
-          dolor sit, amet consectetur adipisicing elit. Pariatur, tempore
-          architecto excepturi assumenda aliquid officia sint. Sunt aperiam
-          praesentium ratione doloribus! Repellendus perferendis blanditiis
-          pariatur fugiat quas sequi a iusto.
+          Lépj be egy olyan helyre, ahol az ínycsiklandó koktélok, kézműves
+          sörök és finom borok mellé izgalmas társasjátékos élmények társulnak.
+          Legyen szó baráti összejövetelről, randevúról vagy egy csapatépítő
+          estéről, nálunk minden adott, hogy a szórakozás és a kikapcsolódás
+          tökéletes harmóniában valósuljon meg.
         </p>
+
+        <p>
+          A TableTop Bárban több mint 100 különböző társasjátékkal várunk,
+          legyen az egy könnyed party játék vagy egy izgalmas stratégiai
+          kihívás. A hangulatos környezet és a játékok világához illő, egyedi
+          italok garantálják, hogy minden alkalom felejthetetlen élménnyé
+          váljon.
+        </p>
+
+        <p>
+          Nálunk nemcsak a játékmenet, de az ízek is főszerepet kapnak. Próbáld
+          ki különleges koktéljainkat, amelyek játékaink ihlette neveikkel
+          mosolyt csalnak az arcodra, vagy lazíts egy hűsítő sör társaságában a
+          legjobb lépésekre gondolva.
+        </p>
+
+        <p>
+          Gyere, és tapasztald meg, milyen a TableTop életérzés – a játék öröme
+          és az italok élvezete egy helyen! 🎲🍹
+        </p>
+
+        <p>Várunk szeretettel!</p>
       </article>
       <Footer />
     </>
