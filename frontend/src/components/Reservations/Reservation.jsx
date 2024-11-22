@@ -1,39 +1,301 @@
 import NavBar from "../Helper_Components/NavBar";
 import Footer from "../Helper_Components/Footer";
-import { useState } from "react";
+import getDayOfWeek from "../../functions/Reservation_Functions/ReservationHelperFunctions";
+import { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
 
+// !!!!MINDENHOL FELVENNI A LOADING USESTATE-ET, AHOL VAN ADATLEKÉRDEZÉS
+//Bugos, 23:00 és 01:00 között, átalakítani a date inputot HU-hu formára, majd azt összehasonlítani/elküldeni
+
 function Reservation() {
-  const [dateForReservation, setDateForReservation] = useState(
-    new Date().toISOString().split("T")[0]
-  );
-  const [startHour, setStartHour] = useState("10");
-  const [endHour, setEndHour] = useState("11");
+  const GETROOMAPI = import.meta.env.VITE_API_RESERVATION_GETROOMS_URL;
+  const GETOPENINFOSAPI = import.meta.env.VITE_API_OPENINFOS_URL;
+  const POSTRESERVATIONAPI = import.meta.env.VITE_API_POSTRESERVATION_URL;
+  const GETRESERVATIONSBYDATEAPI = import.meta.env
+    .VITE_API_GETRESERVATIONSBYDATE_URL;
+  const GETOPENINFOBYDAYAPI = import.meta.env.VITE_API_GETOPENINFOBYDAY_URL;
+  const GETCLOSEDDATESAPI = import.meta.env.VITE_API_GETCLOSEDDATES_URL;
+
+  const [dateForReservation, setDateForReservation] = useState("");
+  const [startHour, setStartHour] = useState();
+  const [endHour, setEndHour] = useState();
+
+  const [startHours, setStartHours] = useState([]);
+  const [endHours, setEndHours] = useState([]);
+  const [groupedHours, setGroupedHours] = useState([]);
+
+  const [rooms, setRooms] = useState([]);
+  const [roomID, setRoomID] = useState();
+  const [groupedInfos, setGroupedInfos] = useState();
+
+  const [reservationsByDate, setReservationsByDate] = useState();
+  const [reservedStartHours, setReservedStartHours] = useState([]);
+  const [reservedEndHours, setReservedEndHours] = useState([]);
+
+  const [openInfoByDay, setOpenInfoByDay] = useState();
+
+  const [closedDates, setClosedDates] = useState([]);
+
+  const [loading, setLoading] = useState(true);
 
   const handleDateChange = (event) => {
     setDateForReservation(event.target.value);
   };
 
-  const handleStartDate = (event) => {
-    setStartHour(event.target.value);
+  const handleStartHour = (event) => {
+    setStartHour(Number(event.target.value));
   };
 
-  const handleEndDate = (event) => {
-    setEndHour(event.target.value);
+  const handleEndHour = (event) => {
+    setEndHour(Number(event.target.value));
+  };
+  const hanldeRoomIDChange = (event) => {
+    setRoomID(Number(event.target.value));
   };
 
-  //Dummy adat próbaként, később db-ből lekérdezés
-  const rooms = [
-    { roomID: 1, capacity: 10 },
-    { roomID: 2, capacity: 8 },
-    { roomID: 3, capacity: 5 },
-    { roomID: 4, capacity: 5 },
-  ];
-  const availableHours = [
-    10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 0o0,
-  ];
-  const startHours = [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
-  const endHours = [11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 0o0];
+  useEffect(() => {
+    const fetchClosedDates = async () => {
+      try {
+        const response = await fetch(GETCLOSEDDATESAPI, {
+          mode: "cors",
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        const data = await response.json();
+
+        for (const reservation of data["rows"]) {
+          reservation["date"] = new Date(
+            reservation["date"]
+          ).toLocaleDateString("hu-HU");
+        }
+        setClosedDates(data["rows"].map((x) => x.date));
+      } catch (err) {
+        console.error("Hiba történt a foglalások lekérdezése közben: ", err);
+      }
+    };
+    fetchClosedDates();
+  }, [GETCLOSEDDATESAPI]);
+
+  useEffect(() => {
+    const fetchRooms = async () => {
+      try {
+        const response = await fetch(GETROOMAPI, {
+          mode: "cors",
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        const data = await response.json();
+
+        const roomsObject = data["rooms"].reduce((acc, room) => {
+          acc[room.roomid] = room.capacity;
+          return acc;
+        }, {});
+        setRooms(roomsObject);
+        if (!response.ok) {
+          console.error("Hibaüzenet a szerver felől:", data.error);
+        }
+      } catch (err) {
+        console.error("Hiba történt a kapcsolódáskor: ", err);
+      }
+    };
+    const fetchOpenInfos = async () => {
+      try {
+        const response = await fetch(GETOPENINFOSAPI, {
+          mode: "cors",
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        if (response.status >= 400) {
+          throw new Error("Szerver Error");
+        }
+        const data = await response.json();
+
+        const openInfosObject = data.rows.reduce((acc, openinfo) => {
+          acc[openinfo.day] = {
+            startHour: Number(openinfo.starthour),
+            endHour: Number(openinfo.endhour),
+          };
+          return acc;
+        }, {});
+        setGroupedInfos(openInfosObject);
+      } catch (err) {
+        console.error("Hiba történt a nyitvatartés lekérdezése közben: ", err);
+      }
+    };
+
+    fetchRooms();
+    fetchOpenInfos();
+  }, [GETOPENINFOSAPI, GETROOMAPI]);
+
+  useEffect(() => {
+    setDateForReservation(new Date().toISOString().split("T")[0]);
+  }, [groupedInfos]);
+
+  const fetchReservationsByDate = async (dateForReservation, roomID) => {
+    try {
+      const url = `${GETRESERVATIONSBYDATEAPI}?date=${encodeURIComponent(
+        dateForReservation
+      )}&roomID=${encodeURIComponent(roomID)}`;
+
+      const response = await fetch(url, {
+        mode: "cors",
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (response.status >= 400) {
+        throw new Error("Szerver Error");
+      }
+      const data = await response.json();
+
+      setReservationsByDate(data);
+    } catch (err) {
+      console.error(
+        "Hiba történt a foglalt időpontok lekérdezése közben: ",
+        err
+      );
+    }
+  };
+  const fetchOpenInfoByDay = async (day) => {
+    try {
+      const url = `${GETOPENINFOBYDAYAPI}?day=${encodeURIComponent(day)}`;
+
+      const response = await fetch(url, {
+        mode: "cors",
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (response.status >= 400) {
+        throw new Error("Szerver Error");
+      }
+      const data = await response.json();
+      setOpenInfoByDay(data);
+    } catch (err) {
+      console.error("Hiba történt a nyitvatartás lekérdezése közben: ", err);
+    }
+  };
+
+  useEffect(() => {
+    if (dateForReservation && roomID) {
+      setLoading(true);
+      setReservedStartHours([]);
+      setReservedEndHours([]);
+
+      Promise.all([
+        fetchReservationsByDate(dateForReservation, roomID),
+        fetchOpenInfoByDay(getDayOfWeek(dateForReservation)),
+      ]).then(() => setLoading(false));
+    }
+  }, [dateForReservation, roomID]);
+
+  useEffect(() => {
+    if (reservationsByDate) {
+      const resStartHelper = [];
+      const resEndHelper = [];
+
+      for (const reservation of reservationsByDate["reservations"]) {
+        const start = Number(reservation["reservedfrom"]);
+        const end = Number(reservation["reservedto"]);
+        const userID = reservation["userid"];
+
+        for (let i = start; i <= end; i++) {
+          if (i === start) {
+            resStartHelper.push({ hour: i, userid: userID });
+          } else if (i === end) {
+            resEndHelper.push({ hour: i, userid: userID });
+          } else {
+            resStartHelper.push({ hour: i, userid: userID });
+            resEndHelper.push({ hour: i, userid: userID });
+          }
+        }
+      }
+
+      setReservedStartHours(resStartHelper);
+      setReservedEndHours(resEndHelper);
+    }
+  }, [reservationsByDate]);
+
+  useEffect(() => {
+    if (dateForReservation && openInfoByDay) {
+      const fromHour = Number(openInfoByDay["specificDay"][0]["starthour"]);
+      const toHour = Number(openInfoByDay["specificDay"][0]["endhour"]);
+
+      const aHours = [];
+      for (let i = fromHour; i <= toHour; ++i) {
+        aHours.push(i);
+      }
+
+      setStartHours(aHours.slice(0, aHours.length - 1));
+      setEndHours(aHours.slice(1));
+    }
+  }, [dateForReservation, openInfoByDay]);
+
+  useEffect(() => {
+    if (startHours.length > 0 && endHours.length > 0) {
+      setStartHour(Number(startHours[0]));
+      setEndHour(Number(endHours[0]));
+      const groupedHoursHelper = [];
+      const today = new Date().toISOString().split("T")[0];
+      const currentHour = new Date().getHours();
+
+      for (let i = 0; i < startHours.length; i++) {
+        const reservedStartObj = reservedStartHours.find(
+          (reserved) => reserved.hour === startHours[i]
+        );
+        const reservedEndObj = reservedEndHours.find(
+          (reserved) => reserved.hour === endHours[i]
+        );
+
+        groupedHoursHelper.push({
+          sHour: startHours[i],
+          eHour: endHours[i],
+          isReserved: !!reservedStartObj && !!reservedEndObj,
+          userID: reservedEndObj ? reservedEndObj.userid : null,
+          isInThePast:
+            dateForReservation < today ||
+            (dateForReservation === today && startHours[i] <= currentHour),
+        });
+      }
+
+      setGroupedHours(groupedHoursHelper);
+    } else {
+      setGroupedHours([]);
+    }
+  }, [
+    startHours,
+    endHours,
+    reservedEndHours,
+    reservedStartHours,
+    dateForReservation,
+  ]);
+
+  useEffect(() => {
+    if (groupedHours.length > 0) {
+      const StartAvailableHour = groupedHours.find(
+        (hour) => !hour.isReserved && !hour.isInThePast
+      );
+      if (StartAvailableHour) {
+        setStartHour(StartAvailableHour.sHour);
+        setEndHour(StartAvailableHour.sHour + 1);
+      }
+    }
+  }, [groupedHours, dateForReservation]);
+
+  useEffect(() => {
+    if (rooms) {
+      setRoomID(Number(Object.keys(rooms)[0]));
+    }
+  }, [rooms]);
 
   const user = localStorage.getItem("user")
     ? JSON.parse(localStorage.getItem("user"))
@@ -43,101 +305,239 @@ function Reservation() {
     return <Navigate to="/bejelentkezes" />;
   }
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await fetch(POSTRESERVATIONAPI, {
+        mode: "cors",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+
+        body: JSON.stringify({
+          userID: Number(user["userid"]),
+          roomID: Number(roomID),
+          dateForReservation,
+          reservedFrom: Number(startHour),
+          reservedTo: Number(endHour),
+        }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        console.error("Hibaüzenet a szerver felől: ", data.error);
+      } else {
+        alert(data.message);
+      }
+    } catch (error) {
+      console.error("Hiba történt a kapcsolódáskor: ", error);
+    } finally {
+      fetchReservationsByDate(dateForReservation, roomID);
+    }
+  };
+
   return (
     <>
       <NavBar />
       <h3>Foglalás menüpont</h3>
-      <div className="reservationNavBar">
-        <label htmlFor="roomSelect">Szobaszám: </label>
-        <select name="roomSelect" id="roomSelect">
-          {rooms.map((room) => (
-            <option key={room.roomID} value={room.roomID}>
-              {room.roomID + ". szoba - " + room.capacity + " fő"}
-            </option>
-          ))}
-        </select>
-        <label htmlFor="reservationDate">Foglalás dátuma: </label>
-        <input
-          type="date"
-          id="reservationDate"
-          name="reservationDate"
-          value={dateForReservation}
-          onChange={handleDateChange}
-          min={"2024-01-01"}
-          max={"2024-12-31"}
-        />
-        <p>{dateForReservation}</p>
-      </div>
-      <div className="reservationContainer">
-        <div className="reservationTable">
-          <div className="reservationTableHeader">
-            <label htmlFor="reservationStartHour">Kezdőóra: </label>
-            <select
-              name="reservationStartHour"
-              id="reservationStartHour"
-              onChange={handleStartDate}
-            >
-              {startHours.map((startHour) => (
-                <option key={startHour} value={startHour}>
-                  {startHour + ":00"}
-                </option>
-              ))}
-            </select>
+      <form onSubmit={handleSubmit}>
+        <fieldset>
+          <label htmlFor="roomSelect">Szobaszám: </label>
+          <select
+            name="roomSelect"
+            id="roomSelect"
+            onChange={hanldeRoomIDChange}
+          >
+            {Object.entries(rooms).map(([key, value]) => (
+              <option key={key} value={key}>
+                {key + ". Szoba - " + value + " Fő"}
+              </option>
+            ))}
+          </select>
+          <label htmlFor="reservationDate">Foglalás dátuma: </label>
+          <input
+            type="date"
+            id="reservationDate"
+            name="reservationDate"
+            value={dateForReservation}
+            onChange={handleDateChange}
+            min={"2024-01-01"}
+            max={"2025-02-28"}
+          />
 
-            <label htmlFor="reservationEndHour">Végóra: </label>
-            <select
-              name="reservationEndHour"
-              id="reservationEndHour"
-              onChange={handleEndDate}
-            >
-              {endHours.map((endHour) => (
-                <option key={endHour} value={endHour}>
-                  {endHour !== 0 ? endHour + ":00" : endHour + "0:00"}
-                </option>
-              ))}
-            </select>
-            <p>
-              {endHour < startHour ? (
-                <strong>
-                  A kezdőóra nem lehet nagyobb, mint a záró óra...
-                </strong>
-              ) : (
-                startHour + ":00 - " + endHour + ":00"
-              )}
-            </p>
-          </div>
-          <div className="reservationTableContent">
-            <table>
-              <thead>
-                <tr>
-                  <th>Időpont</th>
-                </tr>
-              </thead>
-              <tbody>
-                {availableHours.map((hour) => {
-                  const isWithinRange = hour >= startHour && hour <= endHour;
-                  return (
-                    <tr
-                      key={hour}
-                      value={hour}
-                      style={{
-                        backgroundColor: isWithinRange
-                          ? "lightgreen"
-                          : "transparent",
-                        color: isWithinRange ? "white" : "black",
-                      }}
-                    >
-                      {hour === 0 ? hour + "0:00" : hour + ":00"}
+          <div className="reservationTable">
+            <div className="reservationTableHeader">
+              <label htmlFor="reservationStartHour">Kezdőóra: </label>
+              <select
+                name="reservationStartHour"
+                id="reservationStartHour"
+                onChange={handleStartHour}
+                value={startHour}
+              >
+                {startHours.map((startHour) => (
+                  <option key={startHour} value={startHour}>
+                    {startHour + ":00"}
+                  </option>
+                ))}
+              </select>
+
+              <label htmlFor="reservationEndHour">Végóra: </label>
+              <select
+                name="reservationEndHour"
+                id="reservationEndHour"
+                onChange={handleEndHour}
+                value={endHour}
+              >
+                {endHours.map((endHour) => (
+                  <option key={endHour} value={endHour}>
+                    {endHour + ":00"}
+                  </option>
+                ))}
+              </select>
+              <>
+                {closedDates.includes(
+                  new Date(dateForReservation).toLocaleDateString("hu-HU")
+                ) ? (
+                  <h2>
+                    <strong>Ezen a napon zárva tartunk!</strong>
+                  </h2>
+                ) : dateForReservation <
+                  new Date().toISOString().split("T")[0] ? (
+                  <h2>
+                    <strong>Nem lehet múltbeli időpontot lefoglalni</strong>
+                  </h2>
+                ) : startHour >= endHour ? (
+                  <h2>
+                    <strong>
+                      A kezdőóra nem lehet nagyobb vagy egyenlő, mint a záró
+                      óra...
+                    </strong>
+                  </h2>
+                ) : reservedStartHours.map((x) => x.hour).includes(startHour) ||
+                  reservedEndHours.map((x) => x.hour).includes(endHour) ? (
+                  <h2>
+                    <strong>A kijelölt időpont már foglalt!</strong>
+                  </h2>
+                ) : dateForReservation ===
+                    new Date().toISOString().split("T")[0] &&
+                  startHour < new Date().getHours() ? (
+                  <h2>
+                    <strong>
+                      Nem lehet olyan időpontot kijelölni, ami{" "}
+                      {new Date().getHours() +
+                        ":" +
+                        new Date().getMinutes() +
+                        " "}{" "}
+                      előtt van!
+                    </strong>
+                  </h2>
+                ) : null}
+              </>
+            </div>
+            {!loading &&
+            !closedDates.includes(
+              new Date(dateForReservation).toLocaleDateString("hu-HU")
+            ) ? (
+              <div className="reservationTableContent">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Időpont</th>
                     </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Színmagyarázat: </td>
+                      <td>
+                        <div style={{ backgroundColor: "red", color: "white" }}>
+                          Foglalt
+                        </div>
+                        <div
+                          style={{ backgroundColor: "blue", color: "white" }}
+                        >
+                          Saját foglalás
+                        </div>
+                        <div
+                          style={{
+                            backgroundColor: "transparent",
+                            color: "black",
+                          }}
+                        >
+                          Szabad
+                        </div>
+                        <div
+                          style={{
+                            backgroundColor: "lightgreen",
+                            color: "white",
+                          }}
+                        >
+                          Aktuális kijelölés
+                        </div>
+                      </td>
+                    </tr>
+                    {groupedHours.map((hour) => {
+                      const isWithinRange =
+                        startHour < endHour &&
+                        hour["sHour"] >= startHour &&
+                        hour["eHour"] <= endHour;
+
+                      const style = hour.isInThePast
+                        ? { textDecoration: "line-through" }
+                        : {
+                            backgroundColor:
+                              hour["userID"] === user.userid
+                                ? "blue"
+                                : hour["isReserved"]
+                                ? "red"
+                                : isWithinRange
+                                ? "lightgreen"
+                                : "transparent",
+                            color:
+                              hour["isReserved"] || isWithinRange
+                                ? "white"
+                                : "black",
+                          };
+
+                      return (
+                        <tr key={hour["sHour"]}>
+                          <td value={hour} style={style}>
+                            {hour["sHour"] + ":00 - " + hour["eHour"] + ":00"}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+                <button
+                  type="submit"
+                  disabled={
+                    closedDates.includes(
+                      new Date(dateForReservation).toLocaleDateString("hu-HU")
+                    ) ||
+                    startHour >= endHour ||
+                    reservedStartHours.map((x) => x.hour).includes(startHour) ||
+                    reservedEndHours.map((x) => x.hour).includes(endHour) ||
+                    dateForReservation <
+                      new Date().toISOString().split("T")[0] ||
+                    (dateForReservation ===
+                      new Date().toISOString().split("T")[0] &&
+                      startHour < new Date().getHours())
+                  }
+                >
+                  Elküldés
+                </button>
+              </div>
+            ) : (
+              ""
+            )}
           </div>
-        </div>
-      </div>
+        </fieldset>
+      </form>
       <Footer />
     </>
   );
 }
+
 export default Reservation;
