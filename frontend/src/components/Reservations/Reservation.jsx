@@ -355,7 +355,6 @@ function Reservation() {
       );
     }
   }, [myGroupedReservations, dateForReservation]);
-  useEffect(() => {}, [alreadyHaveReservation]);
 
   if (!user) {
     return <Navigate to="/bejelentkezes" />;
