@@ -1,14 +1,19 @@
 import NavBar from "../Helper_Components/NavBar";
 import Footer from "../Helper_Components/Footer";
-import { Link } from "react-router-dom";
-import { useState } from "react";
+import { Link, Navigate, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { isAuthenticated } from "../../functions/Login_Functions/LoginHelperFunctions";
 
+//Kötelező mező jelölése *-gal
+//Email küldés
 function Registration() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [verPassword, setVerPassword] = useState("");
   const [lastName, setLastName] = useState("");
   const [firstName, setFirstName] = useState("");
+  const [redirectToLogin, setRedirectToLogin] = useState(false);
+  const navigate = useNavigate();
 
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
@@ -25,6 +30,11 @@ function Registration() {
   const handleVerPasswordChange = (event) => {
     setVerPassword(event.target.value);
   };
+  useEffect(() => {
+    if (isAuthenticated()) {
+      navigate("/");
+    }
+  }, [navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -38,6 +48,7 @@ function Registration() {
       const response = await fetch(
         "http://localhost:3000/api/users/registration",
         {
+          mode: "cors",
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -48,6 +59,7 @@ function Registration() {
       const data = await response.json();
       if (response.ok) {
         alert(data.message);
+        setRedirectToLogin(true);
       } else {
         alert(data.error);
       }
@@ -61,16 +73,15 @@ function Registration() {
       setVerPassword("");
     }
   };
+  if (redirectToLogin) {
+    return <Navigate to="/bejelentkezes" />;
+  }
 
   return (
     <>
       <NavBar />
       <div className="registrationMain">
-        <form
-          action="/api/users/registration"
-          method="POST"
-          onSubmit={handleSubmit}
-        >
+        <form onSubmit={handleSubmit} method="POST">
           <fieldset>
             <Link to="/" className="exitLink">
               <div className="exitIcon">X</div>
