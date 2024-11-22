@@ -1,8 +1,6 @@
 import NavBar from "../Helper_Components/NavBar";
 import Footer from "../Helper_Components/Footer";
-import getDayOfWeek, {
-  dateComparison,
-} from "../../functions/Reservation_Functions/ReservationHelperFunctions";
+import getDayOfWeek from "../../functions/Reservation_Functions/ReservationHelperFunctions";
 import { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
 

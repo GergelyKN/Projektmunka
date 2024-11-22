@@ -62,6 +62,9 @@ function NavBar() {
                 </Link>
               </>
             )}
+            <Link to="/szoba" className="nav-small-link">
+              Szoba
+            </Link>
             <Link to="/sajatfoglalasok" className="nav-small-link">
               Saját foglalások
             </Link>
