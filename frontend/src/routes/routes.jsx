@@ -14,6 +14,9 @@ import RePassword from "../components/RePassword/RePassword";
 import AdminReservations from "../components/Admin/AdminReservations/AdminReservations";
 import AdminClosedDays from "../components/Admin/AdminClosedDays/AdminClosedDays";
 import MyReservations from "../components/MyReservations/MyReservations";
+import Room from "../components/Rooms/Room";
+import UserRoute from "../components/UserRoute/UserRoute";
+
 const routes = [
   {
     path: "/",
@@ -46,7 +49,11 @@ const routes = [
   },
   {
     path: "/profilszerkesztes",
-    element: <EditProfile />,
+    element: (
+      <UserRoute>
+        <EditProfile />
+      </UserRoute>
+    ),
   },
   {
     path: "/jelszoemlekezteto",
@@ -54,7 +61,19 @@ const routes = [
   },
   {
     path: "/sajatfoglalasok",
-    element: <MyReservations />,
+    element: (
+      <UserRoute>
+        <MyReservations />
+      </UserRoute>
+    ),
+  },
+  {
+    path: "/szoba",
+    element: (
+      <UserRoute>
+        <Room />
+      </UserRoute>
+    ),
   },
 
   {
