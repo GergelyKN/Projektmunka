@@ -1,0 +1,75 @@
+/* MainPage.css */
+
+/* Betűtípus importálása */
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
+
+/* Globális stílusok */
+body {
+  font-family: "Roboto", sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f4f4;
+  color: #333;
+}
+
+article {
+  text-align: justify;
+}
+/* NavBar és Footer */
+nav,
+footer {
+  background-color: #007bff;
+  color: #fff;
+  padding: 1rem;
+  text-align: center;
+}
+
+/* Zárt napok konténer */
+.closedDateContainer {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 1rem;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.closedDateContainer h3 {
+  font-size: 1.5rem;
+  color: #007bff;
+  text-align: center;
+}
+
+.closedDate {
+  font-size: 1rem;
+  margin: 0.5rem 0;
+  color: #555;
+}
+
+/* Cikkek */
+article {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  line-height: 1.6;
+}
+
+.navbar-logo {
+  width: 125px;
+  height: 125px;
+}
+
+/* Reszponzivitás */
+@media (max-width: 768px) {
+  .closedDateContainer,
+  article {
+    padding: 1rem;
+  }
+
+  .closedDateContainer h3 {
+    font-size: 1.2rem;
+  }
+}
