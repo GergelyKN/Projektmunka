@@ -63,7 +63,7 @@ function Contact() {
       ? JSON.parse(localStorage.getItem("user"))
       : null;
     setUser(storedUser);
-  }, []);
+  }, [GETOPENINFOSAPI]);
 
   useEffect(() => {
     if (user) {
