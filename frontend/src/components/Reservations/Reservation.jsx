@@ -1,6 +1,8 @@
 import NavBar from "../Helper_Components/NavBar";
 import Footer from "../Helper_Components/Footer";
-import getDayOfWeek from "../../functions/Reservation_Functions/ReservationHelperFunctions";
+import getDayOfWeek, {
+  dateComparison,
+} from "../../functions/Reservation_Functions/ReservationHelperFunctions";
 import { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
 
@@ -15,6 +17,7 @@ function Reservation() {
     .VITE_API_GETRESERVATIONSBYDATE_URL;
   const GETOPENINFOBYDAYAPI = import.meta.env.VITE_API_GETOPENINFOBYDAY_URL;
   const GETCLOSEDDATESAPI = import.meta.env.VITE_API_GETCLOSEDDATES_URL;
+  const GETMYRESERVATION = import.meta.env.VITE_API_GETMYRESERVATION_URL;
 
   const [dateForReservation, setDateForReservation] = useState("");
   const [startHour, setStartHour] = useState();
@@ -32,11 +35,14 @@ function Reservation() {
   const [reservedStartHours, setReservedStartHours] = useState([]);
   const [reservedEndHours, setReservedEndHours] = useState([]);
 
+  const [myGroupedReservations, setMyGroupedReservations] = useState([]);
+
   const [openInfoByDay, setOpenInfoByDay] = useState();
 
   const [closedDates, setClosedDates] = useState([]);
 
   const [loading, setLoading] = useState(true);
+  const [alreadyHaveReservation, setAlreadyHaveReservation] = useState(false);
 
   const handleDateChange = (event) => {
     setDateForReservation(event.target.value);
@@ -301,6 +307,56 @@ function Reservation() {
     ? JSON.parse(localStorage.getItem("user"))
     : null;
 
+  useEffect(() => {
+    const fetchMyReservations = async (userID) => {
+      try {
+        const response = await fetch(
+          `${GETMYRESERVATION}?userID=${encodeURIComponent(userID)}`,
+          {
+            mode: "cors",
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        if (response.status >= 400) {
+          throw new Error("Szerver Error");
+        }
+        const data = await response.json();
+
+        for (const reservation of data["rows"]) {
+          reservation["date"] = new Date(
+            reservation["date"]
+          ).toLocaleDateString("hu-HU");
+        }
+        const groupedData = data["rows"].reduce((acc, reservation) => {
+          if (!acc[reservation.date]) {
+            acc[reservation.date] = [];
+          }
+          acc[reservation.date].push(reservation);
+          return acc;
+        }, {});
+
+        setMyGroupedReservations(groupedData);
+      } catch (err) {
+        console.error("Hiba történt a foglalások lekérdezése közben: ", err);
+      }
+    };
+    fetchMyReservations(user.userid);
+  }, [dateForReservation, reservationsByDate, GETMYRESERVATION, user.userid]);
+
+  useEffect(() => {
+    if (Object.keys(myGroupedReservations).length > 0 && dateForReservation) {
+      setAlreadyHaveReservation(
+        Object.keys(myGroupedReservations).includes(
+          new Date(dateForReservation).toLocaleDateString("hu-HU")
+        )
+      );
+    }
+  }, [myGroupedReservations, dateForReservation]);
+  useEffect(() => {}, [alreadyHaveReservation]);
+
   if (!user) {
     return <Navigate to="/bejelentkezes" />;
   }
@@ -400,39 +456,31 @@ function Reservation() {
                 {closedDates.includes(
                   new Date(dateForReservation).toLocaleDateString("hu-HU")
                 ) ? (
-                  <h2>
-                    <strong>Ezen a napon zárva tartunk!</strong>
-                  </h2>
+                  <h2>Ezen a napon zárva tartunk!</h2>
                 ) : dateForReservation <
                   new Date().toISOString().split("T")[0] ? (
-                  <h2>
-                    <strong>Nem lehet múltbeli időpontot lefoglalni</strong>
-                  </h2>
+                  <h2>Nem lehet múltbeli időpontot lefoglalni</h2>
                 ) : startHour >= endHour ? (
                   <h2>
-                    <strong>
-                      A kezdőóra nem lehet nagyobb vagy egyenlő, mint a záró
-                      óra...
-                    </strong>
+                    A kezdőóra nem lehet nagyobb vagy egyenlő, mint a záró
+                    óra...
                   </h2>
                 ) : reservedStartHours.map((x) => x.hour).includes(startHour) ||
                   reservedEndHours.map((x) => x.hour).includes(endHour) ? (
-                  <h2>
-                    <strong>A kijelölt időpont már foglalt!</strong>
-                  </h2>
+                  <h2>A kijelölt időpont már foglalt!</h2>
                 ) : dateForReservation ===
                     new Date().toISOString().split("T")[0] &&
                   startHour < new Date().getHours() ? (
                   <h2>
-                    <strong>
-                      Nem lehet olyan időpontot kijelölni, ami{" "}
-                      {new Date().getHours() +
-                        ":" +
-                        new Date().getMinutes() +
-                        " "}{" "}
-                      előtt van!
-                    </strong>
+                    Nem lehet olyan időpontot kijelölni, ami{" "}
+                    {new Date().getHours() +
+                      ":" +
+                      new Date().getMinutes() +
+                      " "}{" "}
+                    előtt van!
                   </h2>
+                ) : alreadyHaveReservation ? (
+                  <h2>A mai napra már van foglalásod!</h2>
                 ) : null}
               </>
             </div>
@@ -516,6 +564,7 @@ function Reservation() {
                     closedDates.includes(
                       new Date(dateForReservation).toLocaleDateString("hu-HU")
                     ) ||
+                    alreadyHaveReservation ||
                     startHour >= endHour ||
                     reservedStartHours.map((x) => x.hour).includes(startHour) ||
                     reservedEndHours.map((x) => x.hour).includes(endHour) ||
