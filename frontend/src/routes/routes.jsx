@@ -6,9 +6,14 @@ import Reservation from "../components/Reservations/Reservation";
 import Contact from "../components/Contact/Contact";
 import Registration from "../components/Registration/Registration";
 import Login from "../components/Login/Login";
-import AdminPage from "../components/Admin/AdminPage/AdminPage";
+import AdminDrinks from "../components/Admin/AdminDrinks/AdminDrinks";
+import AdminBoardGames from "../components/Admin/AdminBoardGames/AdminBoardGames";
 import AdminRoute from "../components/Admin/AdminRoute/AdminRoute";
-
+import EditProfile from "../components/EditProfile/EditProfile";
+import RePassword from "../components/RePassword/RePassword";
+import AdminReservations from "../components/Admin/AdminReservations/AdminReservations";
+import AdminClosedDays from "../components/Admin/AdminClosedDays/AdminClosedDays";
+import MyReservations from "../components/MyReservations/MyReservations";
 const routes = [
   {
     path: "/",
@@ -40,10 +45,47 @@ const routes = [
     element: <Registration />,
   },
   {
+    path: "/profilszerkesztes",
+    element: <EditProfile />,
+  },
+  {
+    path: "/jelszoemlekezteto",
+    element: <RePassword />,
+  },
+  {
+    path: "/sajatfoglalasok",
+    element: <MyReservations />,
+  },
+
+  {
     path: "/admin/italok",
     element: (
       <AdminRoute>
-        <AdminPage />
+        <AdminDrinks />
+      </AdminRoute>
+    ),
+  },
+  {
+    path: "/admin/tarsasjatekok",
+    element: (
+      <AdminRoute>
+        <AdminBoardGames />
+      </AdminRoute>
+    ),
+  },
+  {
+    path: "/admin/foglalas",
+    element: (
+      <AdminRoute>
+        <AdminReservations />
+      </AdminRoute>
+    ),
+  },
+  {
+    path: "/admin/zartnapok",
+    element: (
+      <AdminRoute>
+        <AdminClosedDays />
       </AdminRoute>
     ),
   },
