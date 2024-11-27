@@ -12,24 +12,23 @@ async function sendEmail(date, roomNumber, from, to) {
 
   const mailOptions = {
     from: process.env.EMAIL,
-    to: "nagy.gergely.koppany@gmail.com",
-    subject: `Foglalását Töröltük!!`,
+    to: process.env.TOEMAIL,
+    subject: `Foglalását Töröltük!`,
     text: `
 A ${date} napon ${from}:00-tól ${to}:00-ig
 ${roomNumber}. szobába történt foglalása törlésre került!
+
 Üdvözlettel,
 TableTop Bár Vezetőség`,
     replyTo: process.env.EMAIL,
   };
   try {
     await transporter.sendMail(mailOptions);
-    console.log("Email sikeresen elküldve!");
   } catch (err) {
     console.error("Email küldési hiba: ", err);
   }
 }
 
-//Többi Controllerben is átírni hibakezelésesre ez a minta alapján
 async function deleteDrink(req, res) {
   const { drinkID } = req.body;
   if (!drinkID) {
@@ -93,12 +92,12 @@ async function addDrink(req, res) {
   }
 }
 async function addDrinkCategory(req, res) {
-  const { categoryname } = req.body;
+  const { categoryname, alcoholic } = req.body;
   if (!categoryname) {
     return res.status(400).json({ error: "Nem érkezett adat a kliens felől!" });
   }
   try {
-    const { success } = await db.addDrinkCategory(categoryname);
+    const { success } = await db.addDrinkCategory(categoryname, alcoholic);
 
     if (success) {
       return res
@@ -135,12 +134,16 @@ async function removeDrinkCategory(req, res) {
   }
 }
 async function updateDrinkCategory(req, res) {
-  const { categoryname, updatedname } = req.body;
+  const { categoryname, updatedname, updatedalcoholic } = req.body;
   if (!categoryname || !updatedname) {
     return res.status(400).json({ error: "Nem érkezett adat a kliens felől!" });
   }
   try {
-    const { success } = await db.updateDrinkCategory(categoryname, updatedname);
+    const { success } = await db.updateDrinkCategory(
+      categoryname,
+      updatedname,
+      updatedalcoholic
+    );
     if (!success) {
       return res.status(404).json({ error: "Nem található a kategórianév!" });
     } else {
