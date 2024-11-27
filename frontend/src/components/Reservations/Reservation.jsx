@@ -2,9 +2,7 @@ import NavBar from "../Helper_Components/NavBar";
 import Footer from "../Helper_Components/Footer";
 import getDayOfWeek from "../../functions/Reservation_Functions/ReservationHelperFunctions";
 import { useState, useEffect } from "react";
-import { Navigate } from "react-router-dom";
 
-// !!!!MINDENHOL FELVENNI A LOADING USESTATE-ET, AHOL VAN ADATLEKÉRDEZÉS
 //Bugos, 23:00 és 01:00 között, átalakítani a date inputot HU-hu formára, majd azt összehasonlítani/elküldeni
 
 function Reservation() {
@@ -41,6 +39,11 @@ function Reservation() {
 
   const [loading, setLoading] = useState(true);
   const [alreadyHaveReservation, setAlreadyHaveReservation] = useState(false);
+  const [clicked, setClicked] = useState(false);
+
+  const user = localStorage.getItem("user")
+    ? JSON.parse(localStorage.getItem("user"))
+    : null;
 
   const handleDateChange = (event) => {
     setDateForReservation(event.target.value);
@@ -301,10 +304,6 @@ function Reservation() {
     }
   }, [rooms]);
 
-  const user = localStorage.getItem("user")
-    ? JSON.parse(localStorage.getItem("user"))
-    : null;
-
   useEffect(() => {
     const fetchMyReservations = async (userID) => {
       try {
@@ -354,12 +353,9 @@ function Reservation() {
     }
   }, [myGroupedReservations, dateForReservation]);
 
-  if (!user) {
-    return <Navigate to="/bejelentkezes" />;
-  }
-
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setClicked(true);
 
     try {
       const response = await fetch(POSTRESERVATIONAPI, {
@@ -388,6 +384,7 @@ function Reservation() {
       console.error("Hiba történt a kapcsolódáskor: ", error);
     } finally {
       fetchReservationsByDate(dateForReservation, roomID);
+      setClicked(false);
     }
   };
 
@@ -462,6 +459,8 @@ function Reservation() {
                     A kezdőóra nem lehet nagyobb vagy egyenlő, mint a záró
                     óra...
                   </h2>
+                ) : groupedHours.every((x) => x.isReserved || x.isInThePast) ? (
+                  <h2>A mai napon már minden időpont foglalt!</h2>
                 ) : reservedStartHours.map((x) => x.hour).includes(startHour) ||
                   reservedEndHours.map((x) => x.hour).includes(endHour) ? (
                   <h2>A kijelölt időpont már foglalt!</h2>
@@ -472,8 +471,9 @@ function Reservation() {
                     Nem lehet olyan időpontot kijelölni, ami{" "}
                     {new Date().getHours() +
                       ":" +
-                      new Date().getMinutes() +
-                      " "}{" "}
+                      (new Date().getMinutes() < 10
+                        ? "0" + new Date().getMinutes()
+                        : new Date().getMinutes())}{" "}
                     előtt van!
                   </h2>
                 ) : alreadyHaveReservation ? (
@@ -555,25 +555,33 @@ function Reservation() {
                     })}
                   </tbody>
                 </table>
-                <button
-                  type="submit"
-                  disabled={
-                    closedDates.includes(
-                      new Date(dateForReservation).toLocaleDateString("hu-HU")
-                    ) ||
-                    alreadyHaveReservation ||
-                    startHour >= endHour ||
-                    reservedStartHours.map((x) => x.hour).includes(startHour) ||
-                    reservedEndHours.map((x) => x.hour).includes(endHour) ||
-                    dateForReservation <
-                      new Date().toISOString().split("T")[0] ||
-                    (dateForReservation ===
-                      new Date().toISOString().split("T")[0] &&
-                      startHour < new Date().getHours())
-                  }
-                >
-                  Elküldés
-                </button>
+                {!loading ? (
+                  !clicked ? (
+                    <button
+                      type="submit"
+                      disabled={
+                        closedDates.includes(
+                          new Date(dateForReservation).toLocaleDateString(
+                            "hu-HU"
+                          )
+                        ) ||
+                        alreadyHaveReservation ||
+                        startHour >= endHour ||
+                        reservedStartHours.some((x) => x.hour === startHour) ||
+                        reservedEndHours.some((x) => x.hour === endHour) ||
+                        new Date(dateForReservation) <
+                          new Date(new Date().toISOString().split("T")[0]) ||
+                        (dateForReservation ===
+                          new Date().toISOString().split("T")[0] &&
+                          startHour < new Date().getHours())
+                      }
+                    >
+                      Elküldés
+                    </button>
+                  ) : (
+                    <p>Foglalás feldolgozás alatt...</p>
+                  )
+                ) : null}
               </div>
             ) : (
               ""
