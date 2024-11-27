@@ -47,7 +47,7 @@ async function getReservationsByDate(date, roomID) {
 async function getReservationsByUserID(userID) {
   try {
     const { rows } = await pool.query(
-      "SELECT * FROM reservations WHERE userid = $1 ORDER BY date",
+      "SELECT * FROM reservations WHERE userid = $1 ORDER BY date DESC, reservedfrom DESC",
       [userID]
     );
     return { rows };
