@@ -12,11 +12,12 @@ async function sendEmail(date, roomNumber, from, to) {
 
   const mailOptions = {
     from: process.env.EMAIL,
-    to: "nagy.gergely.koppany@gmail.com",
+    to: process.env.TOEMAIL,
     subject: `Sikeres foglalás!`,
     text: `
 A ${date} napon ${from}:00-tól ${to}:00-ig
 ${roomNumber}. szobába történt foglalása mentésre került!
+
 Várjuk sok szeretettel,
 TableTop Bár Vezetőség
     `,
@@ -100,7 +101,6 @@ async function getReservationsByDate(req, res) {
 
 async function getReservationsByUserID(req, res) {
   const { userID } = req.query;
-  console.log(userID);
   if (!userID) {
     return res.status(400).json({ error: "Hiányzó adatok!" });
   }
