@@ -3,16 +3,26 @@ import Footer from "../Helper_Components/Footer";
 import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 
-//Megoldani, hogy ha csak az egyik értéket frissítem, akkor is működjön
-//Kötelező mező jelölése *-gal
-
 function EditProfile() {
-  const user = localStorage.getItem("user")
+  const UPDATEUSERAPI = import.meta.env.VITE_API_UPDATEUSER_URL;
+
+  const loggedInUser = localStorage.getItem("user")
     ? JSON.parse(localStorage.getItem("user"))
     : null;
-  const [newEmail, setNewEmail] = useState(user.email);
+
+  const [newEmail, setNewEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [changeEmail, setChangeEmail] = useState(true);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (loggedInUser && loading) {
+      setUser(loggedInUser);
+      setLoading(false);
+      setNewEmail(loggedInUser.email);
+    }
+  }, [loggedInUser, loading]);
 
   const handleNewEmailChange = (event) => {
     setNewEmail(event.target.value);
@@ -22,10 +32,8 @@ function EditProfile() {
     setNewPassword(event.target.value);
   };
   const cleanupAfterSubmit = () => {
-    setNewEmail("");
     setNewPassword("");
   };
-  const updatedUserAPI = import.meta.env.VITE_API_UPDATEUSER_URL;
 
   const handleEmailChange = (e) => {
     e.preventDefault();
@@ -39,7 +47,7 @@ function EditProfile() {
       const newemail = newEmail;
       const newhashedpassword = newPassword;
 
-      const response = await fetch(updatedUserAPI, {
+      const response = await fetch(UPDATEUSERAPI, {
         mode: "cors",
         method: "PUT",
         headers: {
@@ -66,43 +74,55 @@ function EditProfile() {
     }
   };
 
-  if (!user) {
+  if (!loggedInUser) {
     return <Navigate to="/bejelentkezes" />;
   }
   return (
     <>
       <NavBar />
 
-      <form onSubmit={handleSubmit}>
-        <fieldset>
-          <h1>Profil Szerkesztése</h1>
+      {loading ? (
+        <p>Betöltés...</p>
+      ) : (
+        <>
+          <form onSubmit={handleSubmit}>
+            <fieldset>
+              <h1>Profil Szerkesztése</h1>
+              {user.isadmin ? null : (
+                <>
+                  <label htmlFor="updatedEmail">Email cím: </label>
+                  <input
+                    type="email"
+                    id="updatedEmail"
+                    name="updatedEmail"
+                    value={newEmail}
+                    onChange={handleNewEmailChange}
+                    disabled={changeEmail}
+                    required
+                  />
+                  <button onClick={handleEmailChange}>
+                    {changeEmail
+                      ? "Email cím változtatás"
+                      : String.fromCharCode(10004)}
+                  </button>
+                </>
+              )}
 
-          <label htmlFor="updatedEmail">Email cím: </label>
-          <input
-            type="email"
-            id="updatedEmail"
-            name="updatedEmail"
-            value={newEmail}
-            onChange={handleNewEmailChange}
-            disabled={changeEmail}
-            required
-          />
-          <button onClick={handleEmailChange}>
-            {changeEmail ? "Email cím változtatás" : String.fromCharCode(10004)}
-          </button>
+              <label htmlFor="updatedPassword">Új jelszó: </label>
+              <input
+                type="password"
+                id="updatedPassword"
+                name="updatedPassword"
+                value={newPassword}
+                onChange={handleNewPasswordChange}
+                required
+              />
+              <button type="submit">Elküldés</button>
+            </fieldset>
+          </form>
+        </>
+      )}
 
-          <label htmlFor="updatedPassword">Jelszó: </label>
-          <input
-            type="password"
-            id="updatedPassword"
-            name="updatedPassword"
-            value={newPassword}
-            onChange={handleNewPasswordChange}
-            required
-          />
-          <button type="submit">Elküldés</button>
-        </fieldset>
-      </form>
       <Footer />
     </>
   );
