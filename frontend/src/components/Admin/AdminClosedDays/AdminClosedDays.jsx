@@ -28,6 +28,7 @@ function AdminClosedDays() {
           "hu-HU"
         );
       }
+
       setClosedDates(data["rows"]);
     } catch (err) {
       console.error("Hiba történt a foglalások lekérdezése közben: ", err);

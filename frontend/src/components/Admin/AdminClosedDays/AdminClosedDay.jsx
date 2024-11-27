@@ -2,11 +2,7 @@ import getDayOfWeek from "../../../functions/Reservation_Functions/ReservationHe
 
 function AdminClosedDay({ closedDates, handleDelete }) {
   return closedDates.map((x) => (
-    <div
-      className={"closedday-" + x.dateid}
-      style={{ border: "1px solid blue" }}
-      key={x.dateid}
-    >
+    <div className={"closedday-" + x.dateid} key={x.dateid}>
       <p key={x.dateid} className="closedDate">
         {x["date"] + " - " + getDayOfWeek(x["date"])}
       </p>

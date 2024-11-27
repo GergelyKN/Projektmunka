@@ -4,6 +4,7 @@ import AdminDrinkCategory from "./AdminDrinkCategory";
 import { useEffect, useState } from "react";
 
 //Input mezők ellenőrzése kell
+//Kategória törlés esetén az italok is törlődjenek
 
 function AdminDrinks() {
   const getDrinkAPI = import.meta.env.VITE_API_DRINK_URL;
@@ -13,6 +14,7 @@ function AdminDrinks() {
     .VITE_API_ADMIN_ADDDRINKCATEGORY_URL;
 
   const [addNewCategoryName, setAddNewCategoryName] = useState("");
+  const [addNewCategoryAlcoholic, setAddNewCategoryAlcoholic] = useState(false);
   const [addNewDrinkCategory, setAddNewDrinkCategory] = useState(false);
 
   //#region Megjelenítéshez useState-ek
@@ -33,6 +35,7 @@ function AdminDrinks() {
   const [updateAlcoholStrength, setUpdateAlcoholStrength] = useState(0.0);
   const [updateImagePath, setUpdateImagePath] = useState(""); //Megnézni hogyan lehet fájlfeltöltéssel megoldani
   const [updateCategoryName, setUpdateCategoryName] = useState("");
+
   //#endregion Update Formhoz useState-ek
   //#region Add Drink Formhoz useState-ek
   const [addName, setAddName] = useState("");
@@ -46,7 +49,9 @@ function AdminDrinks() {
   //#endregion Add Drink Formhoz useState-ek
 
   useEffect(() => {
-    const firstCategoryValue = Object.entries(groupedCategories)[0]?.[1];
+    const firstCategoryValue =
+      Object.entries(groupedCategories)[0]?.[1].categoryname;
+
     if (firstCategoryValue) {
       setAddCategoryName(firstCategoryValue);
       setUpdateCategoryName(firstCategoryValue);
@@ -90,7 +95,10 @@ function AdminDrinks() {
       const data = await response.json();
 
       const categoriesObject = data.reduce((acc, category) => {
-        acc[category.categoryid] = category.categoryname;
+        acc[category.categoryid] = {
+          categoryname: category.categoryname,
+          alcoholic: category.alcoholic,
+        };
         return acc;
       }, {});
 
@@ -271,7 +279,7 @@ function AdminDrinks() {
       imagepath: updateImagePath,
       categoryid: Number(
         Object.entries(groupedCategories).find(
-          ([key, value]) => value === updateCategoryName
+          ([key, value]) => value.categoryname === updateCategoryName
         )[0]
       ),
     };
@@ -313,7 +321,7 @@ function AdminDrinks() {
       imagepath: addImagePath,
       categoryid: Number(
         Object.entries(groupedCategories).find(
-          ([key, value]) => value === addCategoryName
+          ([key, value]) => value.categoryname === addCategoryName
         )[0]
       ),
     };
@@ -345,6 +353,7 @@ function AdminDrinks() {
   const handleAddCategory = async (event) => {
     event.preventDefault();
     const categoryname = addNewCategoryName;
+    const alcoholic = addNewCategoryAlcoholic;
     try {
       const response = await fetch(adminDrinkCategoryAPI, {
         mode: "cors",
@@ -352,7 +361,7 @@ function AdminDrinks() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ categoryname }),
+        body: JSON.stringify({ categoryname, alcoholic }),
       });
       const data = await response.json();
 
@@ -371,6 +380,7 @@ function AdminDrinks() {
 
   const cleanupAfterAddCategory = () => {
     setAddNewCategoryName("");
+    setAddNewCategoryAlcoholic(false);
     setAddNewDrinkCategory(false);
   };
   const handleShowAddCategoryForm = () => {
@@ -378,6 +388,9 @@ function AdminDrinks() {
   };
   const handleAddNewCategoryNameChange = (event) => {
     setAddNewCategoryName(event.target.value);
+  };
+  const handleAddDrinkCategoryAlcoholic = (event) => {
+    setAddNewCategoryAlcoholic(event.target.checked);
   };
   //#endregion //#region Add Category
   //#region Delete Category
@@ -387,7 +400,7 @@ function AdminDrinks() {
     Object.values(groupedCategories).length > 0;
   let initialCategoryValue = "";
   if (isCategoriesLengthGreaterThanZero) {
-    initialCategoryValue = Object.values(groupedCategories)[0];
+    initialCategoryValue = Object.values(groupedCategories)[0].categoryname;
   }
 
   const [selectedCategoryName, setSelectedCategoryName] =
@@ -441,20 +454,56 @@ function AdminDrinks() {
   const handleSelectedCategoryNameChange = (event) => {
     setSelectedCategoryName(event.target.value);
   };
-  //Refaktorálni, logikailag átnézni
+
   //#endregion Delete Category
   //#region Update Category
   const updateCategoryAPI = import.meta.env
     .VITE_API_ADMIN_UPDATEDRINKCATEGORY_URL;
   const [updateDrinkCategory, setUpdateDrinkCategory] = useState(false);
   const [updatedDrinkCategoryName, setUpdatedDrinkCategoryName] = useState("");
+  const [updatedDrinkCategoryAlcoholic, setUpdateDrinkCategoryAlcoholic] =
+    useState(false);
+
+  let initialCategoryUpdateValue = "";
+  if (isCategoriesLengthGreaterThanZero) {
+    initialCategoryUpdateValue =
+      Object.values(groupedCategories)[0].categoryname;
+  }
+
+  const [selectedUpdateCategoryName, setSelectedUpdateCategoryName] =
+    useState("");
+
+  const handleSelectedUpdateCategoryNameChange = (event) => {
+    setSelectedUpdateCategoryName(event.target.value);
+  };
+
   const handleShowUpdateCategoryForm = () => {
     setUpdateDrinkCategory(true);
+    setSelectedUpdateCategoryName(initialCategoryUpdateValue);
   };
+  useEffect(() => {
+    if (
+      Object.values(groupedCategories).length != 0 &&
+      Object.values(groupedCategories) &&
+      selectedUpdateCategoryName.length != 0
+    ) {
+      setUpdateDrinkCategoryAlcoholic(
+        Object.values(groupedCategories).find(
+          (x) => x.categoryname == selectedUpdateCategoryName
+        ).alcoholic
+      );
+    }
+  }, [selectedUpdateCategoryName, groupedCategories]);
+
   const cleanupAfterUpdateCategory = () => {
     setUpdateDrinkCategory(false);
-    setSelectedCategoryName(initialCategoryValue);
+    setSelectedUpdateCategoryName(initialCategoryUpdateValue);
     setUpdatedDrinkCategoryName("");
+    setUpdateDrinkCategoryAlcoholic(false);
+  };
+
+  const handleUpdatedDrinkCategoryAlcoholic = (event) => {
+    setUpdateDrinkCategoryAlcoholic(event.target.checked);
   };
 
   const handleUpdatedDrinkCategoryName = (event) => {
@@ -463,8 +512,10 @@ function AdminDrinks() {
 
   const handleUpdateCategory = async (event) => {
     event.preventDefault();
-    const categoryname = selectedCategoryName;
+
+    const categoryname = selectedUpdateCategoryName;
     const updatedname = updatedDrinkCategoryName;
+    const updatedalcoholic = updatedDrinkCategoryAlcoholic;
     try {
       const response = await fetch(updateCategoryAPI, {
         mode: "cors",
@@ -472,7 +523,7 @@ function AdminDrinks() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ categoryname, updatedname }),
+        body: JSON.stringify({ categoryname, updatedname, updatedalcoholic }),
       });
 
       const data = await response.json();
@@ -538,7 +589,7 @@ function AdminDrinks() {
             <button id="closebtn" onClick={cleanupAfterAddCategory}>
               X
             </button>
-            <label htmlFor="addedNewCategoryName">Kategória név:</label>
+            <label htmlFor="addedNewCategoryName">Kategória név: </label>
             <input
               type="text"
               name="addedNewCategoryName"
@@ -546,6 +597,14 @@ function AdminDrinks() {
               value={addNewCategoryName}
               onChange={handleAddNewCategoryNameChange}
               required
+            />
+            <label htmlFor="addedAlcoholic"> Alkoholos? </label>
+            <input
+              type="checkbox"
+              id="addedAlcoholic"
+              name="addedAlcoholic"
+              value={addNewCategoryAlcoholic}
+              onChange={handleAddDrinkCategoryAlcoholic}
             />
             <button type="submit">Küldés</button>
           </fieldset>
@@ -565,7 +624,7 @@ function AdminDrinks() {
             <button id="closebtn" onClick={cleanupAfterRemoveCategory}>
               X
             </button>
-            <label htmlFor="removedCategoryName">Kategória név/nevek: </label>
+            <label htmlFor="removedCategoryName">Kategória név: </label>
             <select
               name="removedCategoryName"
               id="removedCategoryName"
@@ -573,8 +632,8 @@ function AdminDrinks() {
               onChange={handleSelectedCategoryNameChange}
             >
               {Object.entries(groupedCategories).map(([key, value]) => (
-                <option key={key} value={value}>
-                  {value}
+                <option key={key} value={value.categoryname}>
+                  {value.categoryname}
                 </option>
               ))}
             </select>
@@ -596,18 +655,16 @@ function AdminDrinks() {
             <button id="closebtn" onClick={cleanupAfterUpdateCategory}>
               X
             </button>
-            <label htmlFor="updatedCategoryNameSelect">
-              Kategória név/nevek:{" "}
-            </label>
+            <label htmlFor="updatedCategoryNameSelect">Kategória név: </label>
             <select
               name="updatedCategoryNameSelect"
               id="updatedCategoryNameSelect"
-              value={selectedCategoryName}
-              onChange={handleSelectedCategoryNameChange}
+              value={selectedUpdateCategoryName}
+              onChange={handleSelectedUpdateCategoryNameChange}
             >
               {Object.entries(groupedCategories).map(([key, value]) => (
-                <option key={key} value={value}>
-                  {value}
+                <option key={key} value={value.categoryname}>
+                  {value.categoryname}
                 </option>
               ))}
             </select>
@@ -622,7 +679,14 @@ function AdminDrinks() {
               onChange={handleUpdatedDrinkCategoryName}
               minLength={2}
               maxLength={20}
-              required
+            />
+            <label htmlFor="updatedAlcoholic"> Alkoholos? </label>
+            <input
+              type="checkbox"
+              id="updatedAlcoholic"
+              name="updatedAlcoholic"
+              checked={updatedDrinkCategoryAlcoholic}
+              onChange={handleUpdatedDrinkCategoryAlcoholic}
             />
             <button type="submit">Küldés</button>
           </fieldset>
@@ -703,11 +767,17 @@ function AdminDrinks() {
               value={addCategoryName}
               onChange={handleAddCategoryNameChange}
             >
-              {Object.entries(groupedCategories).map(([key, value]) => (
-                <option key={key} value={value}>
-                  {value}
-                </option>
-              ))}
+              {Object.entries(groupedCategories)
+                .filter(([key, value]) =>
+                  addContainsAlcohol
+                    ? value.alcoholic === true
+                    : value.alcoholic === false
+                )
+                .map(([key, value]) => (
+                  <option key={key} value={value.categoryname}>
+                    {value.categoryname}
+                  </option>
+                ))}
             </select>
             <button type="submit">Elküldés</button>
           </fieldset>
@@ -789,11 +859,17 @@ function AdminDrinks() {
               value={updateCategoryName}
               onChange={handleUpdateCategoryName}
             >
-              {Object.entries(groupedCategories).map(([key, value]) => (
-                <option key={key} value={value}>
-                  {value}
-                </option>
-              ))}
+              {Object.entries(groupedCategories)
+                .filter(([key, value]) =>
+                  updateContainsAlcohol
+                    ? value.alcoholic === true
+                    : value.alcoholic === false
+                )
+                .map(([key, value]) => (
+                  <option key={key} value={value.categoryname}>
+                    {value.categoryname}
+                  </option>
+                ))}
             </select>
             <button type="submit">Elküldés</button>
           </fieldset>
