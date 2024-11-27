@@ -4,6 +4,63 @@ const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 require("dotenv").config();
 
+async function sendEmailChangedPassword(password) {
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.EMAIL,
+      pass: process.env.EMAILPASSWORD,
+    },
+  });
+
+  const mailOptions = {
+    from: process.env.EMAIL,
+    to: TOEMAIL,
+    subject: `Új jelszó`,
+    text: `
+Az ideiglenes jelszavad, kérjük minél hamarabb változtasd meg!
+${password}
+
+Üdvözlettel,
+TableTop Bár Vezetőség`,
+    replyTo: process.env.EMAIL,
+  };
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log("Email sikeresen elküldve!");
+  } catch (err) {
+    console.error("Email küldési hiba: ", err);
+  }
+}
+async function sendEmailCreatedUser(email) {
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.EMAIL,
+      pass: process.env.EMAILPASSWORD,
+    },
+  });
+
+  const mailOptions = {
+    from: process.env.EMAIL,
+    to: TOEMAIL,
+    subject: "Sikeres regisztráció",
+    text: `
+Köszönjük a regisztrációt!
+${email}
+
+Várunk sok szeretettel,
+TableTop Bár Vezetőség`,
+    replyTo: process.env.EMAIL,
+  };
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log("Email sikeresen elküldve!");
+  } catch (err) {
+    console.error("Email küldési hiba: ", err);
+  }
+}
+
 async function postNewUser(req, res) {
   const { regFirstName, regLastName, regEmail, regPassword } = req.body;
   if (!regFirstName || !regLastName || !regEmail || !regPassword) {
@@ -13,13 +70,15 @@ async function postNewUser(req, res) {
   try {
     const hashedPassword = await bcrypt.hash(regPassword, 10);
 
+    await sendEmailCreatedUser(regEmail);
     await db.postNewUser({
       regFirstName,
       regLastName,
       regEmail,
       hashedPassword,
     });
-    return res.status(201).json({ message: "Felhasználó rögzítve" });
+
+    return res.status(201).json({ message: "Sikeres regisztráció!" });
   } catch (error) {
     console.error("Sikertelen rögzítés: ", error);
     return res
@@ -88,35 +147,6 @@ async function updateUser(req, res) {
   }
 }
 
-async function sendEmail(password) {
-  const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: process.env.EMAIL,
-      pass: process.env.EMAILPASSWORD,
-    },
-  });
-
-  const mailOptions = {
-    from: process.env.EMAIL,
-    to: "nagy.gergely.koppany@gmail.com",
-    subject: `Új jelszó`,
-    text: `
-Az ideiglenes jelszavad, kérünk minél hamarabb változtasd meg!
-${password}
-
-Üdvözlettel,
-TableTop Bár Vezetőség`,
-    replyTo: process.env.EMAIL,
-  };
-  try {
-    await transporter.sendMail(mailOptions);
-    console.log("Email sikeresen elküldve!");
-  } catch (err) {
-    console.error("Email küldési hiba: ", err);
-  }
-}
-
 async function resetPassword(req, res) {
   const { email } = req.body;
   if (!email) {
@@ -136,7 +166,7 @@ async function resetPassword(req, res) {
     if (!success) {
       return res.status(404).json({ error: "Nem található az email cím!" });
     } else {
-      await sendEmail(password);
+      await sendEmailChangedPassword(password);
       return res.status(200).json({ message: "Sikeres frissítés!", password });
     }
   } catch (err) {
@@ -147,9 +177,42 @@ async function resetPassword(req, res) {
   }
 }
 
+async function deleteUser(req, res) {
+  const { userID } = req.body;
+  if (!userID) {
+    return res.status(400).json({ error: "Hiányzó adatok a kliens felől!" });
+  }
+  try {
+    const { success } = await db.deleteUser(userID);
+    if (!success) {
+      return res.status(404).json({ error: "Nem található a felhasználó!" });
+    }
+    return res.status(200).json({ message: "Sikeres törlés!" });
+  } catch (err) {
+    console.error("Sikertelen törlés: ", err);
+    return res
+      .status(500)
+      .json({ error: "Hiba történt a felhasználó törlésekor!" });
+  }
+}
+
+async function getUsers(req, res) {
+  try {
+    const users = await db.getUsers();
+    res.status(200).json(users);
+  } catch (err) {
+    console.error("Sikertelen törlés: ", err);
+    return res
+      .status(500)
+      .json({ error: "Hiba történt a felhasználók lekérdezésekor!" });
+  }
+}
+
 module.exports = {
   postNewUser,
   postLogin,
   updateUser,
   resetPassword,
+  deleteUser,
+  getUsers,
 };
