@@ -15,6 +15,7 @@ function AdminReservations() {
   const [groupedReservations, setGroupedReservations] = useState([]);
   const [groupedReservationForDisplay, setGroupedReservationForDisplay] =
     useState([]);
+  const [clickedStates, setClickedStates] = useState({});
 
   const handleSelectedDateChange = (e) => {
     setSelectedDate(e.target.value);
@@ -56,7 +57,6 @@ function AdminReservations() {
       console.error("Hiba történt a foglalások lekérdezése közben: ", err);
     }
   };
-
   useEffect(() => {
     setSelectedDate(new Date().toISOString().split("T")[0]);
     setComparisonDate(new Date().toLocaleDateString("hu-HU"));
@@ -65,26 +65,24 @@ function AdminReservations() {
 
   useEffect(() => {
     if (groupedReservations) {
+      let AllRess = {};
       if (searchByDate && selectedDate) {
-        const AllRess = {};
         for (const [key, value] of Object.entries(groupedReservations)) {
           if (key === comparisonDate) {
             AllRess[key] = value;
           }
-          setGroupedReservationForDisplay(AllRess);
         }
       } else {
-        const AllRess = {};
         for (const [key, value] of Object.entries(groupedReservations)) {
           AllRess[key] = value;
-
-          setGroupedReservationForDisplay(AllRess);
         }
       }
+      setGroupedReservationForDisplay(AllRess);
     }
   }, [selectedDate, searchByDate, comparisonDate, groupedReservations]);
 
   const handleDelete = async (reservationid) => {
+    setClickedStates((prev) => ({ ...prev, [reservationid]: true }));
     try {
       const response = await fetch(DELETERESERVATIONAPI, {
         mode: "cors",
@@ -97,12 +95,13 @@ function AdminReservations() {
       const data = await response.json();
       if (!response.ok) {
         console.error("Hibaüzenet a szerver felől:", data.error);
-      } else {
-        alert(data.message);
-        fetchReservations();
       }
+      alert(data.message);
     } catch (err) {
       console.error("Hiba történt a kapcsolódáskor: ", err);
+    } finally {
+      await fetchReservations();
+      setClickedStates((prev) => ({ ...prev, [reservationid]: false }));
     }
   };
 
@@ -136,18 +135,23 @@ function AdminReservations() {
               key={resDate}
               className="reservationDate"
               style={{
-                border: "1px solid green",
+                margin: "5px 0px",
               }}
             >
               <h2>{resDate}</h2>
               <AdminReservation
+                clicked={clickedStates}
                 reservations={groupedReservationForDisplay[resDate.toString()]}
                 handleDelete={handleDelete}
               />
             </div>
           ))
         ) : (
-          <p>Nincs a napra foglalás</p>
+          <p>
+            {searchByDate
+              ? "A megadott dátumra nincs foglalás!"
+              : "Nincs foglalás a rendszerben!"}
+          </p>
         )}
       </div>
       <Footer />

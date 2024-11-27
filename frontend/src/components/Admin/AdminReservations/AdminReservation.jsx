@@ -1,10 +1,6 @@
-function AdminReservation({ reservations, handleDelete }) {
+function AdminReservation({ clicked, reservations, handleDelete }) {
   return reservations.map((x) => (
-    <div
-      className={"reservation-" + x.reservationid}
-      style={{ border: "1px solid blue" }}
-      key={x.reservationid}
-    >
+    <div className={"reservation-" + x.reservationid} key={x.reservationid}>
       <p>{x.lastname + " " + x.firstname}</p>
       <p>
         {x.roomid +
@@ -14,9 +10,13 @@ function AdminReservation({ reservations, handleDelete }) {
           x.reservedto +
           ":00"}
       </p>
-      <button id="deleteButton" onClick={() => handleDelete(x.reservationid)}>
-        Törlés
-      </button>
+      {clicked[x.reservationid] ? (
+        <p>Foglalás törlése folyamatban...</p>
+      ) : (
+        <button id="deleteButton" onClick={() => handleDelete(x.reservationid)}>
+          Törlés
+        </button>
+      )}
     </div>
   ));
 }
