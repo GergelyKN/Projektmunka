@@ -21,9 +21,21 @@ async function getUserByEmail(email) {
 }
 async function updateUser(email, newemail, newHashedpassword) {
   try {
+    const newDate = new Date();
+
+    let isoString = newDate.toISOString();
+
+    const micros = newDate.getMilliseconds() * 1000;
+
+    let postgresDate = isoString
+      .replace("T", " ")
+      .replace("Z", "")
+      .replace(/\.\d+$/, `.${micros}`);
+    console.log(postgresDate);
+
     const { rowCount } = await pool.query(
-      `UPDATE users SET email = $1, hashedpassword = $2 WHERE email = $3 `,
-      [newemail, newHashedpassword, email]
+      `UPDATE users SET email = $1, hashedpassword = $2, updatedat = $3 WHERE email = $4 `,
+      [newemail, newHashedpassword, postgresDate, email]
     );
     if (rowCount === 0) {
       return { success: false };
@@ -35,7 +47,6 @@ async function updateUser(email, newemail, newHashedpassword) {
   }
 }
 
-//Két esetben van hiba, ezeket később kezelni
 async function resetPassword(email, generatedPassword) {
   try {
     const { rows } = await pool.query(
@@ -59,4 +70,34 @@ async function resetPassword(email, generatedPassword) {
   }
 }
 
-module.exports = { postNewUser, getUserByEmail, updateUser, resetPassword };
+async function deleteUser(userID) {
+  try {
+    const { rowCount } = await pool.query(
+      "DELETE FROM users WHERE userid = $1",
+      [userID]
+    );
+
+    if (rowCount === 0) {
+      return { success: false };
+    }
+    return { success: true };
+  } catch (err) {
+    console.error("Hiba történt a felhasználó törlésekor:", err);
+    throw err;
+  }
+}
+async function getUsers() {
+  const { rows } = await pool.query(
+    "SELECT userid,firstname,lastname,email FROM Users WHERE isadmin = false ORDER BY lastname,firstname "
+  );
+  return rows;
+}
+
+module.exports = {
+  postNewUser,
+  getUserByEmail,
+  updateUser,
+  resetPassword,
+  deleteUser,
+  getUsers,
+};
