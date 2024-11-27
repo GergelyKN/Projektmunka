@@ -4,9 +4,9 @@ import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { isAuthenticated } from "../../functions/Login_Functions/LoginHelperFunctions";
 
-//Kötelező mező jelölése *-gal
-//Email küldés
 function Registration() {
+  const POSTUSERAPI = import.meta.env.VITE_API_POSTUSER_URL;
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [verPassword, setVerPassword] = useState("");
@@ -45,17 +45,14 @@ function Registration() {
       regPassword: password,
     };
     try {
-      const response = await fetch(
-        "http://localhost:3000/api/users/registration",
-        {
-          mode: "cors",
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(user),
-        }
-      );
+      const response = await fetch(POSTUSERAPI, {
+        mode: "cors",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(user),
+      });
       const data = await response.json();
       if (response.ok) {
         alert(data.message);
