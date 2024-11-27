@@ -142,7 +142,6 @@ function AdminBoardGames() {
         acc[bg.categoryname].push(bg);
         return acc;
       }, {});
-      console.log(groupedData);
       Object.keys(groupedData).forEach((category) => {
         groupedData[category].sort((a, b) => a.name.localeCompare(b.name));
       });
@@ -324,7 +323,6 @@ function AdminBoardGames() {
     }
   };
   //#endregion //#region Delete BoardGame
-
   const handleShowAddForm = () => {
     setAddNewBoardGame(true);
   };
