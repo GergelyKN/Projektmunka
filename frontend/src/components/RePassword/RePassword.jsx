@@ -3,8 +3,6 @@ import Footer from "../Helper_Components/Footer";
 import { useState } from "react";
 import { Navigate } from "react-router-dom";
 
-//Kötelező mező jelölése *-gal
-//Email küldés megoldása
 function RePassword() {
   const [reEmail, setReEmail] = useState("");
   const [redirectToLogin, setRedirectToLogin] = useState(false);
