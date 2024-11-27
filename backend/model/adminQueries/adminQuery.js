@@ -63,11 +63,11 @@ async function addDrink(drink) {
     throw err;
   }
 }
-async function addDrinkCategory(categoryname) {
+async function addDrinkCategory(categoryname, alcoholic) {
   try {
     const { rowCount } = await pool.query(
-      "INSERT INTO drinkcategory (categoryname) VALUES  ($1)",
-      [categoryname]
+      "INSERT INTO drinkcategory (categoryname, alcoholic) VALUES  ($1,$2)",
+      [categoryname, alcoholic]
     );
 
     if (rowCount === 0) {
@@ -95,11 +95,15 @@ async function deleteDrinkCategory(categoryname) {
     throw err;
   }
 }
-async function updateDrinkCategory(categoryname, updatedname) {
+async function updateDrinkCategory(
+  categoryname,
+  updatedname,
+  updatedalcoholic
+) {
   try {
     const { rowCount } = await pool.query(
-      `UPDATE drinkcategory SET categoryname = $2 WHERE categoryname = $1`,
-      [categoryname, updatedname]
+      `UPDATE drinkcategory SET categoryname = $2, alcoholic = $3 WHERE categoryname = $1`,
+      [categoryname, updatedname, updatedalcoholic]
     );
     if (rowCount === 0) {
       return { success: false };
@@ -223,12 +227,8 @@ async function updateBoardGame(boardgame) {
 async function getAllReservations() {
   try {
     const { rows } = await pool.query(
-      "SELECT reservationid,users.userid,reservations.roomid,date,reservedfrom,reservedto,users.firstname,users.lastname,roomprofile.capacity FROM Reservations INNER JOIN users ON users.userid = reservations.userid INNER JOIN roomprofile ON roomprofile.roomid = reservations.roomid ORDER BY date;"
+      "SELECT reservationid,users.userid,reservations.roomid,date,reservedfrom,reservedto,users.firstname,users.lastname,roomprofile.capacity FROM Reservations INNER JOIN users ON users.userid = reservations.userid INNER JOIN roomprofile ON roomprofile.roomid = reservations.roomid ORDER BY date DESC, reservedfrom DESC;"
     );
-    if (rows.length === 0) {
-      return { success: false, rows };
-    }
-
     return { success: true, rows };
   } catch (err) {
     console.error("Hiba történt a foglalások lekérdezése közben:", err);
@@ -254,7 +254,6 @@ async function deleteReservation(reservationid) {
 
 async function addClosedDate(dateForClose) {
   try {
-    //Ellenőrízni, hogy az adott dátum már szerepel-e a listában
     const { rowCount } = await pool.query(
       "INSERT INTO closeddate (date) VALUES ($1)",
       [dateForClose]
