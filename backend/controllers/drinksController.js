@@ -21,4 +21,14 @@ async function getDrinkCategories(req, res) {
   }
 }
 
-module.exports = { drinksGet, getDrinkCategories };
+async function getDrinksWithStorage(req, res) {
+  try {
+    const drinks = await db.getDrinksWithStorage();
+    res.status(200).json(drinks);
+  } catch (error) {
+    console.error("Hiba történt az italok lekérdezése közben:", error);
+    res.status(500).send("Hiba történt az italok lekérdezése közben");
+  }
+}
+
+module.exports = { drinksGet, getDrinkCategories, getDrinksWithStorage };
