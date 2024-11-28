@@ -17,6 +17,7 @@ function NavBar() {
   const handleLogOut = () => {
     localStorage.removeItem("authToken");
     localStorage.removeItem("user");
+    localStorage.removeItem("quantitiesToSend");
     setUser(null);
     alert("Sikeres Kijelentkezés!");
     navigate("/");
@@ -60,16 +61,19 @@ function NavBar() {
                 <Link to="/admin/zartnapok" className="nav-admin-link">
                   Admin Zárt Napok
                 </Link>
+                <Link to="/admin/profilok" className="nav-admin-link">
+                  Admin Profilok
+                </Link>
               </>
             )}
-            <Link to="/szoba" className="nav-small-link">
+            <Link to="/italokrendeles" className="nav-small-link">
               Szoba
             </Link>
             <Link to="/sajatfoglalasok" className="nav-small-link">
               Saját foglalások
             </Link>
             <Link to="/profilszerkesztes" className="nav-small-link">
-              Profilom
+              Profil szerkesztése
             </Link>
             <button onClick={handleLogOut} className="nav-small-link">
               Kijelentkezés
