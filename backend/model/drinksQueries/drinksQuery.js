@@ -11,4 +11,11 @@ async function getAllDrinkCategories() {
   const { rows } = await pool.query("SELECT * FROM drinkcategory");
   return rows;
 }
-module.exports = { getAllDrinks, getAllDrinkCategories };
+async function getDrinksWithStorage() {
+  const { rows } = await pool.query(
+    "SELECT * FROM Drinks INNER JOIN drinkstorage ON drinks.drinkid = drinkstorage.drinkid;"
+  );
+  return rows;
+}
+
+module.exports = { getAllDrinks, getAllDrinkCategories, getDrinksWithStorage };
