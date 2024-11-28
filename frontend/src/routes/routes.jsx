@@ -14,8 +14,12 @@ import RePassword from "../components/RePassword/RePassword";
 import AdminReservations from "../components/Admin/AdminReservations/AdminReservations";
 import AdminClosedDays from "../components/Admin/AdminClosedDays/AdminClosedDays";
 import MyReservations from "../components/MyReservations/MyReservations";
-import Room from "../components/Rooms/Room";
+import RoomRoute from "../components/Rooms/RoomRoute";
 import UserRoute from "../components/UserRoute/UserRoute";
+import ReservationRoute from "../components/ReservationRoute/ReservationRoute";
+import RoomDrinks from "../components/Rooms/RoomDrinks/RoomDrinks";
+import RoomOrder from "../components/Rooms/RoomOrder";
+import AdminProfiles from "../components/Admin/AdminProfiles/AdminProfiles";
 
 const routes = [
   {
@@ -33,7 +37,11 @@ const routes = [
   },
   {
     path: "/foglalas",
-    element: <Reservation />,
+    element: (
+      <ReservationRoute>
+        <Reservation />
+      </ReservationRoute>
+    ),
   },
   {
     path: "/kapcsolat",
@@ -68,10 +76,22 @@ const routes = [
     ),
   },
   {
-    path: "/szoba",
+    path: "/italokrendeles",
     element: (
       <UserRoute>
-        <Room />
+        <RoomRoute>
+          <RoomDrinks />
+        </RoomRoute>
+      </UserRoute>
+    ),
+  },
+  {
+    path: "/rendelesleadas",
+    element: (
+      <UserRoute>
+        <RoomRoute>
+          <RoomOrder />
+        </RoomRoute>
       </UserRoute>
     ),
   },
@@ -105,6 +125,14 @@ const routes = [
     element: (
       <AdminRoute>
         <AdminClosedDays />
+      </AdminRoute>
+    ),
+  },
+  {
+    path: "/admin/profilok",
+    element: (
+      <AdminRoute>
+        <AdminProfiles />
       </AdminRoute>
     ),
   },
