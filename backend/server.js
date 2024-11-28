@@ -14,6 +14,7 @@ const adminRouter = require("./routes/adminRouter");
 const openInformationRouter = require("./routes/openInformationRouter");
 const reservationRouter = require("./routes/reservationRouter");
 const closedDateRouter = require("./routes/closedDateRouter");
+const orderRouter = require("./routes/orderRouter");
 
 app.use(cors());
 app.use(express.json());
@@ -27,6 +28,7 @@ app.use("/api/admin", adminRouter);
 app.use("/api/openinfo", openInformationRouter);
 app.use("/api/reservation", reservationRouter);
 app.use("/api/closeddate", closedDateRouter);
+app.use("/api/orders", orderRouter);
 
 app.listen(port, () => {
   console.log("Server is listening on port " + port + "!");
