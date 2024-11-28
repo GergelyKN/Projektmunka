@@ -15,7 +15,7 @@ async function sendEmailChangedPassword(password) {
 
   const mailOptions = {
     from: process.env.EMAIL,
-    to: TOEMAIL,
+    to: process.env.TOEMAIL,
     subject: `Új jelszó`,
     text: `
 Az ideiglenes jelszavad, kérjük minél hamarabb változtasd meg!
@@ -43,7 +43,7 @@ async function sendEmailCreatedUser(email) {
 
   const mailOptions = {
     from: process.env.EMAIL,
-    to: TOEMAIL,
+    to: process.env.TOEMAIL,
     subject: "Sikeres regisztráció",
     text: `
 Köszönjük a regisztrációt!
