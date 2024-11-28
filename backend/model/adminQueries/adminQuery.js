@@ -57,6 +57,15 @@ async function addDrink(drink) {
     if (rowCount === 0) {
       return { success: false };
     }
+    const { rows } = await pool.query(
+      "SELECT drinkid FROM drinks WHERE name = $1 AND size = $2 AND price = $3",
+      [drink.name, drink.size, drink.price]
+    );
+
+    await pool.query(
+      "INSERT INTO drinkstorage (drinkid, quantity) VALUES ($1,50) ",
+      [rows[0].drinkid]
+    );
     return { success: true };
   } catch (err) {
     console.error("Hiba történt az ital hozzáadásakor: ", err);
