@@ -1,4 +1,4 @@
-const db = require("../model/closedDateQueries.js/closedDateQuery");
+const db = require("../model/closedDateQueries/closedDateQuery");
 
 async function getAllClosedDates(req, res) {
   try {
