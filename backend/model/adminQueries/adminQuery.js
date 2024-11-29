@@ -19,14 +19,14 @@ async function deleteDrink(drinkID) {
 async function updateDrink(drink) {
   try {
     const { rowCount } = await pool.query(
-      `UPDATE drinks SET name = $1, size = $2, price = $3, containsalcohol = $4, alcoholstrength = $5, imagepath = $6, categoryid = $7 WHERE drinkid = $8`,
+      `UPDATE drinks SET name = $1, size = $2, price = $3, containsalcohol = $4, alcoholstrength = $5, description = $6, categoryid = $7 WHERE drinkid = $8`,
       [
         drink.name,
         drink.size,
         drink.price,
         drink.containsalcohol,
         drink.alcoholstrength,
-        drink.imagepath,
+        drink.description,
         drink.categoryid,
         drink.drinkid,
       ]
@@ -43,14 +43,14 @@ async function updateDrink(drink) {
 async function addDrink(drink) {
   try {
     const { rowCount } = await pool.query(
-      "INSERT INTO drinks (name, size, price, containsalcohol, alcoholstrength, imagepath, categoryid) VALUES ($1,$2,$3,$4,$5,$6,$7)",
+      "INSERT INTO drinks (name, size, price, containsalcohol, alcoholstrength, description, categoryid) VALUES ($1,$2,$3,$4,$5,$6,$7)",
       [
         drink.name,
         drink.size,
         drink.price,
         drink.containsalcohol,
         drink.alcoholstrength,
-        drink.imagepath,
+        drink.description,
         drink.categoryid,
       ]
     );
