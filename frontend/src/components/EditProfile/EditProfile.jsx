@@ -1,11 +1,11 @@
 import NavBar from "../Helper_Components/NavBar";
 import Footer from "../Helper_Components/Footer";
 import { useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 
 function EditProfile() {
   const UPDATEUSERAPI = import.meta.env.VITE_API_UPDATEUSER_URL;
-
+  const navigate = useNavigate();
   const loggedInUser = localStorage.getItem("user")
     ? JSON.parse(localStorage.getItem("user"))
     : null;
@@ -15,6 +15,16 @@ function EditProfile() {
   const [changeEmail, setChangeEmail] = useState(true);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [clicked, setClicked] = useState(false);
+
+  const handleLogOut = () => {
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("user");
+    localStorage.removeItem("quantitiesToSend");
+    setUser(null);
+    alert("Sikeres Kijelentkezés!");
+    navigate("/");
+  };
 
   useEffect(() => {
     if (loggedInUser && loading) {
@@ -33,6 +43,7 @@ function EditProfile() {
   };
   const cleanupAfterSubmit = () => {
     setNewPassword("");
+    setClicked(false);
   };
 
   const handleEmailChange = (e) => {
@@ -41,6 +52,7 @@ function EditProfile() {
   };
 
   const handleSubmit = async (event) => {
+    setClicked(true);
     event.preventDefault();
     try {
       const email = user.email;
@@ -64,8 +76,7 @@ function EditProfile() {
         console.error("Hibaüzenet a szerver felől:", data.error);
       } else {
         alert(data.message);
-        const updatedUser = { ...user, email: newemail };
-        localStorage.setItem("user", JSON.stringify(updatedUser));
+        handleLogOut();
       }
     } catch (err) {
       console.error("Hiba történt a kapcsolódáskor: ", err);
@@ -117,7 +128,11 @@ function EditProfile() {
                 onChange={handleNewPasswordChange}
                 required
               />
-              <button type="submit">Elküldés</button>
+              {clicked ? (
+                <p>Jelszóváltoztatás folyamatban...</p>
+              ) : (
+                <button type="submit">Elküldés</button>
+              )}
             </fieldset>
           </form>
         </>
