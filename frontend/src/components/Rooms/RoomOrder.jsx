@@ -5,7 +5,8 @@ import { ReservationIDContext } from "./RoomRoute";
 
 function RoomOrder() {
   const POSTORDERAPI = import.meta.env.VITE_API_POSTORDERITEMS_URL;
-  const GETDRINKAPI = import.meta.env.VITE_API_DRINK_URL;
+  const GETDRINKAPIWITHQUANTITY = import.meta.env
+    .VITE_API_DRINKWITHQUANTITY_URL;
   const ResID = useContext(ReservationIDContext);
 
   const [drinks, setDrinks] = useState([]);
@@ -24,7 +25,7 @@ function RoomOrder() {
   useEffect(() => {
     const fetchDrinks = async () => {
       try {
-        const response = await fetch(GETDRINKAPI, {
+        const response = await fetch(GETDRINKAPIWITHQUANTITY, {
           mode: "cors",
         });
 
@@ -40,7 +41,7 @@ function RoomOrder() {
     };
 
     fetchDrinks();
-  }, [GETDRINKAPI]);
+  }, [GETDRINKAPIWITHQUANTITY]);
 
   const handleSubmit = async (event) => {
     setClicked(true);
@@ -76,12 +77,12 @@ function RoomOrder() {
       .filter((drink) => orderKeys.includes(drink.drinkid))
       .map((drink) => ({
         ...drink,
-        quantity: orderToSend[drink.drinkid],
+        quantityToSend: orderToSend[drink.drinkid],
       }));
 
     let sum = 0;
     for (const x of drinksWithQuantity) {
-      sum = sum + Number(x.price) * Number(x.quantity);
+      sum = sum + Number(x.price) * Number(x.quantityToSend);
     }
 
     setPriceForAll(sum);
@@ -89,7 +90,6 @@ function RoomOrder() {
   }, [drinks, orderToSend]);
 
   const handleQuantityChange = (drinkid, event) => {
-    console.log(event.target.value);
     if (Number(event.target.value) === 0) {
       handleDelete(drinkid);
     } else {
@@ -97,7 +97,6 @@ function RoomOrder() {
       updatedOrder[drinkid] = Number(event.target.value);
       localStorage.setItem("quantitiesToSend", JSON.stringify(updatedOrder));
       setOrderToSend(updatedOrder);
-      console.log("Frissített rendelés:", updatedOrder);
     }
   };
   const handleDelete = (drinkid) => {
@@ -107,7 +106,6 @@ function RoomOrder() {
     localStorage.setItem("quantitiesToSend", JSON.stringify(updatedOrder));
 
     setOrderToSend(updatedOrder);
-    console.log("Frissített rendelés:", updatedOrder);
   };
 
   return (
@@ -127,12 +125,12 @@ function RoomOrder() {
                   margin: "5px 0",
                 }}
               >
-                <label htmlFor="drinkQuantity">Mennyiség: </label>
+                <label htmlFor="drinkQuantityToSend">Mennyiség: </label>
                 <input
                   type="number"
-                  value={drink.quantity}
-                  name="drinkQuantity"
-                  id="drinkQuantity"
+                  value={drink.quantityToSend}
+                  name="drinkQuantityToSend"
+                  id="drinkQuantityToSend"
                   onChange={(event) =>
                     handleQuantityChange(drink.drinkid, event)
                   }
@@ -142,10 +140,10 @@ function RoomOrder() {
                 <p key={drink.drinkid}>
                   {drink.name +
                     " " +
-                    drink.quantity +
+                    drink.quantityToSend +
                     " db " +
                     " ==> " +
-                    drink.price * drink.quantity +
+                    drink.price * drink.quantityToSend +
                     " Ft"}
                 </p>
                 <button onClick={() => handleDelete(drink.drinkid)}>
