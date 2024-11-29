@@ -6,6 +6,7 @@ import { Navigate } from "react-router-dom";
 function RePassword() {
   const [reEmail, setReEmail] = useState("");
   const [redirectToLogin, setRedirectToLogin] = useState(false);
+  const [clicked, setClicked] = useState(false);
 
   const handleEmailChange = (event) => {
     setReEmail(event.target.value);
@@ -13,6 +14,7 @@ function RePassword() {
   const RESETPASSWORDAPI = import.meta.env.VITE_API_RESETPASSWORD_URL;
 
   const handleSubmit = async (event) => {
+    setClicked(true);
     event.preventDefault();
     try {
       const email = reEmail;
@@ -46,6 +48,7 @@ function RePassword() {
 
   const cleanupAfterSubmit = () => {
     setReEmail("");
+    setClicked(false);
   };
   if (redirectToLogin) {
     return <Navigate to="/bejelentkezes" />;
@@ -66,7 +69,11 @@ function RePassword() {
             onChange={handleEmailChange}
             required
           />
-          <button type="submit">Elküldés</button>
+          {clicked ? (
+            <p>Jelszóküldés folyamatban...</p>
+          ) : (
+            <button type="submit">Elküldés</button>
+          )}
         </fieldset>
       </form>
       <Footer />
