@@ -13,7 +13,7 @@ async function getAllDrinkCategories() {
 }
 async function getDrinksWithStorage() {
   const { rows } = await pool.query(
-    "SELECT * FROM Drinks INNER JOIN drinkstorage ON drinks.drinkid = drinkstorage.drinkid;"
+    "SELECT drinks.*,drinkcategory.categoryname,drinkstorage.quantity FROM Drinks INNER JOIN drinkstorage ON drinks.drinkid = drinkstorage.drinkid INNER JOIN drinkcategory ON drinks.categoryid = drinkcategory.categoryid ORDER BY drinks.name"
   );
   return rows;
 }
