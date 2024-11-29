@@ -40,7 +40,7 @@ function AdminBoardGames() {
   const [updateMinPlayerNum, setUpdateMinPlayerNum] = useState(1);
   const [updateMaxPlayerNum, setUpdateMaxPlayerNum] = useState(12);
   const [updateLanguage, setUpdateLanguage] = useState("");
-  const [updateImagePath, setUpdateImagePath] = useState(""); //Megnézni hogyan lehet fájlfeltöltéssel megoldani
+  const [updateDescription, setUpdateDescription] = useState("");
   const [updateCategoryName, setUpdateCategoryName] = useState("");
   //#endregion Update Formhoz useState-ek
   //#region Add BoardGame Formhoz useState-ek
@@ -48,7 +48,7 @@ function AdminBoardGames() {
   const [addDifficulty, setAddDifficulty] = useState("");
   const [addMinPlayerNum, setAddMinPlayerNum] = useState(1);
   const [addMaxPlayerNum, setAddMaxPlayerNum] = useState(12);
-  const [addImagePath, setAddImagePath] = useState(""); //Megnézni hogyan lehet fájlfeltöltéssel megoldani
+  const [addDescription, setAddDescription] = useState("");
   const [addLanguage, setAddLanguage] = useState("");
   const [addCategoryName, setAddCategoryName] = useState("");
   const [addNewBoardGame, setAddNewBoardGame] = useState(false);
@@ -60,6 +60,7 @@ function AdminBoardGames() {
     setUpdateDifficulty("");
     setUpdateMinPlayerNum(0);
     setUpdateMaxPlayerNum(0);
+    setUpdateDescription("");
     setUpdateLanguage("");
     setUpdateCategoryName("");
   };
@@ -68,7 +69,7 @@ function AdminBoardGames() {
     setAddDifficulty("");
     setAddMinPlayerNum(0);
     setAddMaxPlayerNum(0);
-    setAddImagePath("");
+    setAddDescription("");
     setAddLanguage("");
     setAddCategoryName("");
     setAddNewBoardGame(false);
@@ -263,8 +264,8 @@ function AdminBoardGames() {
   const handleUpdateLanguageForDisplay = (event) => {
     setUpdateLanguage(event.target.value);
   };
-  const handleUpdateImagePath = (event) => {
-    setUpdateImagePath(event.target.value);
+  const handleUpdateDescription = (event) => {
+    setUpdateDescription(event.target.value.toString());
   };
   const handleUpdateCategoryName = (event) => {
     setUpdateCategoryName(event.target.value);
@@ -288,8 +289,8 @@ function AdminBoardGames() {
   const handleAddLanguageForDisplay = (event) => {
     setAddLanguage(event.target.value);
   };
-  const handleAddImagePath = (event) => {
-    setAddImagePath(event.target.value);
+  const handleAddDescription = (event) => {
+    setAddDescription(event.target.value.toString());
   };
   const handleAddCategoryName = (event) => {
     setAddCategoryName(event.target.value);
@@ -335,7 +336,7 @@ function AdminBoardGames() {
     setUpdateDifficulty(boardgame.difficulty);
     setUpdateMinPlayerNum(boardgame.minplayernum);
     setUpdateMaxPlayerNum(boardgame.maxplayernum);
-    setUpdateImagePath(boardgame.imagepath);
+    setUpdateDescription(boardgame.description);
     setUpdateLanguage(boardgame.language);
     setUpdateCategoryName(boardgame.categoryname);
   };
@@ -347,7 +348,7 @@ function AdminBoardGames() {
       difficulty: updateDifficulty,
       minplayernum: Number(updateMinPlayerNum),
       maxplayernum: Number(updateMaxPlayerNum),
-      imagepath: updateImagePath,
+      description: updateDescription,
       categoryid: Number(
         Object.entries(groupedCategories).find(
           ([key, value]) => value === updateCategoryName
@@ -392,7 +393,7 @@ function AdminBoardGames() {
       difficulty: addDifficulty,
       minplayernum: Number(addMinPlayerNum),
       maxplayernum: Number(addMaxPlayerNum),
-      imagepath: addImagePath,
+      description: addDescription,
       categoryid: Number(
         Object.entries(groupedCategories).find(
           ([key, value]) => value === addCategoryName
@@ -846,13 +847,13 @@ function AdminBoardGames() {
                   </option>
                 ))}
               </select>
-              <label htmlFor="addedImagePath">Elérés: </label>
+              <label htmlFor="addedDescription">Leírás: </label>
               <input
                 type="text"
-                name="addedImagePath"
-                id="addedImagePath"
-                value={addImagePath}
-                onChange={handleAddImagePath}
+                name="addedDescription"
+                id="addedDescription"
+                value={addDescription}
+                onChange={handleAddDescription}
                 required
               />
               <label htmlFor="addedCategoryName">Kategórianév: </label>
@@ -875,7 +876,7 @@ function AdminBoardGames() {
         {selectedBoardGame && (
           <form onSubmit={handleUpdate}>
             <fieldset>
-              <button id="closebtn" onClick={cleanupAfterAdd}>
+              <button id="closebtn" onClick={cleanupAfterUpdate}>
                 X
               </button>
               <label htmlFor="updatedName">Név: </label>
@@ -941,13 +942,13 @@ function AdminBoardGames() {
                   </option>
                 ))}
               </select>
-              <label htmlFor="updatedImagePath">Elérés: </label>
+              <label htmlFor="updatedDescription">Leírás: </label>
               <input
                 type="text"
-                name="updatedImagePath"
-                id="updatedImagePath"
-                value={updateImagePath}
-                onChange={handleUpdateImagePath}
+                name="updatedDescription"
+                id="updatedDescription"
+                value={updateDescription}
+                onChange={handleUpdateDescription}
                 required
               />
               <label htmlFor="updatedCategoryName">Kategórianév: </label>
