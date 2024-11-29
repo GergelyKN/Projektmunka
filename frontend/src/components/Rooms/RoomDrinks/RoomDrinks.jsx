@@ -95,7 +95,10 @@ function RoomDrinks() {
       const updatedQuantities = { ...prevQuantitiesToSend };
 
       Object.entries(quantities).forEach(([key, value]) => {
-        updatedQuantities[key] = (updatedQuantities[key] || 0) + Number(value);
+        value === 0
+          ? delete updatedQuantities[key]
+          : (updatedQuantities[key] =
+              (updatedQuantities[key] || 0) + Number(value));
       });
 
       return updatedQuantities;
@@ -145,6 +148,7 @@ function RoomDrinks() {
       </div>
 
       <button onClick={handleAdd}>Küldés</button>
+
       <div className="drinks">
         {Object.keys(groupedDrinks).length > 0 ? (
           Object.keys(groupedDrinks)
