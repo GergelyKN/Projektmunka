@@ -3,9 +3,6 @@ import Footer from "../../Helper_Components/Footer";
 import AdminDrinkCategory from "./AdminDrinkCategory";
 import { useEffect, useState } from "react";
 
-//Input mezők ellenőrzése kell
-//Kategória törlés esetén az italok is törlődjenek
-
 function AdminDrinks() {
   const getDrinkAPI = import.meta.env.VITE_API_DRINK_URL;
   const getDrinkCategoryAPI = import.meta.env.VITE_API_DRINKCATEGORY_URL;
@@ -33,7 +30,7 @@ function AdminDrinks() {
   const [updatePrice, setUpdatePrice] = useState(0);
   const [updateContainsAlcohol, setUpdateContainsAlcohol] = useState(false);
   const [updateAlcoholStrength, setUpdateAlcoholStrength] = useState(0.0);
-  const [updateImagePath, setUpdateImagePath] = useState(""); //Megnézni hogyan lehet fájlfeltöltéssel megoldani
+  const [updateDescription, setUpdateDescription] = useState("");
   const [updateCategoryName, setUpdateCategoryName] = useState("");
 
   //#endregion Update Formhoz useState-ek
@@ -43,7 +40,7 @@ function AdminDrinks() {
   const [addPrice, setAddPrice] = useState(0);
   const [addContainsAlcohol, setAddContainsAlcohol] = useState(false);
   const [addAlcoholStrength, setAddAlcoholStrength] = useState(0.0);
-  const [addImagePath, setAddImagePath] = useState("");
+  const [addDescription, setAddDescription] = useState("");
   const [addCategoryName, setAddCategoryName] = useState("");
   const [addNewDrink, setAddnewDrink] = useState(false);
   //#endregion Add Drink Formhoz useState-ek
@@ -65,7 +62,7 @@ function AdminDrinks() {
     setUpdatePrice(0);
     setUpdateContainsAlcohol(false);
     setUpdateAlcoholStrength(0.0);
-    setUpdateImagePath("");
+    setUpdateDescription("");
     setUpdateCategoryName("");
   };
   const cleanupAfterAdd = () => {
@@ -74,7 +71,7 @@ function AdminDrinks() {
     setAddPrice(0);
     setAddContainsAlcohol(false);
     setAddAlcoholStrength(0.0);
-    setAddImagePath("");
+    setAddDescription("");
     setAddCategoryName("Üditők");
     setAddnewDrink(false);
   };
@@ -194,12 +191,23 @@ function AdminDrinks() {
   };
   const handleUpdateContainsAlcoholChange = (event) => {
     setUpdateContainsAlcohol(event.target.checked);
+    if (event.target.checked) {
+      setUpdateCategoryName(
+        Object.values(groupedCategories).filter((x) => x.alcoholic)[0]
+          .categoryname
+      );
+    } else {
+      setUpdateCategoryName(
+        Object.values(groupedCategories).filter((x) => !x.alcoholic)[0]
+          .categoryname
+      );
+    }
   };
   const handleUpdateAlcoholStengthChange = (event) => {
     setUpdateAlcoholStrength(event.target.value);
   };
-  const handleUpdateImagePath = (event) => {
-    setUpdateImagePath(event.target.value.toString());
+  const handleUpdateDescription = (event) => {
+    setUpdateDescription(event.target.value.toString());
   };
   const handleUpdateCategoryName = (event) => {
     setUpdateCategoryName(event.target.value.toString());
@@ -218,12 +226,23 @@ function AdminDrinks() {
   };
   const handleAddContainsAlcoholChange = (event) => {
     setAddContainsAlcohol(event.target.checked);
+    if (event.target.checked) {
+      setAddCategoryName(
+        Object.values(groupedCategories).filter((x) => x.alcoholic)[0]
+          .categoryname
+      );
+    } else {
+      setAddCategoryName(
+        Object.values(groupedCategories).filter((x) => !x.alcoholic)[0]
+          .categoryname
+      );
+    }
   };
   const handleAddAlcoholStengthChange = (event) => {
     setAddAlcoholStrength(event.target.value);
   };
-  const handleAddImagePathChange = (event) => {
-    setAddImagePath(event.target.value.toString());
+  const handleAddDescriptionChange = (event) => {
+    setAddDescription(event.target.value.toString());
   };
   const handleAddCategoryNameChange = (event) => {
     setAddCategoryName(event.target.value.toString());
@@ -265,9 +284,10 @@ function AdminDrinks() {
     setUpdatePrice(drink.price);
     setUpdateContainsAlcohol(drink.containsalcohol);
     setUpdateAlcoholStrength(drink.alcoholstrength);
-    setUpdateImagePath(drink.imagepath);
+    setUpdateDescription(drink.description);
     setUpdateCategoryName(drink.categoryname);
   };
+
   const handleUpdate = async (event) => {
     const drink = {
       drinkid: Number(selectedDrink.drinkid),
@@ -276,7 +296,7 @@ function AdminDrinks() {
       price: Number(updatePrice),
       containsalcohol: updateContainsAlcohol,
       alcoholstrength: parseFloat(updateAlcoholStrength),
-      imagepath: updateImagePath,
+      description: updateDescription,
       categoryid: Number(
         Object.entries(groupedCategories).find(
           ([key, value]) => value.categoryname === updateCategoryName
@@ -318,7 +338,7 @@ function AdminDrinks() {
       price: Number(addPrice),
       containsalcohol: addContainsAlcohol,
       alcoholstrength: parseFloat(addAlcoholStrength),
-      imagepath: addImagePath,
+      description: addDescription,
       categoryid: Number(
         Object.entries(groupedCategories).find(
           ([key, value]) => value.categoryname === addCategoryName
@@ -541,6 +561,64 @@ function AdminDrinks() {
   };
 
   //#endregion Update Category
+
+  //#region Mennyiség növelés
+  const UPDATEDRINKSTORAGEAPI = import.meta.env
+    .VITE_API_UPDATEDRINKSTORAGEAPI_URL;
+
+  const [addNewQuantity, setAddNewQuantity] = useState(false);
+  const [selectedDrinkToUpdateQuantity, setSelectedDrinkToUpdateQuantity] =
+    useState(null);
+  const [quantityToUpdate, setQuantityToUpdate] = useState(0);
+  const [quantityClicked, setQuantityClicked] = useState(false);
+
+  const handleAddQuantityShowForm = (drinkID) => {
+    const drink = drinks.find((drink) => drink.drinkid === drinkID);
+    setSelectedDrinkToUpdateQuantity(drink);
+    setAddNewQuantity(true);
+  };
+  const handleChangeQuantity = (event) => {
+    setQuantityToUpdate(event.target.value);
+  };
+
+  const cleanupAfterQuantityUpdate = () => {
+    setAddNewQuantity(false);
+    setSelectedDrinkToUpdateQuantity(null);
+    setQuantityToUpdate(0);
+    setQuantityClicked(false);
+  };
+
+  const handleAddNewQuantity = async (event) => {
+    setQuantityClicked(true);
+    event.preventDefault();
+
+    try {
+      const response = await fetch(UPDATEDRINKSTORAGEAPI, {
+        mode: "cors",
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          drinkID: selectedDrinkToUpdateQuantity.drinkid,
+          quantity: Number(quantityToUpdate),
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        console.error("Hibaüzenet a szerver felől: ", data.error);
+      } else {
+        alert(data.message);
+      }
+    } catch (err) {
+      console.error("Hiba történt a kapcsolódáskor: ", err);
+    } finally {
+      cleanupAfterQuantityUpdate();
+    }
+  };
+
   return (
     <>
       <NavBar />
@@ -751,13 +829,13 @@ function AdminDrinks() {
               step={0.01}
               disabled={!addContainsAlcohol}
             />
-            <label htmlFor="addedImagePath">Elérés: </label>
+            <label htmlFor="addedDescription">Leírás: </label>
             <input
               type="text"
-              name="addedImagePath"
-              id="addedImagePath"
-              value={addImagePath}
-              onChange={handleAddImagePathChange}
+              name="addedDescription"
+              id="addedDescription"
+              value={addDescription}
+              onChange={handleAddDescriptionChange}
               required
             />
             <label htmlFor="addedCategoryName">Kategórianév: </label>
@@ -785,7 +863,7 @@ function AdminDrinks() {
       )}
 
       {selectedDrink && (
-        <form onSubmit={handleUpdate} method="PUT">
+        <form onSubmit={handleUpdate}>
           <fieldset>
             <button id="closebtn" onClick={cleanupAfterUpdate}>
               X
@@ -843,13 +921,13 @@ function AdminDrinks() {
               step={0.1}
               disabled={!updateContainsAlcohol}
             />
-            <label htmlFor="updatedImagePath">Elérés: </label>
+            <label htmlFor="updatedDescription">Leírás: </label>
             <input
               type="text"
-              name="updatedImagePath"
-              id="updatedImagePath"
-              value={updateImagePath}
-              onChange={handleUpdateImagePath}
+              name="updatedDescription"
+              id="updatedDescription"
+              value={updateDescription}
+              onChange={handleUpdateDescription}
               required
             />
             <label htmlFor="updatedCategoryName">Kategórianév: </label>
@@ -875,6 +953,34 @@ function AdminDrinks() {
           </fieldset>
         </form>
       )}
+
+      {addNewQuantity ? (
+        <>
+          <form onSubmit={handleAddNewQuantity}>
+            <fieldset>
+              <button id="closebtn" onClick={cleanupAfterQuantityUpdate}>
+                X
+              </button>
+              <label htmlFor="quantityUpdate">
+                {selectedDrinkToUpdateQuantity.name + ": "}
+              </label>
+              <input
+                type="number"
+                name="quantityUpdate"
+                id="quantityUpdate"
+                onChange={handleChangeQuantity}
+                min={1}
+                max={500}
+              />
+              {quantityClicked ? (
+                <p>Raktár frissítése folyamatban...</p>
+              ) : (
+                <button type="submit">Elküldés</button>
+              )}
+            </fieldset>
+          </form>
+        </>
+      ) : null}
       <div className="drinks">
         {Object.keys(groupedDrinks).length >= 0 ? (
           Object.keys(groupedDrinks)
@@ -886,6 +992,8 @@ function AdminDrinks() {
                 drinks={groupedDrinks[categoryname]}
                 handleDelete={handleDelete}
                 handleShowUpdateForm={handleShowUpdateForm}
+                handleAddQuantityShowForm={handleAddQuantityShowForm}
+                addNewQuantity={addNewQuantity}
               />
             ))
         ) : (
@@ -899,4 +1007,3 @@ function AdminDrinks() {
 }
 
 export default AdminDrinks;
-//Szétszedni több komponensre, hogy átláthatóbb legyen a kód
