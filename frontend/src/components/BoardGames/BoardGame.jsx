@@ -6,11 +6,14 @@ function BoardGame({ boardgame }) {
           " -- " +
           boardgame.difficulty +
           " -- " +
+          boardgame.language +
+          " -- " +
           boardgame.minplayernum +
           " - " +
           boardgame.maxplayernum +
           " Fő"}
       </h4>
+      <h5>{boardgame.description}</h5>
     </div>
   );
 }
