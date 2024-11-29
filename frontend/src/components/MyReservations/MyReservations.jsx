@@ -84,8 +84,6 @@ function MyReservations() {
   }, [selectedDate, searchByDate, groupedReservations]);
 
   const handleDelete = async (reservationid) => {
-    setClickedStates((prev) => ({ ...prev, [reservationid]: true }));
-
     if (
       dateComparison(
         Object.values(groupedReservationForDisplay)
@@ -98,6 +96,7 @@ function MyReservations() {
     ) {
       alert("Nem lehet múltbeli/aznapi időpontot törölni!");
     } else {
+      setClickedStates((prev) => ({ ...prev, [reservationid]: true }));
       try {
         const response = await fetch(DELETERESERVATIONAPI, {
           mode: "cors",
