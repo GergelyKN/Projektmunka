@@ -1,6 +1,11 @@
 import AdminDrink from "./AdminDrink";
 
-const AdminDrinkCategory = ({ drinks, handleDelete, handleShowUpdateForm }) => {
+const AdminDrinkCategory = ({
+  drinks,
+  handleDelete,
+  handleShowUpdateForm,
+  handleAddQuantityShowForm,
+}) => {
   return (
     <div className={"drinkcategory-" + drinks[0].categoryid}>
       <h2 id={"categoryname-" + drinks[0].categoryid}>
@@ -12,6 +17,9 @@ const AdminDrinkCategory = ({ drinks, handleDelete, handleShowUpdateForm }) => {
           drink={drink}
           handleDelete={() => handleDelete(drink.drinkid)}
           handleShowUpdateForm={() => handleShowUpdateForm(drink.drinkid)}
+          handleAddQuantityShowForm={() =>
+            handleAddQuantityShowForm(drink.drinkid)
+          }
         />
       ))}
     </div>
