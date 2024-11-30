@@ -3,9 +3,11 @@ import Footer from "../Helper_Components/Footer";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { isAuthenticated } from "../../functions/Login_Functions/LoginHelperFunctions";
+import "./Login.css";
 
-//Kötelező mező jelölése *-gal
 function Login() {
+  const POSTLOGINAPI = import.meta.env.VITE_API_POSTLOGIN_URL;
+
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const navigate = useNavigate();
@@ -22,7 +24,7 @@ function Login() {
     e.preventDefault();
     const loginUserData = { loginEmail, loginPassword };
     try {
-      const response = await fetch("http://localhost:3000/api/users/login", {
+      const response = await fetch(POSTLOGINAPI, {
         mode: "cors",
         method: "POST",
         headers: {
@@ -53,17 +55,22 @@ function Login() {
   }, [navigate]);
 
   return (
-    <>
+    <div className="app-container">
       <NavBar />
-      <div className="loginMain">
-        <form onSubmit={handleSubmit}>
-          <fieldset>
-            <Link to="/" className="exitLink">
-              <div className="exitIcon">X</div>
-            </Link>
-            <h1>Kérjük jelentkezzen be!</h1>
-            <label htmlFor="loginEmail">Email cím: </label>
+      <div className="mainpage mainpageLogin">
+        <form className="loginForm" onSubmit={handleSubmit}>
+          <fieldset className="loginFieldset">
+            <div className="exitLink">
+              <Link to="/" className="exitIcon">
+                X
+              </Link>
+            </div>
+            <h1 className="loginH1">Kérjük jelentkezzen be!</h1>
+            <label className="loginLabel" htmlFor="loginEmail">
+              Email cím:
+            </label>
             <input
+              className="loginInput"
               type="email"
               name="loginEmail"
               id="loginEmail"
@@ -72,8 +79,11 @@ function Login() {
               onChange={handleEmailChange}
               required
             />
-            <label htmlFor="loginPassword">Jelszó:</label>
+            <label className="loginLabel" htmlFor="loginPassword">
+              Jelszó:
+            </label>
             <input
+              className="loginInput"
               type="password"
               name="loginPassword"
               id="loginPassword"
@@ -81,22 +91,21 @@ function Login() {
               onChange={handlePasswordChange}
               required
             />
-            <button id="logSendForm" type="submit">
+            <button className="loginButton" id="logSendForm" type="submit">
               Bejelentkezés
             </button>
 
-            <Link to="/regisztracio" className="registrationLink">
+            <Link to="/regisztracio" className="loginLink">
               Még nincs fiókom
             </Link>
-            <Link to="/jelszoemlekezteto" className="passwordreLink">
+            <Link to="/jelszoemlekezteto" className="loginLink">
               Elfelejtett jelszó
             </Link>
           </fieldset>
         </form>
       </div>
-
       <Footer />
-    </>
+    </div>
   );
 }
 
