@@ -26,8 +26,8 @@ input[type="range"] {
 }
 
 .nodrink {
-  font-size: 2rem;
-  color: #333;
+  font-size: 1.5rem;
+  color: #8c5e40;
 }
 
 .drinksMain {
@@ -50,6 +50,7 @@ input[type="range"] {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   padding: 15px;
   width: 20%;
+  font-size: 1.1rem;
 }
 
 .drinksByCategory {
