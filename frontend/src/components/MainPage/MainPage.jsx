@@ -46,57 +46,59 @@ function MainPage() {
   }, [GETCLOSEDDATESAPI]);
 
   return (
-    <>
+    <div className="app-container">
       <NavBar />
-      {closedDates.length > 0 && (
-        <div className="closedDateContainer">
-          <h3>Az alábbi napokon zárva tartunk!</h3>
-          {closedDates.map((x) => (
-            <p key={x.dateid} className="closedDate">
-              {x["date"] + " - " + getDayOfWeek(x["date"])}
-            </p>
-          ))}
-        </div>
-      )}
+      <div className="mainpage">
+        {closedDates.length > 0 && (
+          <div className="closedDateContainer">
+            <h3>Az alábbi napokon zárva tartunk!</h3>
+            {closedDates.map((x) => (
+              <p key={x.dateid} className="closedDate">
+                {x["date"] + " - " + getDayOfWeek(x["date"])}
+              </p>
+            ))}
+          </div>
+        )}
 
-      <article>
-        <h1>
-          Üdvözlünk a TableTop Bárban – ahol az italfogyasztás és a
-          társasjátékok találkoznak!
-        </h1>
+        <article>
+          <h1>
+            Üdvözlünk a TableTop Bárban – ahol az italfogyasztás és a
+            társasjátékok találkoznak!
+          </h1>
 
-        <p>
-          Lépj be egy olyan helyre, ahol az ínycsiklandó koktélok, kézműves
-          sörök és finom borok mellé izgalmas társasjátékos élmények társulnak.
-          Legyen szó baráti összejövetelről, randevúról vagy egy csapatépítő
-          estéről, nálunk minden adott, hogy a szórakozás és a kikapcsolódás
-          tökéletes harmóniában valósuljon meg.
-        </p>
+          <p>
+            Lépj be egy olyan helyre, ahol az ínycsiklandó koktélok, kézműves
+            sörök és finom borok mellé izgalmas társasjátékos élmények
+            társulnak. Legyen szó baráti összejövetelről, randevúról vagy egy
+            csapatépítő estéről, nálunk minden adott, hogy a szórakozás és a
+            kikapcsolódás tökéletes harmóniában valósuljon meg.
+          </p>
 
-        <p>
-          A TableTop Bárban több mint 100 különböző társasjátékkal várunk,
-          legyen az egy könnyed party játék vagy egy izgalmas stratégiai
-          kihívás. A hangulatos környezet és a játékok világához illő, egyedi
-          italok garantálják, hogy minden alkalom felejthetetlen élménnyé
-          váljon.
-        </p>
+          <p>
+            A TableTop Bárban több mint 100 különböző társasjátékkal várunk,
+            legyen az egy könnyed party játék vagy egy izgalmas stratégiai
+            kihívás. A hangulatos környezet és a játékok világához illő, egyedi
+            italok garantálják, hogy minden alkalom felejthetetlen élménnyé
+            váljon.
+          </p>
 
-        <p>
-          Nálunk nemcsak a játékmenet, de az ízek is főszerepet kapnak. Próbáld
-          ki különleges koktéljainkat, amelyek játékaink ihlette neveikkel
-          mosolyt csalnak az arcodra, vagy lazíts egy hűsítő sör társaságában a
-          legjobb lépésekre gondolva.
-        </p>
+          <p>
+            Nálunk nemcsak a játékmenet, de az ízek is főszerepet kapnak.
+            Próbáld ki különleges koktéljainkat, amelyek játékaink ihlette
+            neveikkel mosolyt csalnak az arcodra, vagy lazíts egy hűsítő sör
+            társaságában a legjobb lépésekre gondolva.
+          </p>
 
-        <p>
-          Gyere, és tapasztald meg, milyen a TableTop életérzés – a játék öröme
-          és az italok élvezete egy helyen! 🎲🍹
-        </p>
+          <p>
+            Gyere, és tapasztald meg, milyen a TableTop életérzés – a játék
+            öröme és az italok élvezete egy helyen! 🎲🍹
+          </p>
 
-        <p>Várunk szeretettel!</p>
-      </article>
+          <p>Várunk szeretettel!</p>
+        </article>
+      </div>
       <Footer />
-    </>
+    </div>
   );
 }
 
