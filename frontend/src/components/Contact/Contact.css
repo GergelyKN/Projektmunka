@@ -1,4 +1,7 @@
-/* Bal oldali oszlop stílusai */
+* {
+  color: #8c5e40;
+}
+
 .mainpageContact {
   display: flex;
   flex-wrap: wrap;
@@ -54,7 +57,6 @@
   background-color: #ffffff;
 }
 
-/* Jobb oldali oszlop stílusai */
 .contactRight {
   flex: 1;
   min-width: 300px;
