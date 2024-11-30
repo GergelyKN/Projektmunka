@@ -1,0 +1,174 @@
+.adminClosedday {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  width: 300px;
+  height: 60px;
+  background-color: #f8f4f0;
+  border: 2px solid #d9c4b1;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  margin-bottom: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.adminClosedday:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+.closedDate {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #8e735f;
+  margin: 0;
+}
+
+.adminClosedDateDeleteButton {
+  background-color: #e74c3c; /* Vöröses szín */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.adminClosedDateDeleteButton:hover {
+  background-color: #c0392b; /* Sötétebb vörös */
+  transform: scale(1.05);
+}
+
+.adminClosedDateDeleteButton:active {
+  background-color: #a93226; /* Még sötétebb vörös */
+  transform: scale(0.95);
+}
+
+.adminClosedDateDeleteButton:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.3);
+}
+
+.adminClosedDayContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin: 2rem auto;
+  max-width: 600px;
+}
+
+.adminClosedDaysForm {
+  background-color: #f8f4f0; /* Világos, semleges háttér */
+  border: 2px solid #d9c4b1;
+  border-radius: 10px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.adminClosedDaysFieldset {
+  border: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.adminClosedDaysUpper {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.adminClosedDaysInputContainer {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.adminClosedDaysInput {
+  flex: 1;
+  padding: 10px;
+  border: 2px solid #d9c4b1;
+  border-radius: 5px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+.adminClosedDaysInput:focus {
+  border-color: #b79d8b;
+}
+
+.adminClosedDaysSendForm {
+  background-color: #27ae60; /* Zöld */
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.adminClosedDaysSendForm:hover {
+  background-color: #229954;
+}
+
+.adminClosedDaysSendForm:active {
+  background-color: #1e8449;
+  transform: scale(0.95);
+}
+
+.adminClosedDaysSendForm:disabled {
+  background-color: #d3c4b7; /* Semleges szín */
+  cursor: not-allowed;
+  transform: none;
+}
+
+.adminClosedDaysInfoContainer {
+  text-align: center;
+}
+
+.adminClosedDaysInfo {
+  color: #e74c3c; /* Vörös */
+  font-size: 0.9rem;
+}
+
+.closedDateContainer {
+  background-color: #f8f4f0;
+  border: 2px solid #d9c4b1;
+  border-radius: 10px;
+  padding: 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.closedDateHeader {
+  text-align: center;
+  margin-bottom: 1rem;
+  color: #8e735f;
+}
+
+.closedDateList {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.adminClosedDaysLabel {
+  color: #8e735f;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
