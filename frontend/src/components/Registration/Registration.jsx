@@ -14,6 +14,8 @@ function Registration() {
   const [verPassword, setVerPassword] = useState("");
   const [lastName, setLastName] = useState("");
   const [firstName, setFirstName] = useState("");
+  const [clicked, setClicked] = useState(false);
+
   const [redirectToLogin, setRedirectToLogin] = useState(false);
   const navigate = useNavigate();
 
@@ -40,6 +42,7 @@ function Registration() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setClicked(true);
     const user = {
       regFirstName: firstName,
       regLastName: lastName,
@@ -70,6 +73,7 @@ function Registration() {
       setEmail("");
       setPassword("");
       setVerPassword("");
+      setClicked(false);
     }
   };
   if (redirectToLogin) {
@@ -152,9 +156,14 @@ function Registration() {
               onChange={handleVerPasswordChange}
               required
             />
-            <button className="regButton" id="regSendForm" type="submit">
-              Fiók Létrehozása
-            </button>
+            {clicked ? (
+              <p className="regP">Regisztráció feldolgozása...</p>
+            ) : (
+              <button className="regButton" id="regSendForm" type="submit">
+                Fiók Létrehozása
+              </button>
+            )}
+
             <Link to="/bejelentkezes" className="regLink">
               Már van fiókom
             </Link>
