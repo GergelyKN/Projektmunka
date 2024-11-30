@@ -1,0 +1,108 @@
+.mainpageAdminReservations {
+  flex-grow: 1;
+  padding: 2rem;
+  background-color: #f9f5f2;
+}
+
+.adminReservationsNavbar {
+  background-color: #ffffff;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.adminReservationsNavbar label {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #6d4b33;
+}
+
+.adminReservationsNavbar input[type="date"],
+.adminReservationsNavbar input[type="checkbox"] {
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #d4b59e;
+  margin-top: 0.5rem;
+  font-size: 1rem;
+}
+
+.adminReservationsNavbar input[type="date"]:focus {
+  border-color: #8c5e40;
+  outline: none;
+  box-shadow: 0 0 4px rgba(140, 94, 64, 0.5);
+}
+
+.adminReservationsLabel:hover {
+  cursor: pointer;
+}
+
+.adminReservationsNavbar input[type="checkbox"]:hover {
+  border-color: #8c5e40;
+  outline: none;
+  box-shadow: 0 0 4px rgba(140, 94, 64, 0.5);
+  cursor: pointer;
+}
+
+.adminReservationsBody {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
+.adminReservationDate {
+  background-color: #ffffff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: auto;
+  height: auto;
+}
+
+.adminReservationDate h2 {
+  font-size: 1.5rem;
+  color: #6d4b33;
+  margin-bottom: 1rem;
+}
+
+.adminReservationsBody p {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #6d4b33;
+  margin: 2rem 0;
+}
+
+.adminreservation {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.1rem;
+  width: 25vw;
+  height: 30vh;
+}
+
+.adminReservationSendForm {
+  background-color: #8c5e40;
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  border-radius: 4px;
+}
+.adminReservationSendForm:hover {
+  background-color: #6d4b33;
+}
+.adminReservationP {
+  font-size: 1rem;
+  margin: 0;
+  padding: 0;
+}

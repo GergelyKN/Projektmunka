@@ -3,6 +3,8 @@ import Footer from "../../Helper_Components/Footer";
 import AdminReservation from "./AdminReservation";
 import { useEffect, useState } from "react";
 
+import "./AdminReservations.css";
+
 function AdminReservations() {
   const GETRESERVATIONSAPI = import.meta.env.VITE_API_ADMIN_GETRESERVATIONS_URL;
   const DELETERESERVATIONAPI = import.meta.env
@@ -84,6 +86,7 @@ function AdminReservations() {
   const handleDelete = async (reservationid) => {
     setClickedStates((prev) => ({ ...prev, [reservationid]: true }));
     try {
+      console.log(reservationid);
       const response = await fetch(DELETERESERVATIONAPI, {
         mode: "cors",
         method: "DELETE",
@@ -106,56 +109,59 @@ function AdminReservations() {
   };
 
   return (
-    <>
+    <div className="app-container">
       <NavBar />
-
-      <div className="reservationsNavBar">
-        <label htmlFor="reservationsSearch">Dátum: </label>
-        <input
-          type="date"
-          id="reservationsSearch"
-          name="reservationsSearch"
-          value={selectedDate}
-          onChange={handleSelectedDateChange}
-          disabled={!searchByDate}
-        />
-        <label htmlFor="reservationsDateCheckBox">Dátum: </label>
-        <input
-          type="checkbox"
-          id="reservationsDateCheckBox"
-          name="reservationsDateCheckBox"
-          value={searchByDate}
-          onChange={handleSearchByDateChange}
-        />
-      </div>
-      <div className="reservationsBody">
-        {Object.keys(groupedReservationForDisplay).length > 0 ? (
-          Object.keys(groupedReservationForDisplay).map((resDate) => (
-            <div
-              key={resDate}
-              className="reservationDate"
-              style={{
-                margin: "5px 0px",
-              }}
-            >
-              <h2>{resDate}</h2>
-              <AdminReservation
-                clicked={clickedStates}
-                reservations={groupedReservationForDisplay[resDate.toString()]}
-                handleDelete={handleDelete}
-              />
-            </div>
-          ))
-        ) : (
-          <p>
-            {searchByDate
-              ? "A megadott dátumra nincs foglalás!"
-              : "Nincs foglalás a rendszerben!"}
-          </p>
-        )}
+      <div className="mainpage mainpageAdminReservations">
+        <div className="adminReservationsNavbar">
+          <label htmlFor="reservationsSearch">Dátum:</label>
+          <input
+            type="date"
+            id="reservationsSearch"
+            name="reservationsSearch"
+            value={selectedDate}
+            onChange={handleSelectedDateChange}
+            disabled={!searchByDate}
+          />
+          <label
+            className="adminReservationsLabel"
+            htmlFor="reservationsDateCheckBox"
+          >
+            Dátum szerint szűrés:
+          </label>
+          <input
+            className="adminReservationsInput"
+            type="checkbox"
+            id="reservationsDateCheckBox"
+            name="reservationsDateCheckBox"
+            value={searchByDate}
+            onChange={handleSearchByDateChange}
+          />
+        </div>
+        <div className="adminReservationsBody">
+          {Object.keys(groupedReservationForDisplay).length > 0 ? (
+            Object.keys(groupedReservationForDisplay).map((resDate) => (
+              <div key={resDate} className="adminReservationDate">
+                <AdminReservation
+                  dateForReservation={resDate}
+                  clicked={clickedStates}
+                  reservations={
+                    groupedReservationForDisplay[resDate.toString()]
+                  }
+                  handleDelete={handleDelete}
+                />
+              </div>
+            ))
+          ) : (
+            <p>
+              {searchByDate
+                ? "A megadott dátumra nincs foglalás!"
+                : "Nincs foglalás a rendszerben!"}
+            </p>
+          )}
+        </div>
       </div>
       <Footer />
-    </>
+    </div>
   );
 }
 export default AdminReservations;

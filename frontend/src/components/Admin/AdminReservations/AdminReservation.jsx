@@ -1,8 +1,14 @@
-function AdminReservation({ clicked, reservations, handleDelete }) {
+function AdminReservation({
+  clicked,
+  reservations,
+  handleDelete,
+  dateForReservation,
+}) {
   return reservations.map((x) => (
-    <div className={"reservation-" + x.reservationid} key={x.reservationid}>
-      <p>{x.lastname + " " + x.firstname}</p>
-      <p>
+    <div className="adminreservation" key={x.reservationid}>
+      <h2>{dateForReservation}</h2>
+      <p className="adminReservationP">{x.lastname + " " + x.firstname}</p>
+      <p className="adminReservationP">
         {x.roomid +
           ". szoba " +
           x.reservedfrom +
@@ -11,9 +17,13 @@ function AdminReservation({ clicked, reservations, handleDelete }) {
           ":00"}
       </p>
       {clicked[x.reservationid] ? (
-        <p>Foglalás törlése folyamatban...</p>
+        <p className="adminReservationP">Foglalás törlése folyamatban...</p>
       ) : (
-        <button id="deleteButton" onClick={() => handleDelete(x.reservationid)}>
+        <button
+          className="adminReservationSendForm"
+          id="deleteButton"
+          onClick={() => handleDelete(x.reservationid)}
+        >
           Törlés
         </button>
       )}
