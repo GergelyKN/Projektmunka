@@ -63,6 +63,19 @@
   appearance: none;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
+.range-slider input[type="range"]::-moz-range-thumb {
+  position: relative;
+  z-index: 2;
+  pointer-events: all;
+  width: 20px;
+  height: 20px;
+  background: #8b4513;
+  border: 2px solid #8b4513;
+  border-radius: 50%;
+  cursor: pointer;
+  appearance: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
 
 .boardgamesMain {
   display: flex;
@@ -76,7 +89,7 @@
 
 .noboardgame {
   font-size: 1.5rem;
-  color: #333;
+  color: #8c5e40;
 }
 
 .boardgamesByCategory {
