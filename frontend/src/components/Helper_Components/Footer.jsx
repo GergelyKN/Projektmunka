@@ -1,51 +1,10 @@
-// function Footer() {
-//   return (
-//     <footer>
-//       <div className="links">
-//         <p>Készítette </p>
-//         <div className="nameCard">
-//           <a
-//             href="https://github.com/OsziBen"
-//             target="blank"
-//             rel="noopener noreferrer"
-//           >
-//             Bence
-//             <img id="githubIcon" src="/githubicon.png" alt="Github Icon" />
-//           </a>
-//         </div>
-//         <div className="nameCard">
-//           <a
-//             href="https://github.com/GergelyKN"
-//             target="blank"
-//             rel="noopener noreferrer"
-//           >
-//             Gergely
-//             <img id="githubIcon" src="/githubicon.png" alt="Github Icon" />
-//           </a>
-//         </div>
-//         <div className="nameCard">
-//           <a
-//             href="https://github.com/Abaku009"
-//             target="blank"
-//             rel="noopener noreferrer"
-//           >
-//             Szabolcs
-//             <img id="githubIcon" src="/githubicon.png" alt="Github Icon" />
-//           </a>
-//         </div>
-//       </div>
-//     </footer>
-//   );
-// }
-// export default Footer;
-
-import "./NavBarFooter.css";
+import "./Footer.css";
 
 function Footer() {
   return (
-    <footer className="footer">
+    <div className="footer">
       <div className="footer-links">
-        <p>Készítette:</p>
+        <p className="footerP">Készítette:</p>
         <div className="nameCard">
           <a
             href="https://github.com/OsziBen"
@@ -55,7 +14,6 @@ function Footer() {
           >
             Bence
             <img
-              id="githubIcon"
               className="footer-icon"
               src="/githubicon.png"
               alt="Github Icon"
@@ -71,7 +29,6 @@ function Footer() {
           >
             Gergely
             <img
-              id="githubIcon"
               className="footer-icon"
               src="/githubicon.png"
               alt="Github Icon"
@@ -87,7 +44,6 @@ function Footer() {
           >
             Szabolcs
             <img
-              id="githubIcon"
               className="footer-icon"
               src="/githubicon.png"
               alt="Github Icon"
@@ -95,7 +51,7 @@ function Footer() {
           </a>
         </div>
       </div>
-    </footer>
+    </div>
   );
 }
 

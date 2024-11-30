@@ -1,0 +1,50 @@
+.footer {
+  background-color: #8b5e3c;
+  color: #fff;
+  padding: 1.5rem;
+  text-align: center;
+  border-top: 2px solid #7a4e32;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.footerP,
+a {
+  color: #fff;
+  font-weight: bold;
+}
+
+.footer-links {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  flex-wrap: nowrap;
+}
+
+.nameCard {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 5px;
+}
+
+.footer-link {
+  text-decoration: none;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.footer-link:hover {
+  color: #f0d4bc;
+}
+
+.footer-icon {
+  width: 24px;
+  height: 24px;
+}
