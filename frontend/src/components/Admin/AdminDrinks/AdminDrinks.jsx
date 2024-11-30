@@ -2,6 +2,7 @@ import NavBar from "../../Helper_Components/NavBar";
 import Footer from "../../Helper_Components/Footer";
 import AdminDrinkCategory from "./AdminDrinkCategory";
 import { useEffect, useState } from "react";
+import "./AdminDrinks.css";
 
 function AdminDrinks() {
   const getDrinkAPI = import.meta.env.VITE_API_DRINK_URL;
@@ -620,389 +621,458 @@ function AdminDrinks() {
   };
 
   return (
-    <>
+    <div className="app-container">
       <NavBar />
-      <div className="drinksNavbar">
-        <label htmlFor="drinksSearchForName">Ital neve: </label>
-        <input
-          type="text"
-          id="drinksSearchForName"
-          name="drinksSearchForName"
-          placeholder="Pilsner Urquell"
-          value={searchedDrinkName}
-          onChange={handleSearchForDrinkName}
-        />
-        <label htmlFor="drinksPrice">Maximális ár</label>
-        <input
-          type="range"
-          name="drinksPrice"
-          id="drinksPrice"
-          min="200"
-          max="20000"
-          value={price}
-          step={100}
-          onChange={handlePriceChange}
-        />
-        <p>{price}</p>
-        <label htmlFor="containsAlcohol">Italok fajtája</label>
-        <input
-          type="checkbox"
-          name="containsAlcohol"
-          id="containsAlcohol"
-          onChange={handleAlcoholChange}
-        />
-        {containsAlcohol ? "Alkoholos" : "Nem alkoholos"}
-      </div>
-      {!addNewDrinkCategory && (
-        <button
-          id="addDrinkCategoryShowForm"
-          onClick={handleShowAddCategoryForm}
-        >
-          Ital Kategória hozzáadása
-        </button>
-      )}
-      {addNewDrinkCategory && (
-        <form onSubmit={handleAddCategory}>
-          <fieldset>
-            <button id="closebtn" onClick={cleanupAfterAddCategory}>
-              X
-            </button>
-            <label htmlFor="addedNewCategoryName">Kategória név: </label>
-            <input
-              type="text"
-              name="addedNewCategoryName"
-              id="addedNewCategoryName"
-              value={addNewCategoryName}
-              onChange={handleAddNewCategoryNameChange}
-              required
-            />
-            <label htmlFor="addedAlcoholic"> Alkoholos? </label>
-            <input
-              type="checkbox"
-              id="addedAlcoholic"
-              name="addedAlcoholic"
-              value={addNewCategoryAlcoholic}
-              onChange={handleAddDrinkCategoryAlcoholic}
-            />
-            <button type="submit">Küldés</button>
-          </fieldset>
-        </form>
-      )}
-      {!deleteDrinkCategory && (
-        <button
-          id="removeDrinkCategoryShowForm"
-          onClick={handleShowRemoveCategoryForm}
-        >
-          Ital Kategória törlése
-        </button>
-      )}
-      {deleteDrinkCategory && (
-        <form onSubmit={handleRemoveCategory}>
-          <fieldset>
-            <button id="closebtn" onClick={cleanupAfterRemoveCategory}>
-              X
-            </button>
-            <label htmlFor="removedCategoryName">Kategória név: </label>
-            <select
-              name="removedCategoryName"
-              id="removedCategoryName"
-              value={selectedCategoryName}
-              onChange={handleSelectedCategoryNameChange}
-            >
-              {Object.entries(groupedCategories).map(([key, value]) => (
-                <option key={key} value={value.categoryname}>
-                  {value.categoryname}
-                </option>
-              ))}
-            </select>
-            <button type="submit">Küldés</button>
-          </fieldset>
-        </form>
-      )}
-      {!updateDrinkCategory && (
-        <button
-          id="updateDrinkCategoryShowForm"
-          onClick={handleShowUpdateCategoryForm}
-        >
-          Ital Kategória módosítása
-        </button>
-      )}
-      {updateDrinkCategory && (
-        <form onSubmit={handleUpdateCategory}>
-          <fieldset>
-            <button id="closebtn" onClick={cleanupAfterUpdateCategory}>
-              X
-            </button>
-            <label htmlFor="updatedCategoryNameSelect">Kategória név: </label>
-            <select
-              name="updatedCategoryNameSelect"
-              id="updatedCategoryNameSelect"
-              value={selectedUpdateCategoryName}
-              onChange={handleSelectedUpdateCategoryNameChange}
-            >
-              {Object.entries(groupedCategories).map(([key, value]) => (
-                <option key={key} value={value.categoryname}>
-                  {value.categoryname}
-                </option>
-              ))}
-            </select>
-            <label htmlFor="updatedCategoryName">
-              Frissített Kategórianév:
-            </label>
-            <input
-              type="text"
-              name="updatedCategoryName"
-              id="updatedCategoryName"
-              value={updatedDrinkCategoryName}
-              onChange={handleUpdatedDrinkCategoryName}
-              minLength={2}
-              maxLength={20}
-            />
-            <label htmlFor="updatedAlcoholic"> Alkoholos? </label>
-            <input
-              type="checkbox"
-              id="updatedAlcoholic"
-              name="updatedAlcoholic"
-              checked={updatedDrinkCategoryAlcoholic}
-              onChange={handleUpdatedDrinkCategoryAlcoholic}
-            />
-            <button type="submit">Küldés</button>
-          </fieldset>
-        </form>
-      )}
-      {!addNewDrink && (
-        <button id="addDrinkShowForm" onClick={handleShowAddForm}>
-          Ital hozzáadása
-        </button>
-      )}
-      {addNewDrink && (
-        <form onSubmit={handleAdd}>
-          <fieldset>
-            <button id="closebtn" onClick={cleanupAfterAdd}>
-              X
-            </button>
-            <label htmlFor="addedName">Név: </label>
-            <input
-              type="text"
-              name="addedName"
-              id="addedName"
-              value={addName}
-              onChange={handleAddNameChange}
-              required
-            />
-            <label htmlFor="addedSize">Kiszerelés: </label>
-            <input
-              type="number"
-              name="addedSize"
-              id="addedSize"
-              value={addSize}
-              onChange={handleAddSizeChange}
-              required
-            />
-            <label htmlFor="addedPrice">Ár: </label>
-            <input
-              type="number"
-              name="addedPrice"
-              id="addedPrice"
-              value={addPrice}
-              onChange={handleAddPriceChange}
-              required
-            />
-            <label htmlFor="addedContainsAlcohol">Alkoholos-e? </label>
-            <input
-              type="checkbox"
-              name="addedContainsAlcohol"
-              id="addedContainsAlcohol"
-              checked={addContainsAlcohol}
-              onChange={handleAddContainsAlcoholChange}
-            />
-            <label htmlFor="addedAlcoholStrength">Alkoholtartalom: </label>
-            <input
-              type="number"
-              name="addedAlcoholStrength"
-              id="addedAlcoholStrength"
-              value={addAlcoholStrength}
-              onChange={handleAddAlcoholStengthChange}
-              required
-              min={0.0}
-              max={90}
-              step={0.01}
-              disabled={!addContainsAlcohol}
-            />
-            <label htmlFor="addedDescription">Leírás: </label>
-            <input
-              type="text"
-              name="addedDescription"
-              id="addedDescription"
-              value={addDescription}
-              onChange={handleAddDescriptionChange}
-              required
-            />
-            <label htmlFor="addedCategoryName">Kategórianév: </label>
-            <select
-              name="addedCategoryName"
-              id="addedCategoryName"
-              value={addCategoryName}
-              onChange={handleAddCategoryNameChange}
-            >
-              {Object.entries(groupedCategories)
-                .filter(([key, value]) =>
-                  addContainsAlcohol
-                    ? value.alcoholic === true
-                    : value.alcoholic === false
-                )
-                .map(([key, value]) => (
-                  <option key={key} value={value.categoryname}>
-                    {value.categoryname}
-                  </option>
-                ))}
-            </select>
-            <button type="submit">Elküldés</button>
-          </fieldset>
-        </form>
-      )}
-
-      {selectedDrink && (
-        <form onSubmit={handleUpdate}>
-          <fieldset>
-            <button id="closebtn" onClick={cleanupAfterUpdate}>
-              X
-            </button>
-            <label htmlFor="updatedName">Név:</label>
-            <input
-              type="text"
-              name="updatedName"
-              id="updatedName"
-              value={updateName}
-              onChange={handleUpdateNameChange}
-              required
-            />
-            <label htmlFor="updatedSize">Kiszerelés: </label>
-            <input
-              type="number"
-              name="updatedSize"
-              id="updatedSize"
-              value={updateSize}
-              onChange={handleUpdateSizeChange}
-              required
-              min={0.0}
-              max={5}
-              step={0.1}
-            />
-            <label htmlFor="updatedPrice">Ár: </label>
-            <input
-              type="number"
-              name="updatedPrice"
-              id="updatedPrice"
-              value={updatePrice}
-              onChange={handleUpdatePriceChange}
-              required
-              min={0}
-              max={50000}
-            />
-            <label htmlFor="updatedContainsAlcohol">Alkoholos-e?</label>
-            <input
-              type="checkbox"
-              name="updatedContainsAlcohol"
-              id="updatedContainsAlcohol"
-              checked={updateContainsAlcohol}
-              onChange={handleUpdateContainsAlcoholChange}
-            />
-            <label htmlFor="updatedAlcoholStrength">Alkoholtartalom: </label>
-            <input
-              type="number"
-              name="updatedAlcoholStrength"
-              id="updatedAlcoholStrength"
-              value={updateAlcoholStrength}
-              onChange={handleUpdateAlcoholStengthChange}
-              required
-              min={0.0}
-              max={90}
-              step={0.1}
-              disabled={!updateContainsAlcohol}
-            />
-            <label htmlFor="updatedDescription">Leírás: </label>
-            <input
-              type="text"
-              name="updatedDescription"
-              id="updatedDescription"
-              value={updateDescription}
-              onChange={handleUpdateDescription}
-              required
-            />
-            <label htmlFor="updatedCategoryName">Kategórianév: </label>
-            <select
-              name="updatedCategoryName"
-              id="updatedCategoryName"
-              value={updateCategoryName}
-              onChange={handleUpdateCategoryName}
-            >
-              {Object.entries(groupedCategories)
-                .filter(([key, value]) =>
-                  updateContainsAlcohol
-                    ? value.alcoholic === true
-                    : value.alcoholic === false
-                )
-                .map(([key, value]) => (
-                  <option key={key} value={value.categoryname}>
-                    {value.categoryname}
-                  </option>
-                ))}
-            </select>
-            <button type="submit">Elküldés</button>
-          </fieldset>
-        </form>
-      )}
-
-      {addNewQuantity ? (
-        <>
-          <form onSubmit={handleAddNewQuantity}>
-            <fieldset>
-              <button id="closebtn" onClick={cleanupAfterQuantityUpdate}>
+      <div className="mainpage">
+        <div className="drinksNavbar">
+          <label htmlFor="drinksSearchForName">Ital neve: </label>
+          <input
+            className="drinksInput"
+            type="text"
+            id="drinksSearchForName"
+            name="drinksSearchForName"
+            placeholder="Pilsner Urquell"
+            value={searchedDrinkName}
+            onChange={handleSearchForDrinkName}
+          />
+          <label htmlFor="drinksPrice">Maximális ár</label>
+          <input
+            className="adminDrinkInput"
+            type="range"
+            name="drinksPrice"
+            id="drinksPrice"
+            min="200"
+            max="20000"
+            value={price}
+            step={100}
+            onChange={handlePriceChange}
+          />
+          <p>{price}</p>
+          <label htmlFor="containsAlcohol">Italok fajtája</label>
+          <input
+            className="adminDrinkInput"
+            type="checkbox"
+            name="containsAlcohol"
+            id="containsAlcohol"
+            onChange={handleAlcoholChange}
+          />
+          {containsAlcohol ? "Alkoholos" : "Nem alkoholos"}
+        </div>
+        {!addNewDrinkCategory && (
+          <button
+            className="adminDrinkButton"
+            id="addDrinkCategoryShowForm"
+            onClick={handleShowAddCategoryForm}
+          >
+            Ital Kategória hozzáadása
+          </button>
+        )}
+        {addNewDrinkCategory && (
+          <form className="adminDrinkForm" onSubmit={handleAddCategory}>
+            <fieldset className="adminDrinkFieldset">
+              <button
+                className="adminDrinkButton"
+                id="closebtn"
+                onClick={cleanupAfterAddCategory}
+              >
                 X
               </button>
-              <label htmlFor="quantityUpdate">
-                {selectedDrinkToUpdateQuantity.name + ": "}
-              </label>
+              <label htmlFor="addedNewCategoryName">Kategória név: </label>
               <input
-                type="number"
-                name="quantityUpdate"
-                id="quantityUpdate"
-                onChange={handleChangeQuantity}
-                min={1}
-                max={500}
+                className="adminDrinkInput"
+                type="text"
+                name="addedNewCategoryName"
+                id="addedNewCategoryName"
+                value={addNewCategoryName}
+                onChange={handleAddNewCategoryNameChange}
+                required
               />
-              {quantityClicked ? (
-                <p>Raktár frissítése folyamatban...</p>
-              ) : (
-                <button type="submit">Elküldés</button>
-              )}
+              <label htmlFor="addedAlcoholic"> Alkoholos? </label>
+              <input
+                className="adminDrinkInput"
+                type="checkbox"
+                id="addedAlcoholic"
+                name="addedAlcoholic"
+                value={addNewCategoryAlcoholic}
+                onChange={handleAddDrinkCategoryAlcoholic}
+              />
+              <button className="adminDrinkButton" type="submit">
+                Küldés
+              </button>
             </fieldset>
           </form>
-        </>
-      ) : null}
-      <div className="drinks">
-        {Object.keys(groupedDrinks).length >= 0 ? (
-          Object.keys(groupedDrinks)
-            .filter((categoryname) => groupedDrinks[categoryname].length >= 0)
-            .sort()
-            .map((categoryname) => (
-              <AdminDrinkCategory
-                key={categoryname}
-                drinks={groupedDrinks[categoryname]}
-                handleDelete={handleDelete}
-                handleShowUpdateForm={handleShowUpdateForm}
-                handleAddQuantityShowForm={handleAddQuantityShowForm}
-                addNewQuantity={addNewQuantity}
-              />
-            ))
-        ) : (
-          <p>Nincs ilyen ital</p>
         )}
+        {!deleteDrinkCategory && (
+          <button
+            className="adminDrinkButton"
+            id="removeDrinkCategoryShowForm"
+            onClick={handleShowRemoveCategoryForm}
+          >
+            Ital Kategória törlése
+          </button>
+        )}
+        {deleteDrinkCategory && (
+          <form className="adminDrinkForm" onSubmit={handleRemoveCategory}>
+            <fieldset className="adminDrinkFieldset">
+              <button
+                className="adminDrinkButton"
+                id="closebtn"
+                onClick={cleanupAfterRemoveCategory}
+              >
+                X
+              </button>
+              <label htmlFor="removedCategoryName">Kategória név: </label>
+              <select
+                className="adminDrinkSelect"
+                name="removedCategoryName"
+                id="removedCategoryName"
+                value={selectedCategoryName}
+                onChange={handleSelectedCategoryNameChange}
+              >
+                {Object.entries(groupedCategories).map(([key, value]) => (
+                  <option key={key} value={value.categoryname}>
+                    {value.categoryname}
+                  </option>
+                ))}
+              </select>
+              <button className="adminDrinkButton" type="submit">
+                Küldés
+              </button>
+            </fieldset>
+          </form>
+        )}
+        {!updateDrinkCategory && (
+          <button
+            className="adminDrinkButton"
+            id="updateDrinkCategoryShowForm"
+            onClick={handleShowUpdateCategoryForm}
+          >
+            Ital Kategória módosítása
+          </button>
+        )}
+        {updateDrinkCategory && (
+          <form className="adminDrinkForm" onSubmit={handleUpdateCategory}>
+            <fieldset className="adminDrinkFieldset">
+              <button
+                className="adminDrinkButton"
+                id="closebtn"
+                onClick={cleanupAfterUpdateCategory}
+              >
+                X
+              </button>
+              <label htmlFor="updatedCategoryNameSelect">Kategória név: </label>
+              <select
+                className="adminDrinkSelect"
+                name="updatedCategoryNameSelect"
+                id="updatedCategoryNameSelect"
+                value={selectedUpdateCategoryName}
+                onChange={handleSelectedUpdateCategoryNameChange}
+              >
+                {Object.entries(groupedCategories).map(([key, value]) => (
+                  <option key={key} value={value.categoryname}>
+                    {value.categoryname}
+                  </option>
+                ))}
+              </select>
+              <label htmlFor="updatedCategoryName">
+                Frissített Kategórianév:
+              </label>
+              <input
+                className="adminDrinkInput"
+                type="text"
+                name="updatedCategoryName"
+                id="updatedCategoryName"
+                value={updatedDrinkCategoryName}
+                onChange={handleUpdatedDrinkCategoryName}
+                minLength={2}
+                maxLength={20}
+              />
+              <label htmlFor="updatedAlcoholic"> Alkoholos? </label>
+              <input
+                className="adminDrinkInput"
+                type="checkbox"
+                id="updatedAlcoholic"
+                name="updatedAlcoholic"
+                checked={updatedDrinkCategoryAlcoholic}
+                onChange={handleUpdatedDrinkCategoryAlcoholic}
+              />
+              <button className="adminDrinkButton" type="submit">
+                Küldés
+              </button>
+            </fieldset>
+          </form>
+        )}
+        {!addNewDrink && (
+          <button
+            className="adminDrinkButton"
+            id="addDrinkShowForm"
+            onClick={handleShowAddForm}
+          >
+            Ital hozzáadása
+          </button>
+        )}
+        {addNewDrink && (
+          <form className="adminDrinkForm" onSubmit={handleAdd}>
+            <fieldset className="adminDrinkFieldset">
+              <button
+                className="adminDrinkButton"
+                id="closebtn"
+                onClick={cleanupAfterAdd}
+              >
+                X
+              </button>
+              <label htmlFor="addedName">Név: </label>
+              <input
+                className="adminDrinkInput"
+                type="text"
+                name="addedName"
+                id="addedName"
+                value={addName}
+                onChange={handleAddNameChange}
+                required
+              />
+              <label htmlFor="addedSize">Kiszerelés: </label>
+              <input
+                className="adminDrinkInput"
+                type="number"
+                name="addedSize"
+                id="addedSize"
+                value={addSize}
+                onChange={handleAddSizeChange}
+                required
+              />
+              <label htmlFor="addedPrice">Ár: </label>
+              <input
+                className="adminDrinkInput"
+                type="number"
+                name="addedPrice"
+                id="addedPrice"
+                value={addPrice}
+                onChange={handleAddPriceChange}
+                required
+              />
+              <label htmlFor="addedContainsAlcohol">Alkoholos-e? </label>
+              <input
+                className="adminDrinkInput"
+                type="checkbox"
+                name="addedContainsAlcohol"
+                id="addedContainsAlcohol"
+                checked={addContainsAlcohol}
+                onChange={handleAddContainsAlcoholChange}
+              />
+              <label htmlFor="addedAlcoholStrength">Alkoholtartalom: </label>
+              <input
+                className="adminDrinkInput"
+                type="number"
+                name="addedAlcoholStrength"
+                id="addedAlcoholStrength"
+                value={addAlcoholStrength}
+                onChange={handleAddAlcoholStengthChange}
+                required
+                min={0.0}
+                max={90}
+                step={0.01}
+                disabled={!addContainsAlcohol}
+              />
+              <label htmlFor="addedDescription">Leírás: </label>
+              <input
+                className="adminDrinkInput"
+                type="text"
+                name="addedDescription"
+                id="addedDescription"
+                value={addDescription}
+                onChange={handleAddDescriptionChange}
+                required
+              />
+              <label htmlFor="addedCategoryName">Kategórianév: </label>
+              <select
+                className="adminDrinkSelect"
+                name="addedCategoryName"
+                id="addedCategoryName"
+                value={addCategoryName}
+                onChange={handleAddCategoryNameChange}
+              >
+                {Object.entries(groupedCategories)
+                  .filter(([key, value]) =>
+                    addContainsAlcohol
+                      ? value.alcoholic === true
+                      : value.alcoholic === false
+                  )
+                  .map(([key, value]) => (
+                    <option key={key} value={value.categoryname}>
+                      {value.categoryname}
+                    </option>
+                  ))}
+              </select>
+              <button className="adminDrinkButton" type="submit">
+                Elküldés
+              </button>
+            </fieldset>
+          </form>
+        )}
+
+        {selectedDrink && (
+          <form className="adminDrinkForm" onSubmit={handleUpdate}>
+            <fieldset className="adminDrinkFieldset">
+              <button
+                className="adminDrinkButton"
+                id="closebtn"
+                onClick={cleanupAfterUpdate}
+              >
+                X
+              </button>
+              <label htmlFor="updatedName">Név:</label>
+              <input
+                className="adminDrinkInput"
+                type="text"
+                name="updatedName"
+                id="updatedName"
+                value={updateName}
+                onChange={handleUpdateNameChange}
+                required
+              />
+              <label htmlFor="updatedSize">Kiszerelés: </label>
+              <input
+                className="adminDrinkInput"
+                type="number"
+                name="updatedSize"
+                id="updatedSize"
+                value={updateSize}
+                onChange={handleUpdateSizeChange}
+                required
+                min={0.0}
+                max={5}
+                step={0.1}
+              />
+              <label htmlFor="updatedPrice">Ár: </label>
+              <input
+                className="adminDrinkInput"
+                type="number"
+                name="updatedPrice"
+                id="updatedPrice"
+                value={updatePrice}
+                onChange={handleUpdatePriceChange}
+                required
+                min={0}
+                max={50000}
+              />
+              <label htmlFor="updatedContainsAlcohol">Alkoholos-e?</label>
+              <input
+                className="adminDrinkInput"
+                type="checkbox"
+                name="updatedContainsAlcohol"
+                id="updatedContainsAlcohol"
+                checked={updateContainsAlcohol}
+                onChange={handleUpdateContainsAlcoholChange}
+              />
+              <label htmlFor="updatedAlcoholStrength">Alkoholtartalom: </label>
+              <input
+                className="adminDrinkInput"
+                type="number"
+                name="updatedAlcoholStrength"
+                id="updatedAlcoholStrength"
+                value={updateAlcoholStrength}
+                onChange={handleUpdateAlcoholStengthChange}
+                required
+                min={0.0}
+                max={90}
+                step={0.1}
+                disabled={!updateContainsAlcohol}
+              />
+              <label htmlFor="updatedDescription">Leírás: </label>
+              <input
+                className="adminDrinkInput"
+                type="text"
+                name="updatedDescription"
+                id="updatedDescription"
+                value={updateDescription}
+                onChange={handleUpdateDescription}
+                required
+              />
+              <label htmlFor="updatedCategoryName">Kategórianév: </label>
+              <select
+                className="adminDrinkSelect"
+                name="updatedCategoryName"
+                id="updatedCategoryName"
+                value={updateCategoryName}
+                onChange={handleUpdateCategoryName}
+              >
+                {Object.entries(groupedCategories)
+                  .filter(([key, value]) =>
+                    updateContainsAlcohol
+                      ? value.alcoholic === true
+                      : value.alcoholic === false
+                  )
+                  .map(([key, value]) => (
+                    <option key={key} value={value.categoryname}>
+                      {value.categoryname}
+                    </option>
+                  ))}
+              </select>
+              <button className="adminDrinkButton" type="submit">
+                Elküldés
+              </button>
+            </fieldset>
+          </form>
+        )}
+
+        {addNewQuantity ? (
+          <>
+            <form className="adminDrinkForm" onSubmit={handleAddNewQuantity}>
+              <fieldset className="adminDrinkFieldset">
+                <button
+                  className="adminDrinkButton"
+                  id="closebtn"
+                  onClick={cleanupAfterQuantityUpdate}
+                >
+                  X
+                </button>
+                <label htmlFor="quantityUpdate">
+                  {selectedDrinkToUpdateQuantity.name + ": "}
+                </label>
+                <input
+                  className="adminDrinkInput"
+                  type="number"
+                  name="quantityUpdate"
+                  id="quantityUpdate"
+                  onChange={handleChangeQuantity}
+                  min={1}
+                  max={500}
+                />
+                {quantityClicked ? (
+                  <p>Raktár frissítése folyamatban...</p>
+                ) : (
+                  <button className="adminDrinkButton" type="submit">
+                    Elküldés
+                  </button>
+                )}
+              </fieldset>
+            </form>
+          </>
+        ) : null}
+        <div className="drinksMain">
+          {Object.keys(groupedDrinks).length >= 0 ? (
+            Object.keys(groupedDrinks)
+              .filter((categoryname) => groupedDrinks[categoryname].length >= 0)
+              .sort()
+              .map((categoryname) => (
+                <AdminDrinkCategory
+                  key={categoryname}
+                  drinks={groupedDrinks[categoryname]}
+                  handleDelete={handleDelete}
+                  handleShowUpdateForm={handleShowUpdateForm}
+                  handleAddQuantityShowForm={handleAddQuantityShowForm}
+                  addNewQuantity={addNewQuantity}
+                />
+              ))
+          ) : (
+            <p>Nincs ilyen ital</p>
+          )}
+        </div>
       </div>
 
       <Footer />
-    </>
+    </div>
   );
 }
 
