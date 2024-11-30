@@ -1,0 +1,88 @@
+.mainpageEditProfile {
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  width: 100%;
+  max-width: 500px;
+  margin: auto;
+}
+
+.mainpageEditProfile p {
+  text-align: center;
+  font-size: 1.2em;
+  color: #8c5e40;
+}
+
+.EditProfileForm {
+  display: flex;
+  flex-direction: column;
+}
+
+.EditProfileFieldset {
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+.EditProfileH1 {
+  text-align: center;
+  font-size: 1.8em;
+  margin-bottom: 20px;
+  color: #6d4b33;
+}
+
+.EditProfileLabel {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #6d4b33;
+}
+
+.EditProfileInput {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #d4b59e;
+  border-radius: 5px;
+  font-size: 1em;
+  margin-bottom: 15px;
+  transition: border-color 0.3s;
+}
+
+.EditProfileInput:focus {
+  border-color: #8c5e40;
+  outline: none;
+}
+
+.EditProfileButton,
+.EditProfileButtonSubmit {
+  background-color: #8c5e40;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 15px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.EditProfileButton {
+  margin-bottom: 15px;
+}
+
+.EditProfileButton:hover,
+.EditProfileButtonSubmit:hover {
+  background-color: #6d4b33;
+}
+
+.EditProfileInput:disabled {
+  background-color: #f9f5f2;
+  border-color: #ddd;
+  cursor: not-allowed;
+}
+
+.EditProfileForm p {
+  text-align: center;
+  color: #6d4b33;
+  font-size: 1em;
+}
