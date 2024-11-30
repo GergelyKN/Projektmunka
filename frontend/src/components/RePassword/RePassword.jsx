@@ -3,6 +3,8 @@ import Footer from "../Helper_Components/Footer";
 import { useState } from "react";
 import { Navigate } from "react-router-dom";
 
+import "./RePassword.css";
+
 function RePassword() {
   const [reEmail, setReEmail] = useState("");
   const [redirectToLogin, setRedirectToLogin] = useState(false);
@@ -54,30 +56,37 @@ function RePassword() {
     return <Navigate to="/bejelentkezes" />;
   }
   return (
-    <>
+    <div className="app-container">
       <NavBar />
 
-      <form onSubmit={handleSubmit}>
-        <fieldset>
-          <h1>Jelszó emlékeztető</h1>
-          <label htmlFor="Email">Email cím: </label>
-          <input
-            type="email"
-            name="Email"
-            id="Email"
-            value={reEmail}
-            onChange={handleEmailChange}
-            required
-          />
-          {clicked ? (
-            <p>Jelszóküldés folyamatban...</p>
-          ) : (
-            <button type="submit">Elküldés</button>
-          )}
-        </fieldset>
-      </form>
+      <div className="mainpage mainpageRePassword">
+        <form className="RePasswordForm" onSubmit={handleSubmit}>
+          <fieldset className="RePasswordFieldset">
+            <h1 className="RePasswordH1">Jelszó emlékeztető</h1>
+            <label className="RePasswordLabel" htmlFor="Email">
+              Email cím:{" "}
+            </label>
+            <input
+              className="RePasswordInput"
+              type="email"
+              name="Email"
+              id="Email"
+              value={reEmail}
+              onChange={handleEmailChange}
+              required
+            />
+            {clicked ? (
+              <p className="RePasswordP">Jelszóküldés folyamatban...</p>
+            ) : (
+              <button className="RePasswordSendForm" type="submit">
+                Elküldés
+              </button>
+            )}
+          </fieldset>
+        </form>
+      </div>
       <Footer />
-    </>
+    </div>
   );
 }
 export default RePassword;
