@@ -3,6 +3,7 @@ import Footer from "../Helper_Components/Footer";
 import MyReservation from "./MyReservation";
 import { dateComparison } from "../../functions/Reservation_Functions/ReservationHelperFunctions";
 import { useState, useEffect, useMemo } from "react";
+import "./MyReservations.css";
 
 function MyReservations() {
   const GETMYRESERVATIONAPI = import.meta.env.VITE_API_GETMYRESERVATION_URL;
@@ -121,52 +122,60 @@ function MyReservations() {
   };
 
   return (
-    <>
+    <div className="app-container">
       <NavBar />
+      <div className="mainpage mainpageMyReservations">
+        <div className="MyreservationsNavBar">
+          <label htmlFor="reservationsSearch">Dátum: </label>
+          <input
+            type="date"
+            id="reservationsSearch"
+            name="reservationsSearch"
+            value={selectedDate}
+            onChange={handleSelectedDateChange}
+            disabled={!searchByDate}
+          />
 
-      <div className="reservationsNavBar">
-        <label htmlFor="reservationsSearch">Dátum: </label>
-        <input
-          type="date"
-          id="reservationsSearch"
-          name="reservationsSearch"
-          value={selectedDate}
-          onChange={handleSelectedDateChange}
-          disabled={!searchByDate}
-        />
-        <label htmlFor="reservationsDateCheckBox">Dátum szerint: </label>
-        <input
-          type="checkbox"
-          id="reservationsDateCheckBox"
-          name="reservationsDateCheckBox"
-          checked={searchByDate}
-          onChange={handleSearchByDateChange}
-        />
-      </div>
+          <label
+            className="myReservationLabel"
+            htmlFor="reservationsDateCheckBox"
+          >
+            Dátum szerint szűrés:
+          </label>
+          <input
+            className="myReservationInput"
+            type="checkbox"
+            id="reservationsDateCheckBox"
+            name="reservationsDateCheckBox"
+            checked={searchByDate}
+            onChange={handleSearchByDateChange}
+          />
+        </div>
 
-      <div className="reservationsBody">
-        {Object.keys(groupedReservationForDisplay).length > 0 ? (
-          Object.entries(groupedReservationForDisplay).map(([key, value]) => (
-            <div key={key} className="reservationDate">
-              <h2>{key}</h2>
-              <MyReservation
-                clicked={clickedStates}
-                reservations={groupedReservationForDisplay[key]}
-                handleDelete={handleDelete}
-              />
-            </div>
-          ))
-        ) : (
-          <p>
-            {searchByDate
-              ? "A megadott dátumra nincs foglalás!"
-              : "Nincs foglalás a rendszerben!"}
-          </p>
-        )}
+        <div className="reservationsBody">
+          {Object.keys(groupedReservationForDisplay).length > 0 ? (
+            Object.entries(groupedReservationForDisplay).map(([key, value]) => (
+              <div key={key} className="reservationDate">
+                <MyReservation
+                  dateForReservation={key}
+                  clicked={clickedStates}
+                  reservations={groupedReservationForDisplay[key]}
+                  handleDelete={handleDelete}
+                />
+              </div>
+            ))
+          ) : (
+            <p>
+              {searchByDate
+                ? "A megadott dátumra nincs foglalás!"
+                : "Nincs foglalás a rendszerben!"}
+            </p>
+          )}
+        </div>
       </div>
 
       <Footer />
-    </>
+    </div>
   );
 }
 
