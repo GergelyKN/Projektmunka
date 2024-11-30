@@ -3,7 +3,7 @@ import Footer from "../../Helper_Components/Footer";
 import AdminBoardGameCategory from "./AdminBoardGameCategory";
 import { useEffect, useState } from "react";
 
-//Input mezők ellenőrzése kell
+import "./AdminBoardGames.css";
 
 function AdminBoardGames() {
   const GETBOARDGAMEAPI = import.meta.env.VITE_API_BOARDGAME_URL;
@@ -228,11 +228,16 @@ function AdminBoardGames() {
     setBoardGameName(event.target.value);
   };
 
-  const handleMinPlayerNumberChange = (event) => {
-    setBoardGameMinPlayerNumber(Number(event.target.value));
-  };
-  const handleMaxPlayerNumberChange = (event) => {
-    setBoardGameMaxPlayerNumber(Number(event.target.value));
+  const handleRangeChange = (event) => {
+    const { value, name } = event.target;
+
+    if (name === "minPlayer") {
+      const newMin = Math.min(Number(value), boardGameMaxPlayerNumber - 1);
+      setBoardGameMinPlayerNumber(newMin);
+    } else if (name === "maxPlayer") {
+      const newMax = Math.max(Number(value), boardGameMinPlayerNumber + 1);
+      setBoardGameMaxPlayerNumber(newMax);
+    }
   };
 
   const handleLanguageChange = (event) => {
@@ -588,91 +593,95 @@ function AdminBoardGames() {
   //#endregion Update Category
 
   return (
-    <>
+    <div className="app-container">
       <NavBar />
-      <div className="boardgamesNavbar">
-        <label htmlFor="boardgamesSearchForName">Társasjáték neve: </label>
-        <input
-          type="text"
-          id="boardgamesSearchForName"
-          name="boardgamesSearchForName"
-          value={boardGameName}
-          onChange={handleBoardGameSearch}
-        />
+      <div className="mainpage">
+        <div className="boardgamesNavbar">
+          <div className="boardgamesNavbarUpper">
+            <label htmlFor="boardgamesSearchForName">Társasjáték neve: </label>
+            <input
+              className="boardgamesInput"
+              type="text"
+              id="boardgamesSearchForName"
+              name="boardgamesSearchForName"
+              value={boardGameName}
+              onChange={handleBoardGameSearch}
+            />
 
-        <label htmlFor="boardgameLanguages">Nyelv: </label>
-        <select
-          name="boardgameLanguages"
-          id="boardgameLanguages"
-          value={selectedLanguageForDisplay}
-          onChange={handleLanguageChange}
-        >
-          <option value="all">Összes Nyelv</option>
-          {Object.entries(groupedLanguages).map(([key, value]) => (
-            <option key={key} value={value}>
-              {value}
-            </option>
-          ))}
-        </select>
+            <label htmlFor="boardgameLanguages">Nyelv: </label>
+            <select
+              name="boardgameLanguages"
+              id="boardgameLanguages"
+              value={selectedLanguageForDisplay}
+              onChange={handleLanguageChange}
+            >
+              <option value="all">Összes Nyelv</option>
+              {Object.entries(groupedLanguages).map(([key, value]) => (
+                <option key={key} value={value}>
+                  {value}
+                </option>
+              ))}
+            </select>
 
-        <label htmlFor="boardgameCategories">Kategória: </label>
-        <select
-          name="boardgameCategories"
-          id="boardgameCategories"
-          value={selectedCategory}
-          onChange={handleCategoryChange}
-        >
-          <option value="all">Összes Kategória</option>
-          {Object.entries(groupedCategories).map(([key, value]) => (
-            <option key={key} value={value}>
-              {value}
-            </option>
-          ))}
-        </select>
+            <label htmlFor="boardgameCategories">Kategória: </label>
+            <select
+              name="boardgameCategories"
+              id="boardgameCategories"
+              value={selectedCategory}
+              onChange={handleCategoryChange}
+            >
+              <option value="all">Összes Kategória</option>
+              {Object.entries(groupedCategories).map(([key, value]) => (
+                <option key={key} value={value}>
+                  {value}
+                </option>
+              ))}
+            </select>
 
-        <label htmlFor="boardGameDifficulties">Nehézség: </label>
-        <select
-          name="boardGameDifficulties"
-          id="boardGameDifficulties"
-          value={selectedDifficulty}
-          onChange={handleDifficultyChange}
-        >
-          <option value="all">Összes Nehézség</option>
-          {difficulties.map((difficulty) => (
-            <option key={difficulty} value={difficulty}>
-              {difficulty}
-            </option>
-          ))}
-        </select>
+            <label htmlFor="boardGameDifficulties">Nehézség: </label>
+            <select
+              name="boardGameDifficulties"
+              id="boardGameDifficulties"
+              value={selectedDifficulty}
+              onChange={handleDifficultyChange}
+            >
+              <option value="all">Összes Nehézség</option>
+              {difficulties.map((difficulty) => (
+                <option key={difficulty} value={difficulty}>
+                  {difficulty}
+                </option>
+              ))}
+            </select>
+          </div>
 
-        <label htmlFor="boardgameMinPlayer">Játékosok minimális száma: </label>
-        <input
-          type="range"
-          name="boardgameMinPlayer"
-          id="boardgameMinPlayer"
-          min="1"
-          max={boardGameMaxPlayerNumber}
-          value={boardGameMinPlayerNumber}
-          step={1}
-          onChange={handleMinPlayerNumberChange}
-        />
-        <p>Minimum {boardGameMinPlayerNumber} fő</p>
-        <label htmlFor="boardgameMaxPlayer">Játékosok maximális száma: </label>
-        <input
-          type="range"
-          name="boardgameMaxPlayer"
-          id="boardgameMaxPlayer"
-          min={boardGameMinPlayerNumber}
-          max="12"
-          value={boardGameMaxPlayerNumber}
-          step={1}
-          onChange={handleMaxPlayerNumberChange}
-        />
-        <p>Maximum {boardGameMaxPlayerNumber} fő</p>
-      </div>
-      <div className="addupdateThings">
+          <div className="boardgamesLower">
+            <label>Játékosok száma:</label>
+            <div className="range-slider">
+              <input
+                type="range"
+                name="minPlayer"
+                min="1"
+                max="12"
+                value={boardGameMinPlayerNumber}
+                onChange={handleRangeChange}
+              />
+              <input
+                type="range"
+                name="maxPlayer"
+                min="1"
+                max="12"
+                value={boardGameMaxPlayerNumber}
+                onChange={handleRangeChange}
+              />
+            </div>
+            <p>
+              {boardGameMinPlayerNumber} - {boardGameMaxPlayerNumber} fő
+            </p>
+          </div>
+        </div>
         {!addNewBoardGameCategory && (
           <button
+            className="adminBoardGameButton"
             id="addBoardGameCategoryShowForm"
             onClick={handleShowAddCategoryForm}
           >
@@ -680,13 +689,18 @@ function AdminBoardGames() {
           </button>
         )}
         {addNewBoardGameCategory && (
-          <form onSubmit={handleAddCategory}>
-            <fieldset>
-              <button id="closebtn" onClick={cleanupAfterAddCategory}>
+          <form className="adminBoardGameForm" onSubmit={handleAddCategory}>
+            <fieldset className="adminBoardGameFieldset">
+              <button
+                className="adminBoardGameButton"
+                id="closebtn"
+                onClick={cleanupAfterAddCategory}
+              >
                 X
               </button>
               <label htmlFor="addednewCategoryName">Kategória név:</label>
               <input
+                className="adminBoardGameInput"
                 type="text"
                 name="addednewCategoryName"
                 id="addednewCategoryName"
@@ -694,27 +708,34 @@ function AdminBoardGames() {
                 onChange={handleAddNewCategoryNameChange}
                 required
               />
-              <button type="submit">Küldés</button>
+              <button className="adminBoardGameButton" type="submit">
+                Küldés
+              </button>
             </fieldset>
           </form>
         )}
         {!deleteBoardGameCategory && (
           <button
+            className="adminBoardGameButton"
             id="removeBoardGameCategoryShowForm"
             onClick={handleShowRemoveCategoryForm}
           >
             Társasjáték Kategória törlése
           </button>
         )}
-
         {deleteBoardGameCategory && (
-          <form onSubmit={handleRemoveCategory}>
-            <fieldset>
-              <button id="closebtn" onClick={cleanupAfterRemoveCategory}>
+          <form className="adminBoardGameForm" onSubmit={handleRemoveCategory}>
+            <fieldset className="adminBoardGameFieldset">
+              <button
+                className="adminBoardGameButton"
+                id="closebtn"
+                onClick={cleanupAfterRemoveCategory}
+              >
                 X
               </button>
               <label htmlFor="removedCategoryName">Kategória név/nevek: </label>
               <select
+                className="adminBoardGameSelect"
                 name="removedCategoryName"
                 id="removedCategoryName"
                 value={selectedCategoryName}
@@ -726,12 +747,15 @@ function AdminBoardGames() {
                   </option>
                 ))}
               </select>
-              <button type="submit">Küldés</button>
+              <button className="adminBoardGameButton" type="submit">
+                Küldés
+              </button>
             </fieldset>
           </form>
         )}
         {!updateBoardGameCategory && (
           <button
+            className="adminBoardGameButton"
             id="updateBoardGameCategoryShowForm"
             onClick={handleShowUpdateCategoryForm}
           >
@@ -739,15 +763,20 @@ function AdminBoardGames() {
           </button>
         )}
         {updateBoardGameCategory && (
-          <form onSubmit={handleUpdateCategory}>
-            <fieldset>
-              <button id="closebtn" onClick={cleanupAfterUpdateCategory}>
+          <form className="adminBoardGameForm" onSubmit={handleUpdateCategory}>
+            <fieldset className="adminBoardGameFieldset">
+              <button
+                className="adminBoardGameButton"
+                id="closebtn"
+                onClick={cleanupAfterUpdateCategory}
+              >
                 X
               </button>
               <label htmlFor="updatedCategoryNameSelect">
                 Kategória név/nevek:
               </label>
               <select
+                className="adminBoardGameSelect"
                 name="updatedCategoryNameSelect"
                 id="updatedCategoryNameSelect"
                 value={selectedCategoryName}
@@ -763,6 +792,7 @@ function AdminBoardGames() {
                 Frissített Kategórianév:
               </label>
               <input
+                className="adminBoardGameInput"
                 type="text"
                 name="updatedCategoryName"
                 id="updatedCategoryName"
@@ -772,24 +802,34 @@ function AdminBoardGames() {
                 maxLength={20}
                 required
               />
-              <button type="submit">Küldés</button>
+              <button className="adminBoardGameButton" type="submit">
+                Küldés
+              </button>
             </fieldset>
           </form>
         )}
-
         {!addNewBoardGame && (
-          <button id="addBoardGameShowForm" onClick={handleShowAddForm}>
+          <button
+            className="adminBoardGameButton"
+            id="addBoardGameShowForm"
+            onClick={handleShowAddForm}
+          >
             Társasjáték hozzáadása
           </button>
         )}
         {addNewBoardGame && (
-          <form onSubmit={handleAdd}>
-            <fieldset>
-              <button id="closebtn" onClick={cleanupAfterAdd}>
+          <form className="adminBoardGameForm" onSubmit={handleAdd}>
+            <fieldset className="adminBoardGameFieldset">
+              <button
+                className="adminBoardGameButton"
+                id="closebtn"
+                onClick={cleanupAfterAdd}
+              >
                 X
               </button>
               <label htmlFor="addedName">Név: </label>
               <input
+                className="adminBoardGameInput"
                 type="text"
                 name="addedName"
                 id="addedName"
@@ -799,6 +839,7 @@ function AdminBoardGames() {
               />
               <label htmlFor="addedDifficulty">Nehézség: </label>
               <select
+                className="adminBoardGameSelect"
                 name="addedDifficulty"
                 id="addedDifficulty"
                 value={addDifficulty}
@@ -812,6 +853,7 @@ function AdminBoardGames() {
               </select>
               <label htmlFor="addedMinPlayerNum">Minimális Játékosszám: </label>
               <input
+                className="adminBoardGameInput"
                 type="number"
                 name="addedMinPlayerNum"
                 id="addedMinPlayerNum"
@@ -824,6 +866,7 @@ function AdminBoardGames() {
               />
               <label htmlFor="addedMaxPlayerNum">Maximális Játékosszám: </label>
               <input
+                className="adminBoardGameInput"
                 type="number"
                 name="addedMaxPlayerNum"
                 id="addedMaxPlayerNum"
@@ -836,6 +879,7 @@ function AdminBoardGames() {
               />
               <label htmlFor="addedLanguage">Nyelv: </label>
               <select
+                className="adminBoardGameSelect"
                 name="addedLanguage"
                 id="addedLanguage"
                 value={addLanguage}
@@ -849,6 +893,7 @@ function AdminBoardGames() {
               </select>
               <label htmlFor="addedDescription">Leírás: </label>
               <input
+                className="adminBoardGameInput"
                 type="text"
                 name="addedDescription"
                 id="addedDescription"
@@ -858,6 +903,7 @@ function AdminBoardGames() {
               />
               <label htmlFor="addedCategoryName">Kategórianév: </label>
               <select
+                className="adminBoardGameSelect"
                 name="addedCategoryName"
                 id="addedCategoryName"
                 value={addCategoryName}
@@ -869,18 +915,25 @@ function AdminBoardGames() {
                   </option>
                 ))}
               </select>
-              <button type="submit">Elküldés</button>
+              <button className="adminBoardGameButton" type="submit">
+                Elküldés
+              </button>
             </fieldset>
           </form>
         )}
         {selectedBoardGame && (
-          <form onSubmit={handleUpdate}>
-            <fieldset>
-              <button id="closebtn" onClick={cleanupAfterUpdate}>
+          <form className="adminBoardGameForm" onSubmit={handleUpdate}>
+            <fieldset className="adminBoardGameFieldset">
+              <button
+                className="adminBoardGameButton"
+                id="closebtn"
+                onClick={cleanupAfterUpdate}
+              >
                 X
               </button>
               <label htmlFor="updatedName">Név: </label>
               <input
+                className="adminBoardGameInput"
                 type="text"
                 name="updatedName"
                 id="updatedName"
@@ -890,6 +943,7 @@ function AdminBoardGames() {
               />
               <label htmlFor="updatedDifficulty">Nehézség: </label>
               <select
+                className="adminBoardGameSelect"
                 name="updatedDifficulty"
                 id="updatedDifficulty"
                 value={updateDifficulty}
@@ -905,6 +959,7 @@ function AdminBoardGames() {
                 Minimális Játékosszám:
               </label>
               <input
+                className="adminBoardGameInput"
                 type="number"
                 name="updatedMinPlayerNum"
                 id="updatedMinPlayerNum"
@@ -919,6 +974,7 @@ function AdminBoardGames() {
                 Maximális Játékosszám:
               </label>
               <input
+                className="adminBoardGameInput"
                 type="number"
                 name="updatedMaxPlayerNum"
                 id="updatedMaxPlayerNum"
@@ -931,6 +987,7 @@ function AdminBoardGames() {
               />
               <label htmlFor="updatedLanguage">Nyelv: </label>
               <select
+                className="adminBoardGameSelect"
                 name="updatedLanguage"
                 id="updatedLanguage"
                 value={updateLanguage}
@@ -944,6 +1001,7 @@ function AdminBoardGames() {
               </select>
               <label htmlFor="updatedDescription">Leírás: </label>
               <input
+                className="adminBoardGameInput"
                 type="text"
                 name="updatedDescription"
                 id="updatedDescription"
@@ -953,6 +1011,7 @@ function AdminBoardGames() {
               />
               <label htmlFor="updatedCategoryName">Kategórianév: </label>
               <select
+                className="adminBoardGameSelect"
                 name="updatedCategoryName"
                 id="updatedCategoryName"
                 value={updateCategoryName}
@@ -964,34 +1023,35 @@ function AdminBoardGames() {
                   </option>
                 ))}
               </select>
-              <button type="submit">Elküldés</button>
+              <button className="adminBoardGameButton" type="submit">
+                Elküldés
+              </button>
             </fieldset>
           </form>
         )}
-      </div>
-
-      <div className="boardgames">
-        {Object.keys(groupedBoardGames).length > 0 ? (
-          Object.keys(groupedBoardGames)
-            .filter(
-              (categoryname) => groupedBoardGames[categoryname].length >= 0
-            )
-            .sort()
-            .map((categoryname) => (
-              <AdminBoardGameCategory
-                key={categoryname}
-                boardgames={groupedBoardGames[categoryname]}
-                handleDelete={handleDelete}
-                handleShowUpdateForm={handleShowUpdateForm}
-              />
-            ))
-        ) : (
-          <p>Nincs ilyen társasjáték</p>
-        )}
+        <div className="boardgamesMain">
+          {Object.keys(groupedBoardGames).length > 0 ? (
+            Object.keys(groupedBoardGames)
+              .filter(
+                (categoryname) => groupedBoardGames[categoryname].length >= 0
+              )
+              .sort()
+              .map((categoryname) => (
+                <AdminBoardGameCategory
+                  key={categoryname}
+                  boardgames={groupedBoardGames[categoryname]}
+                  handleDelete={handleDelete}
+                  handleShowUpdateForm={handleShowUpdateForm}
+                />
+              ))
+          ) : (
+            <p>Nincs ilyen társasjáték</p>
+          )}
+        </div>
       </div>
 
       <Footer />
-    </>
+    </div>
   );
 }
 export default AdminBoardGames;

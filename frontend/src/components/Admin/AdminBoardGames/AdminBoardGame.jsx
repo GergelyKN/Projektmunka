@@ -1,6 +1,6 @@
 function AdminBoardGame({ boardgame, handleDelete, handleShowUpdateForm }) {
   return (
-    <div className={"boardgame-" + boardgame.boardgameid}>
+    <div className="boardgame boardgameAdmin">
       <h4>
         {boardgame.name +
           " -- " +
@@ -14,12 +14,22 @@ function AdminBoardGame({ boardgame, handleDelete, handleShowUpdateForm }) {
           " Fő"}
       </h4>
       <h5>{boardgame.description}</h5>
-      <button id="deleteButton" onClick={handleDelete}>
-        Törlés
-      </button>
-      <button id="updateButton" onClick={handleShowUpdateForm}>
-        Módosítás
-      </button>
+      <div className="buttons">
+        <button
+          className="adminBoardGameButton"
+          id="deleteButton"
+          onClick={handleDelete}
+        >
+          Törlés
+        </button>
+        <button
+          className="adminBoardGameButton"
+          id="updateButton"
+          onClick={handleShowUpdateForm}
+        >
+          Módosítás
+        </button>
+      </div>
     </div>
   );
 }
