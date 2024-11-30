@@ -1,0 +1,70 @@
+/* General Container Styling */
+.mainpageAdminProfiles {
+  background-color: #f9f5f2;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 1200px;
+  margin: auto;
+}
+
+/* Users Container */
+.users {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: center;
+}
+
+/* Single User Card */
+.user {
+  background-color: #fff;
+  border: 1px solid #e3ded6;
+  border-radius: 10px;
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 300px;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.user:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* User Information */
+.user h4 {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  color: #8c5e40;
+}
+
+/* Delete Button */
+.adminProfileSendForm {
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 15px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.adminProfileSendForm:hover {
+  background-color: #cc0000;
+  transform: scale(1.05);
+}
+
+.adminProfileSendForm:active {
+  background-color: #990000;
+  transform: scale(1);
+}
+
+/* Loading Text */
+.mainpageAdminProfiles p {
+  text-align: center;
+  font-size: 1.2rem;
+}
