@@ -3,6 +3,8 @@ import Footer from "../Helper_Components/Footer";
 import { useEffect, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 
+import "./EditProfile.css";
+
 function EditProfile() {
   const UPDATEUSERAPI = import.meta.env.VITE_API_UPDATEUSER_URL;
   const navigate = useNavigate();
@@ -89,57 +91,70 @@ function EditProfile() {
     return <Navigate to="/bejelentkezes" />;
   }
   return (
-    <>
+    <div className="app-container">
       <NavBar />
 
-      {loading ? (
-        <p>Betöltés...</p>
-      ) : (
-        <>
-          <form onSubmit={handleSubmit}>
-            <fieldset>
-              <h1>Profil Szerkesztése</h1>
-              {user.isadmin ? null : (
-                <>
-                  <label htmlFor="updatedEmail">Email cím: </label>
-                  <input
-                    type="email"
-                    id="updatedEmail"
-                    name="updatedEmail"
-                    value={newEmail}
-                    onChange={handleNewEmailChange}
-                    disabled={changeEmail}
-                    required
-                  />
-                  <button onClick={handleEmailChange}>
-                    {changeEmail
-                      ? "Email cím változtatás"
-                      : String.fromCharCode(10004)}
-                  </button>
-                </>
-              )}
+      <div className="mainpage mainpageEditProfile">
+        {loading ? (
+          <p>Betöltés...</p>
+        ) : (
+          <>
+            <form className="EditProfileForm" onSubmit={handleSubmit}>
+              <fieldset className="EditProfileFieldset">
+                <h1 className="EditProfileH1">Profil Szerkesztése</h1>
+                {user.isadmin ? null : (
+                  <>
+                    <label className="EditProfileLabel" htmlFor="updatedEmail">
+                      Email cím:{" "}
+                    </label>
+                    <input
+                      className="EditProfileInput"
+                      type="email"
+                      id="updatedEmail"
+                      name="updatedEmail"
+                      value={newEmail}
+                      onChange={handleNewEmailChange}
+                      disabled={changeEmail}
+                      required
+                    />
+                    <button
+                      className="EditProfileButton"
+                      onClick={handleEmailChange}
+                    >
+                      {changeEmail
+                        ? "Email cím változtatás"
+                        : String.fromCharCode(10004)}
+                    </button>
+                  </>
+                )}
 
-              <label htmlFor="updatedPassword">Új jelszó: </label>
-              <input
-                type="password"
-                id="updatedPassword"
-                name="updatedPassword"
-                value={newPassword}
-                onChange={handleNewPasswordChange}
-                required
-              />
-              {clicked ? (
-                <p>Jelszóváltoztatás folyamatban...</p>
-              ) : (
-                <button type="submit">Elküldés</button>
-              )}
-            </fieldset>
-          </form>
-        </>
-      )}
+                <label className="EditProfileLabel" htmlFor="updatedPassword">
+                  Új jelszó:{" "}
+                </label>
+                <input
+                  className="EditProfileInput"
+                  type="password"
+                  id="updatedPassword"
+                  name="updatedPassword"
+                  value={newPassword}
+                  onChange={handleNewPasswordChange}
+                  required
+                />
+                {clicked ? (
+                  <p>Jelszóváltoztatás folyamatban...</p>
+                ) : (
+                  <button className="EditProfileButtonSubmit" type="submit">
+                    Elküldés
+                  </button>
+                )}
+              </fieldset>
+            </form>
+          </>
+        )}
+      </div>
 
       <Footer />
-    </>
+    </div>
   );
 }
 
