@@ -13,8 +13,8 @@
   padding: 25px;
 }
 .drinkRoom {
-  width: 250px;
-  height: 200px;
+  min-width: 250px;
+  min-height: 200px;
   display: flex;
   flex-direction: column;
   align-items: center;
