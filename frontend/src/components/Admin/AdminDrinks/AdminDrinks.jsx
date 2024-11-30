@@ -161,6 +161,7 @@ function AdminDrinks() {
     Object.keys(filteredDrinks).forEach((category) => {
       filteredDrinks[category].sort((a, b) => a.name.localeCompare(b.name));
     });
+
     setGroupedDrinks(filteredDrinks);
   }, [price, containsAlcohol, searchedDrinkName, drinks]);
 
@@ -275,6 +276,13 @@ function AdminDrinks() {
 
   const handleShowAddForm = () => {
     setAddnewDrink(true);
+    const firstCategoryValue =
+      Object.entries(groupedCategories)[0]?.[1].categoryname;
+
+    if (firstCategoryValue) {
+      setAddCategoryName(firstCategoryValue);
+    }
+    console.log(firstCategoryValue);
   };
 
   const handleShowUpdateForm = (drinkID) => {
@@ -1051,7 +1059,7 @@ function AdminDrinks() {
           </>
         ) : null}
         <div className="drinksMain">
-          {Object.keys(groupedDrinks).length >= 0 ? (
+          {Object.keys(groupedDrinks).length > 0 ? (
             Object.keys(groupedDrinks)
               .filter((categoryname) => groupedDrinks[categoryname].length >= 0)
               .sort()
@@ -1066,7 +1074,7 @@ function AdminDrinks() {
                 />
               ))
           ) : (
-            <p>Nincs ilyen ital</p>
+            <p className="nodrink">Nem található ilyen ital!</p>
           )}
         </div>
       </div>
