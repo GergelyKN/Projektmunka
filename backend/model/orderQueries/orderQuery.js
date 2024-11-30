@@ -1,6 +1,6 @@
 const pool = require("../pool");
 
-async function updatrDrinkstorage(drinkID, quantity) {
+async function updateDrinkstorage(drinkID, quantity) {
   const { rows } = await pool.query(
     "SELECT * from Drinkstorage WHERE drinkID = $1",
     [drinkID]
@@ -28,7 +28,7 @@ async function postOrder(order, reservationid) {
          VALUES ($1, $2, $3, $4, $5)`,
         [orderId, drinkID, reservationid, quantity, timestamp]
       );
-      await updatrDrinkstorage(drinkID, quantity);
+      await updateDrinkstorage(drinkID, quantity);
     }
 
     return { success: true };
