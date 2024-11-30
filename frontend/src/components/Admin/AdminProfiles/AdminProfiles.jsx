@@ -2,6 +2,7 @@ import AdminProfile from "./AdminProfile";
 import NavBar from "../../Helper_Components/NavBar";
 import Footer from "../../Helper_Components/Footer";
 import { useEffect, useState } from "react";
+import "./AdminProfiles.css";
 
 function AdminProfiles() {
   const GETUSERSAPI = import.meta.env.VITE_API_GETUSERS_URL;
@@ -58,27 +59,29 @@ function AdminProfiles() {
   };
 
   return (
-    <>
+    <div className="app-container">
       <NavBar />
-      {loading ? (
-        <p>Betöltés...</p>
-      ) : (
-        <>
-          {users.length > 0 ? (
-            users.map((user) => (
-              <AdminProfile
-                key={user.userid}
-                user={user}
-                handleDelete={() => handleDelete(user.userid)}
-              />
-            ))
-          ) : (
-            <p>Nem található felhasználó a rendszerben</p>
-          )}
-        </>
-      )}
+      <div className="mainpage mainpageAdminProfiles">
+        {loading ? (
+          <p>Betöltés...</p>
+        ) : (
+          <div className="users">
+            {users.length > 0 ? (
+              users.map((user) => (
+                <AdminProfile
+                  key={user.userid}
+                  user={user}
+                  handleDelete={() => handleDelete(user.userid)}
+                />
+              ))
+            ) : (
+              <p>Nem található felhasználó a rendszerben</p>
+            )}
+          </div>
+        )}
+      </div>
       <Footer />
-    </>
+    </div>
   );
 }
 
