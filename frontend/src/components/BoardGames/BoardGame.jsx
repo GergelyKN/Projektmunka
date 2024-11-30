@@ -1,6 +1,6 @@
 function BoardGame({ boardgame }) {
   return (
-    <div className={"boardgame-" + boardgame.boardgameid}>
+    <div className="boardgame">
       <h4>
         {boardgame.name +
           " -- " +

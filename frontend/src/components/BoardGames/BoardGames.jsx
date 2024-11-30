@@ -1,7 +1,8 @@
+import { useEffect, useState } from "react";
 import NavBar from "../Helper_Components/NavBar";
 import Footer from "../Helper_Components/Footer";
 import BoardGameCategory from "./BoardGameCategory";
-import { useEffect, useState } from "react";
+import "./BoardGames.css";
 
 function BoardGames() {
   const GETBOARDGAMEAPI = import.meta.env.VITE_API_BOARDGAME_URL;
@@ -23,30 +24,29 @@ function BoardGames() {
     setBoardGameName(event.target.value);
   };
 
-  const handleMinPlayerNumberChange = (event) => {
-    setBoardGameMinPlayerNumber(Number(event.target.value));
-  };
-  const handleMaxPlayerNumberChange = (event) => {
-    setBoardGameMaxPlayerNumber(Number(event.target.value));
+  const handleRangeChange = (event) => {
+    const { value, name } = event.target;
+
+    if (name === "minPlayer") {
+      const newMin = Math.min(Number(value), boardGameMaxPlayerNumber - 1);
+      setBoardGameMinPlayerNumber(newMin);
+    } else if (name === "maxPlayer") {
+      const newMax = Math.max(Number(value), boardGameMinPlayerNumber + 1);
+      setBoardGameMaxPlayerNumber(newMax);
+    }
   };
 
-  const handleLanguageChange = (event) => {
+  const handleLanguageChange = (event) =>
     setSelectedLanguage(event.target.value);
-  };
-  const handleCategoryChange = (event) => {
+  const handleCategoryChange = (event) =>
     setSelectedCategory(event.target.value);
-  };
-  const handleDifficultyChange = (event) => {
+  const handleDifficultyChange = (event) =>
     setSelectedDifficulty(event.target.value);
-  };
 
   useEffect(() => {
     const fetchBoardGames = async () => {
       try {
-        const response = await fetch(GETBOARDGAMEAPI, {
-          mode: "cors",
-        });
-
+        const response = await fetch(GETBOARDGAMEAPI, { mode: "cors" });
         if (response.status >= 400) {
           throw new Error("Server Error");
         }
@@ -63,15 +63,9 @@ function BoardGames() {
         setBoardGames(data);
         setGroupedBoardGames(groupedData);
         if (data) {
-          setLanguages(
-            Array.from(new Set(data.map((bg) => bg.language))).sort()
-          );
-          setCategories(
-            Array.from(new Set(data.map((bg) => bg.categoryname))).sort()
-          );
-          setDifficulties(
-            Array.from(new Set(data.map((bg) => bg.difficulty))).sort()
-          );
+          setLanguages([...new Set(data.map((bg) => bg.language))].sort());
+          setCategories([...new Set(data.map((bg) => bg.categoryname))].sort());
+          setDifficulties([...new Set(data.map((bg) => bg.difficulty))].sort());
         }
       } catch (error) {
         console.error("Error fetching boardgames: ", error);
@@ -79,6 +73,7 @@ function BoardGames() {
     };
     fetchBoardGames();
   }, [GETBOARDGAMEAPI]);
+
   useEffect(() => {
     const filteredBoardGames = boardgames.reduce((acc, bg) => {
       if (
@@ -110,106 +105,110 @@ function BoardGames() {
   ]);
 
   return (
-    <>
+    <div className="app-container">
       <NavBar />
-      <div className="boardgamesNavbar">
-        <label htmlFor="boardgamesSearch">Társasjáték: </label>
-        <input
-          type="text"
-          id="boardgamesSearchForName"
-          name="boardgamesSearchForName"
-          value={boardGameName}
-          onChange={handleBoardGameSearch}
-        />
+      <div className="mainpage">
+        <div className="boardgamesNavbar">
+          <div className="boardgamesNavbarUpper">
+            <label htmlFor="boardgamesSearch">Társasjáték neve: </label>
+            <input
+              className="boardgamesInput"
+              type="text"
+              id="boardgamesSearchForName"
+              name="boardgamesSearchForName"
+              value={boardGameName}
+              onChange={handleBoardGameSearch}
+            />
 
-        <label htmlFor="language">Nyelv: </label>
-        <select
-          name="language"
-          id="language"
-          value={selectedLanguage}
-          onChange={handleLanguageChange}
-        >
-          <option value="all">Összes Nyelv</option>
-          {languages.map((language) => (
-            <option key={language} value={language}>
-              {language}
-            </option>
-          ))}
-        </select>
+            <label htmlFor="language">Nyelv: </label>
+            <select
+              name="language"
+              id="language"
+              value={selectedLanguage}
+              onChange={handleLanguageChange}
+            >
+              <option value="all">Összes Nyelv</option>
+              {languages.map((language) => (
+                <option key={language} value={language}>
+                  {language}
+                </option>
+              ))}
+            </select>
 
-        <label htmlFor="category">Kategória: </label>
-        <select
-          name="category"
-          id="category"
-          value={selectedCategory}
-          onChange={handleCategoryChange}
-        >
-          <option value="all">Összes Kategória</option>
-          {categories.map((category) => (
-            <option key={category} value={category}>
-              {category}
-            </option>
-          ))}
-        </select>
+            <label htmlFor="category">Kategória: </label>
+            <select
+              name="category"
+              id="category"
+              value={selectedCategory}
+              onChange={handleCategoryChange}
+            >
+              <option value="all">Összes Kategória</option>
+              {categories.map((category) => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
+              ))}
+            </select>
 
-        <label htmlFor="difficulty">Nehézség: </label>
-        <select
-          name="difficulty"
-          id="difficulty"
-          value={selectedDifficulty}
-          onChange={handleDifficultyChange}
-        >
-          <option value="all">Összes Nehézség</option>
-          {difficulties.map((difficulty) => (
-            <option key={difficulty} value={difficulty}>
-              {difficulty}
-            </option>
-          ))}
-        </select>
-
-        <label htmlFor="boardgameMinPlayer">Játékosok minimális száma: </label>
-        <input
-          type="range"
-          name="boardgameMinPlayer"
-          id="boardgameMinPlayer"
-          min="1"
-          max={boardGameMaxPlayerNumber}
-          value={boardGameMinPlayerNumber}
-          step={1}
-          onChange={handleMinPlayerNumberChange}
-        />
-        <p>Minimum {boardGameMinPlayerNumber} fő</p>
-        <label htmlFor="boardgameMaxPlayer">Játékosok maximális száma: </label>
-        <input
-          type="range"
-          name="boardgameMaxPlayer"
-          id="boardgameMaxPlayer"
-          min={boardGameMinPlayerNumber}
-          max="12"
-          value={boardGameMaxPlayerNumber}
-          step={1}
-          onChange={handleMaxPlayerNumberChange}
-        />
-        <p>Maximum {boardGameMaxPlayerNumber} fő</p>
-      </div>
-
-      <div className="everyBoardGame">
-        {Object.keys(groupedBoardGames).length > 0 ? (
-          Object.keys(groupedBoardGames)
-            .sort()
-            .map((categoryname) => (
-              <BoardGameCategory
-                key={categoryname}
-                boardgames={groupedBoardGames[categoryname]}
+            <label htmlFor="difficulty">Nehézség: </label>
+            <select
+              name="difficulty"
+              id="difficulty"
+              value={selectedDifficulty}
+              onChange={handleDifficultyChange}
+            >
+              <option value="all">Összes Nehézség</option>
+              {difficulties.map((difficulty) => (
+                <option key={difficulty} value={difficulty}>
+                  {difficulty}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="boardgamesLower">
+            <label>Játékosok száma:</label>
+            <div className="range-slider">
+              <input
+                type="range"
+                name="minPlayer"
+                min="1"
+                max="12"
+                value={boardGameMinPlayerNumber}
+                onChange={handleRangeChange}
               />
-            ))
-        ) : (
-          <p>Nincs ilyen társasjáték</p>
-        )}
-      </div>
+              <input
+                type="range"
+                name="maxPlayer"
+                min="1"
+                max="12"
+                value={boardGameMaxPlayerNumber}
+                onChange={handleRangeChange}
+              />
+            </div>
+            <p>
+              {boardGameMinPlayerNumber} - {boardGameMaxPlayerNumber} fő
+            </p>
+          </div>
+        </div>
 
+        <div className="boardgamesMain">
+          {Object.keys(groupedBoardGames).length > 0 ? (
+            Object.keys(groupedBoardGames)
+              .sort()
+              .map((categoryname) => (
+                <BoardGameCategory
+                  key={categoryname}
+                  boardgames={groupedBoardGames[categoryname]}
+                />
+              ))
+          ) : (
+            <p className="noboardgame">Nincs ilyen társasjáték</p>
+          )}
+        </div>
+      </div>
       <Footer />
-    </>
+    </div>
   );
 }
+
 export default BoardGames;
