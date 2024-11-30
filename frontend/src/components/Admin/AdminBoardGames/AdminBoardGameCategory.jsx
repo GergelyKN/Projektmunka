@@ -6,7 +6,7 @@ function AdminBoardGameCategory({
   handleShowUpdateForm,
 }) {
   return (
-    <div className="boardGamesByCategory">
+    <div className="boardgamesByCategory">
       <h2 id="boardGameCategory">{boardgames[0].categoryname}</h2>
       <div className="boardgamenames boardgamenamesadmin">
         {boardgames.map((boardgame) => (
