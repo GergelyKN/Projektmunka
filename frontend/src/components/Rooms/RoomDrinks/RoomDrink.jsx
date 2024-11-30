@@ -1,6 +1,6 @@
 function RoomDrink({ drink, quantity, handleQuantityChange }) {
   return (
-    <div className={"drink-" + drink.drinkid}>
+    <div className="drinkRoom">
       <h4>
         {drink.name + " - " + drink.price + " Ft - " + drink.size + " Liter "}
       </h4>
@@ -9,6 +9,7 @@ function RoomDrink({ drink, quantity, handleQuantityChange }) {
           <h5>{"Elérhető italmennyiség: " + drink.quantity + " db"}</h5>
           <label htmlFor={`drinkQuantity-${drink.drinkid}`}>Mennyiség: </label>
           <input
+            className="drinkQuantity"
             type="number"
             id={`drinkQuantity-${drink.drinkid}`}
             value={quantity}
@@ -19,7 +20,9 @@ function RoomDrink({ drink, quantity, handleQuantityChange }) {
           />
         </>
       ) : (
-        <p>Sajnáljuk, jelenleg ez az ital nem elérhető!</p>
+        <p className="noquantity">
+          Sajnáljuk, jelenleg ez az ital nem elérhető!
+        </p>
       )}
     </div>
   );

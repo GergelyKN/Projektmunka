@@ -3,6 +3,8 @@ import Footer from "../../Helper_Components/Footer";
 import { useEffect, useState } from "react";
 import RoomDrinkCategory from "./RoomDrinkCategory";
 
+import "./RoomDrinks.css";
+
 function RoomDrinks() {
   const GETDRINKAPIWITHQUANTITY = import.meta.env
     .VITE_API_DRINKWITHQUANTITY_URL;
@@ -112,62 +114,65 @@ function RoomDrinks() {
   }, [quantititesToSend]);
 
   return (
-    <>
+    <div className="app-container">
       <RoomNavBar />
-      <div className="drinksNavbar">
-        <label htmlFor="drinksSearchForName">Ital neve: </label>
-        <input
-          type="text"
-          id="drinksSearchForName"
-          name="drinksSearchForName"
-          placeholder="Pilsner Urquell"
-          value={searchedDrinkName}
-          onChange={handleSearchForDrinkName}
-        />
-        <label htmlFor="drinksPrice">Maximális ár</label>
-        <input
-          type="range"
-          name="drinksPrice"
-          id="drinksPrice"
-          min="200"
-          max="20000"
-          value={price}
-          step={100}
-          onChange={handlePriceChange}
-        />
-        <p>{price}</p>
-        <label htmlFor="containsAlcohol">Italok fajtája</label>
-        <input
-          type="checkbox"
-          name="containsAlcohol"
-          id="containsAlcohol"
-          onChange={handleAlcoholChange}
-          checked={containsAlcohol}
-        />
-        {containsAlcohol ? "Alkoholos" : "Nem alkoholos"}
-      </div>
+      <div className="mainpage">
+        <div className="drinksNavbar">
+          <label htmlFor="drinksSearchForName">Ital neve: </label>
+          <input
+            type="text"
+            id="drinksSearchForName"
+            name="drinksSearchForName"
+            placeholder="Pilsner Urquell"
+            value={searchedDrinkName}
+            onChange={handleSearchForDrinkName}
+          />
+          <label htmlFor="drinksPrice">Maximális ár</label>
+          <input
+            type="range"
+            name="drinksPrice"
+            id="drinksPrice"
+            min="200"
+            max="20000"
+            value={price}
+            step={100}
+            onChange={handlePriceChange}
+          />
+          <p>{price} Ft</p>
+          <label htmlFor="containsAlcohol">Italok fajtája</label>
+          <input
+            type="checkbox"
+            name="containsAlcohol"
+            id="containsAlcohol"
+            onChange={handleAlcoholChange}
+            checked={containsAlcohol}
+          />
+          {containsAlcohol ? "Alkoholos" : "Nem alkoholos"}
+          <button className="sendOrderButton" onClick={handleAdd}>
+            Küldés
+          </button>
+        </div>
 
-      <button onClick={handleAdd}>Küldés</button>
-
-      <div className="drinks">
-        {Object.keys(groupedDrinks).length > 0 ? (
-          Object.keys(groupedDrinks)
-            .filter((categoryname) => groupedDrinks[categoryname].length > 0)
-            .sort()
-            .map((categoryname) => (
-              <RoomDrinkCategory
-                key={categoryname}
-                drinks={groupedDrinks[categoryname]}
-                handleQuantityChange={handleQuantityChange}
-                quantities={quantities}
-              />
-            ))
-        ) : (
-          <p>Nincs ilyen ital</p>
-        )}
+        <div className="drinksMain">
+          {Object.keys(groupedDrinks).length > 0 ? (
+            Object.keys(groupedDrinks)
+              .filter((categoryname) => groupedDrinks[categoryname].length > 0)
+              .sort()
+              .map((categoryname) => (
+                <RoomDrinkCategory
+                  key={categoryname}
+                  drinks={groupedDrinks[categoryname]}
+                  handleQuantityChange={handleQuantityChange}
+                  quantities={quantities}
+                />
+              ))
+          ) : (
+            <p className="nodrink">Nem található ilyen ital!</p>
+          )}
+        </div>
       </div>
       <Footer />
-    </>
+    </div>
   );
 }
 
