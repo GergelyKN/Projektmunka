@@ -1,6 +1,7 @@
 import NavBar from "../Helper_Components/NavBar";
 import Footer from "../Helper_Components/Footer";
 import { useState, useEffect } from "react";
+import "./Contact.css";
 
 function Contact() {
   const [FirstName, setFirstName] = useState("");
@@ -11,6 +12,7 @@ function Contact() {
   const [user, setUser] = useState(null);
 
   const GETOPENINFOSAPI = import.meta.env.VITE_API_OPENINFOS_URL;
+  const POSTMESSAGEAPI = import.meta.env.VITE_API_POSTMESSAGE_URL;
 
   const handleFirstNameChange = (event) => {
     setFirstName(event.target.value);
@@ -84,7 +86,7 @@ function Contact() {
     };
 
     try {
-      const response = await fetch("http://localhost:3000/api/messages", {
+      const response = await fetch(POSTMESSAGEAPI, {
         mode: "cors",
         method: "POST",
         headers: {
@@ -110,99 +112,109 @@ function Contact() {
   };
 
   return (
-    <>
+    <div className="app-container">
       <NavBar />
-      <h3>Kapcsolat</h3>
-      <div className="informaciok">
-        <p>Cím: 9024 Győr, Mária Terézia út 25/B </p>
-        <p>Telefon: +36 10 100 1000</p>
-        <p>E-mail: tabletopbaruni@gmail.com </p>
-        <table id="openhours">
-          <thead>
-            <tr>
-              <th colSpan={2}>Nyitvatartás</th>
-            </tr>
-          </thead>
-          <tbody>
-            {Object.keys(groupedInfos).map((key) => {
-              const openinfo = groupedInfos[key];
-              return (
-                <tr key={key}>
-                  <td>{openinfo.day}</td>
-                  <td>
-                    {(openinfo.startHour < 10
-                      ? "0" + openinfo.startHour + ":00"
-                      : openinfo.startHour + ":00") +
-                      " - " +
-                      (openinfo.endHour < 10
-                        ? "0" + openinfo.endHour + ":00"
-                        : openinfo.endHour + ":00")}
-                  </td>
+      <div className="mainpage mainpageContact">
+        <div className="contactLeft">
+          <div className="informaciok">
+            <h3 className="h3Contact">Kapcsolat</h3>
+            <p>Cím: 9024 Győr, Mária Terézia út 25/B </p>
+            <p>Telefon: +36 10 100 1000</p>
+            <p>E-mail: tabletopbaruni@gmail.com </p>
+            <table id="openhours">
+              <thead>
+                <tr>
+                  <th colSpan={2}>Nyitvatartás</th>
                 </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
-      <div className="uzenet">
-        <form action="/api/messages" method="POST" onSubmit={handleSubmit}>
-          <fieldset>
-            <h3>Írj nekünk!</h3>
+              </thead>
+              <tbody>
+                {Object.keys(groupedInfos).map((key) => {
+                  const openinfo = groupedInfos[key];
+                  return (
+                    <tr key={key}>
+                      <td>{openinfo.day}</td>
+                      <td>
+                        {(openinfo.startHour < 10
+                          ? "0" + openinfo.startHour + ":00"
+                          : openinfo.startHour + ":00") +
+                          " - " +
+                          (openinfo.endHour < 10
+                            ? "0" + openinfo.endHour + ":00"
+                            : openinfo.endHour + ":00")}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div className="contactRight">
+          {" "}
+          <div className="uzenet">
+            <form onSubmit={handleSubmit} className="formContact">
+              <fieldset className="fieldsetContact">
+                <h3 className="h3Contact">Írj nekünk!</h3>
 
-            <label htmlFor="ContactLastName">Vezetéknév </label>
-            <input
-              type="text"
-              id="ContactLastName"
-              name="ContactLastName"
-              required
-              placeholder={user?.lastname || "Varga"}
-              value={user?.lastname || LastName}
-              onChange={user ? undefined : handleLastNameChange}
-              disabled={Boolean(user)}
-            />
-            <label htmlFor="ContactFirstName">Keresztnév </label>
-            <input
-              type="text"
-              id="ContactFirstName"
-              name="ContactFirstName"
-              required
-              placeholder={user?.firstname || "Károly"}
-              value={user?.firstname || FirstName}
-              onChange={user ? undefined : handleFirstNameChange}
-              disabled={Boolean(user)}
-            />
-            <label htmlFor="ContactEmail">Email cím </label>
-            <input
-              type="email"
-              id="ContactEmail"
-              name="ContactEmail"
-              required
-              placeholder={user?.email || "valami@email.com"}
-              value={user?.email || Email}
-              onChange={user ? undefined : handleEmailChange}
-              disabled={Boolean(user)}
-            />
-            <label htmlFor="ContactText">Üzenet </label>
+                <label htmlFor="ContactLastName">Vezetéknév </label>
+                <input
+                  className="inputContact"
+                  type="text"
+                  id="ContactLastName"
+                  name="ContactLastName"
+                  required
+                  placeholder={user?.lastname || "Varga"}
+                  value={user?.lastname || LastName}
+                  onChange={user ? undefined : handleLastNameChange}
+                  disabled={Boolean(user)}
+                />
+                <label htmlFor="ContactFirstName">Keresztnév </label>
+                <input
+                  className="inputContact"
+                  type="text"
+                  id="ContactFirstName"
+                  name="ContactFirstName"
+                  required
+                  placeholder={user?.firstname || "Károly"}
+                  value={user?.firstname || FirstName}
+                  onChange={user ? undefined : handleFirstNameChange}
+                  disabled={Boolean(user)}
+                />
+                <label htmlFor="ContactEmail">Email cím </label>
+                <input
+                  className="inputContact"
+                  type="email"
+                  id="ContactEmail"
+                  name="ContactEmail"
+                  required
+                  placeholder={user?.email || "valami@email.com"}
+                  value={user?.email || Email}
+                  onChange={user ? undefined : handleEmailChange}
+                  disabled={Boolean(user)}
+                />
+                <label htmlFor="ContactText">Üzenet </label>
 
-            <textarea
-              name="ContactText"
-              id="ContactText"
-              required
-              placeholder="Üzenj nekünk valamit!"
-              maxLength={350}
-              rows={15}
-              cols={30}
-              value={Text}
-              onChange={handleTextChange}
-            ></textarea>
-            <button id="ContactSendForm" type="submit">
-              Küldés
-            </button>
-          </fieldset>
-        </form>
+                <textarea
+                  name="ContactText"
+                  id="ContactText"
+                  required
+                  placeholder="Üzenj nekünk valamit!"
+                  maxLength={350}
+                  rows={3}
+                  cols={30}
+                  value={Text}
+                  onChange={handleTextChange}
+                ></textarea>
+                <button id="ContactSendForm" type="submit">
+                  Küldés
+                </button>
+              </fieldset>
+            </form>
+          </div>
+        </div>
       </div>
       <Footer />
-    </>
+    </div>
   );
 }
 

@@ -1,0 +1,113 @@
+/* Bal oldali oszlop stílusai */
+.mainpageContact {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 10vw;
+  padding: 2rem;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 1200px;
+  margin: auto;
+}
+.contactLeft {
+  flex: 1;
+  min-width: 300px;
+  box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px,
+    rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+}
+
+.informaciok {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.informaciok p {
+  margin: 0.5rem 0;
+}
+
+#openhours {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+#openhours th,
+#openhours td {
+  padding: 0.75rem;
+  border: 1px solid #e3ded6;
+  text-align: center;
+}
+
+#openhours th {
+  background-color: #f3ece7;
+  font-weight: bold;
+}
+
+#openhours tbody tr:nth-child(odd) {
+  background-color: #f9f5f2;
+}
+
+#openhours tbody tr:nth-child(even) {
+  background-color: #ffffff;
+}
+
+/* Jobb oldali oszlop stílusai */
+.contactRight {
+  flex: 1;
+  min-width: 300px;
+  box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px,
+    rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+}
+
+.uzenet {
+  margin-top: 1rem;
+}
+
+.fieldsetContact {
+  padding: 1.5rem;
+  background-color: #fff;
+  border-radius: 8px;
+
+  border: none;
+}
+
+.inputContact,
+#ContactText,
+#ContactSendForm {
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border: 1px solid #d4b59e;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+#ContactText {
+  resize: vertical;
+}
+
+.inputContact:focus,
+#ContactText:focus {
+  border-color: #8c5e40;
+  outline: none;
+  box-shadow: 0 0 4px rgba(140, 94, 64, 0.5);
+}
+
+#ContactSendForm {
+  color: #fff;
+  background-color: #8c5e40;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#ContactSendForm:hover {
+  background-color: #6d4b33;
+}
+
+#ContactSendForm:disabled {
+  background-color: #b8a79b;
+}
