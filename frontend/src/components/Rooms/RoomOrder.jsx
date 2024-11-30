@@ -3,6 +3,8 @@ import Footer from "../Helper_Components/Footer";
 import { useEffect, useState, useContext } from "react";
 import { ReservationIDContext } from "./RoomRoute";
 
+import "./RoomOrder.css";
+
 function RoomOrder() {
   const POSTORDERAPI = import.meta.env.VITE_API_POSTORDERITEMS_URL;
   const GETDRINKAPIWITHQUANTITY = import.meta.env
@@ -109,64 +111,68 @@ function RoomOrder() {
   };
 
   return (
-    <>
+    <div className="app-container">
       <RoomNavBar />
-      <h4>Rendelés összegző</h4>
-      {
-        <div>
-          {drinksToDisplay.length > 0 ? (
-            drinksToDisplay.map((drink) => (
-              <div
-                key={drink.drinkid}
-                className="drink"
-                style={{
-                  border: "1px solid red",
-                  padding: "5px 0",
-                  margin: "5px 0",
-                }}
+      <div className="mainpage">
+        <h4 className="reservationNavbar">Rendelés összegző</h4>
+        <div className="container">
+          <div className="leftpanel">
+            {drinksToDisplay.length > 0 ? (
+              drinksToDisplay.map((drink) => (
+                <div key={drink.drinkid} className="drinkOrder">
+                  <label htmlFor="drinkQuantityToSend">Mennyiség: </label>
+                  <input
+                    type="number"
+                    value={drink.quantityToSend}
+                    name="drinkQuantityToSend"
+                    id="drinkQuantityToSend"
+                    onChange={(event) =>
+                      handleQuantityChange(drink.drinkid, event)
+                    }
+                    min={0}
+                    max={12}
+                  />
+                  <p key={drink.drinkid}>
+                    {drink.name +
+                      " " +
+                      drink.size +
+                      " liter " +
+                      " -- " +
+                      drink.quantityToSend +
+                      " darab " +
+                      " ==> " +
+                      drink.price * drink.quantityToSend +
+                      " Ft"}
+                  </p>
+                  <button onClick={() => handleDelete(drink.drinkid)}>
+                    Ital törlése
+                  </button>
+                </div>
+              ))
+            ) : (
+              <p className="nodrinkInOrder">Jelenleg nincs semmi a kosárban!</p>
+            )}
+          </div>
+
+          <div className="rightpanel">
+            <p>{"Összesen: " + priceForAll + " Ft"}</p>
+            {clicked ? (
+              <p>Fizetés feldolgozás alatt...</p>
+            ) : (
+              <button
+                className="sendOrderButton"
+                onClick={handleSubmit}
+                disabled={drinksToDisplay.length === 0}
               >
-                <label htmlFor="drinkQuantityToSend">Mennyiség: </label>
-                <input
-                  type="number"
-                  value={drink.quantityToSend}
-                  name="drinkQuantityToSend"
-                  id="drinkQuantityToSend"
-                  onChange={(event) =>
-                    handleQuantityChange(drink.drinkid, event)
-                  }
-                  min={0}
-                  max={12}
-                />
-                <p key={drink.drinkid}>
-                  {drink.name +
-                    " " +
-                    drink.quantityToSend +
-                    " db " +
-                    " ==> " +
-                    drink.price * drink.quantityToSend +
-                    " Ft"}
-                </p>
-                <button onClick={() => handleDelete(drink.drinkid)}>
-                  Ital törlése
-                </button>
-              </div>
-            ))
-          ) : (
-            <p>Jelenleg nincs semmi a kosárban!</p>
-          )}
+                Rendelés leadása
+              </button>
+            )}
+          </div>
         </div>
-      }
-      <p>{"Összesen: " + priceForAll + " Ft"}</p>
-      {clicked ? (
-        <p>Fizetés feldolgozás alatt...</p>
-      ) : (
-        <button onClick={handleSubmit} disabled={drinksToDisplay.length === 0}>
-          Rendelés leadása
-        </button>
-      )}
+      </div>
 
       <Footer />
-    </>
+    </div>
   );
 }
 

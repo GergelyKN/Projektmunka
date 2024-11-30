@@ -1,0 +1,95 @@
+.leftpanel,
+.rightpanel {
+  background-color: #fff;
+  padding: 20px;
+  margin: 10px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.leftpanel {
+  width: 60%;
+}
+
+.rightpanel {
+  width: 35%;
+  text-align: center;
+}
+
+.drinkOrder {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #ddd;
+  padding: 10px 0;
+}
+
+.drinkOrder label {
+  margin-right: 10px;
+  font-weight: bold;
+}
+
+.drinkOrder input[type="number"] {
+  width: 60px;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.drinkOrder p {
+  flex: 1;
+  margin: 0 10px;
+}
+
+.drinkOrder button {
+  background-color: #e74c3c;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.drinkOrder button:hover {
+  background-color: #c0392b;
+}
+
+.nodrinkInOrder {
+  text-align: center;
+  font-style: italic;
+  color: #777;
+}
+
+.rightpanel p {
+  font-size: 1.2rem;
+  margin: 15px 0;
+}
+
+.sendOrderButton {
+  background-color: #8c5e40;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.sendOrderButton:hover {
+  background-color: #a47354;
+  transform: scale(1.05);
+}
+
+.sendOrderButton:disabled {
+  background-color: #d3c4b7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.container {
+  display: flex;
+}

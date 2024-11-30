@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
+import "./RoomNavBar.css";
+
 function RoomNavBar() {
   const navigate = useNavigate();
   const handleLogOut = () => {
@@ -13,20 +15,20 @@ function RoomNavBar() {
   };
 
   return (
-    <nav className="navbar">
+    <nav className="navbar navbarRoom">
       <img className="navbar-logo" src="/logo_no_background.png" alt="Logo" />
-      <Link to="/" className="nav-link">
+      <Link to="/" className=" linkRoom">
         Kezdőlap
       </Link>
 
-      <Link to="/italokrendeles" className="nav-link">
+      <Link to="/italokrendeles" className=" linkRoom">
         Italok
       </Link>
 
-      <Link to="/rendelesleadas" className="nav-link">
+      <Link to="/rendelesleadas" className=" linkRoom">
         Rendelés
       </Link>
-      <button onClick={handleLogOut} className="nav-small-link">
+      <button onClick={handleLogOut} className="linkRoom roomLogout">
         Kijelentkezés
       </button>
     </nav>
