@@ -4,6 +4,8 @@ import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { isAuthenticated } from "../../functions/Login_Functions/LoginHelperFunctions";
 
+import "./Registration.css";
+
 function Registration() {
   const POSTUSERAPI = import.meta.env.VITE_API_POSTUSER_URL;
 
@@ -75,36 +77,49 @@ function Registration() {
   }
 
   return (
-    <>
+    <div className="app-container">
       <NavBar />
-      <div className="registrationMain">
-        <form onSubmit={handleSubmit} method="POST">
-          <fieldset>
-            <Link to="/" className="exitLink">
-              <div className="exitIcon">X</div>
-            </Link>
-            <h1>Regisztráció</h1>
-            <label htmlFor="regLastName">Vezetéknév: </label>
+      <div className="mainpage mainpageRegistration">
+        <form className="regForm" onSubmit={handleSubmit}>
+          <fieldset className="regFieldset">
+            <div className="exitLink">
+              <Link to="/" className="exitIcon">
+                X
+              </Link>
+            </div>
+            <h1 className="regH1">Regisztráció</h1>
+            <label className="regLabel" htmlFor="regLastName">
+              Vezetéknév:
+            </label>
             <input
+              className="regInput"
               type="text"
               name="regLastName"
               id="regLastName"
               value={lastName}
               onChange={handleLastNameChange}
+              placeholder="Kiss"
               required
             />
-            <label htmlFor="regFirstName">Keresztnév: </label>
+            <label className="regLabel" htmlFor="regFirstName">
+              Keresztnév:
+            </label>
             <input
+              className="regInput"
               type="text"
               name="regFirstName"
               id="regFirstName"
               value={firstName}
               onChange={handleFirstNameChange}
+              placeholder="János"
               required
             />
 
-            <label htmlFor="regEmail">Email cím: </label>
+            <label className="regLabel" htmlFor="regEmail">
+              Email cím:
+            </label>
             <input
+              className="regInput"
               type="email"
               name="regEmail"
               id="regEmail"
@@ -113,8 +128,11 @@ function Registration() {
               onChange={handleEmailChange}
               required
             />
-            <label htmlFor="regPassword">Jelszó:</label>
+            <label className="regLabel" htmlFor="regPassword">
+              Jelszó:
+            </label>
             <input
+              className="regInput"
               type="password"
               name="regPassword"
               id="regPassword"
@@ -122,8 +140,11 @@ function Registration() {
               onChange={handlePasswordChange}
               required
             />
-            <label htmlFor="regVerPassword">Jelszó megerősítése:</label>
+            <label className="regLabel" htmlFor="regVerPassword">
+              Jelszó megerősítése:
+            </label>
             <input
+              className="regInput"
               type="password"
               name="regVerPassword"
               id="regVerPassword"
@@ -131,17 +152,17 @@ function Registration() {
               onChange={handleVerPasswordChange}
               required
             />
-            <button id="regSendForm" type="submit">
+            <button className="regButton" id="regSendForm" type="submit">
               Fiók Létrehozása
             </button>
-            <Link to="/bejelentkezes" className="loginLink">
+            <Link to="/bejelentkezes" className="regLink">
               Már van fiókom
             </Link>
           </fieldset>
         </form>
       </div>
       <Footer />
-    </>
+    </div>
   );
 }
 
