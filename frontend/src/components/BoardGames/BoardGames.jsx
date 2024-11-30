@@ -202,7 +202,7 @@ function BoardGames() {
                 />
               ))
           ) : (
-            <p className="noboardgame">Nincs ilyen társasjáték</p>
+            <p className="noboardgame">Nem található ilyen társasjáték!</p>
           )}
         </div>
       </div>
