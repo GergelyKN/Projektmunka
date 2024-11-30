@@ -1,0 +1,134 @@
+.reservationNavbar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin: 0;
+  font-size: 2rem;
+  color: #333;
+}
+
+.formReservation {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.fieldsetReservation {
+  border: none;
+  padding: 0;
+}
+
+.labelReservation {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.dateInputForReservation,
+.selectForReservation {
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border: 1px solid #d4b59e;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.dateInputForReservation:focus,
+.selectForReservation:focus {
+  border-color: #8c5e40;
+  outline: none;
+  box-shadow: 0 0 4px rgba(140, 94, 64, 0.5);
+}
+
+.sendReservation {
+  display: inline-block;
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 1rem;
+  font-weight: 500;
+  color: white;
+  background-color: #8c5e40;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.sendReservation:disabled {
+  background-color: #b8a79b;
+  cursor: not-allowed;
+}
+
+.sendReservation:hover:not(:disabled) {
+  background-color: #6d4b33;
+}
+
+.reservationTable {
+  margin-top: 2rem;
+}
+
+.reservationTableHeader {
+  margin-bottom: 1rem;
+  text-align: center;
+  font-weight: bold;
+}
+
+.figyelmeztetes {
+  color: #dc3545;
+  text-align: center;
+  margin: 1rem 0;
+}
+
+/* Táblázat stílus */
+.reservationTableContent table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.reservationTableContent th,
+.reservationTableContent td {
+  padding: 0.75rem;
+  text-align: center;
+  border: 1px solid #e3ded6;
+}
+
+.reservationTableContent th {
+  background-color: #f3ece7;
+}
+
+.reservationTableContent td div {
+  padding: 0.5rem;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+/* Színmagyarázat */
+.reservationTableContent td div[style*="background-color: red"] {
+  background-color: red;
+  color: white;
+}
+
+.reservationTableContent td div[style*="background-color: blue"] {
+  background-color: blue;
+  color: white;
+}
+
+.reservationTableContent td div[style*="background-color: lightgreen"] {
+  background-color: lightgreen;
+  color: black;
+}
+
+.reservationTableContent td div[style*="background-color: transparent"] {
+  background-color: transparent;
+  color: black;
+}

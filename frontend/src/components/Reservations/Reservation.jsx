@@ -2,8 +2,7 @@ import NavBar from "../Helper_Components/NavBar";
 import Footer from "../Helper_Components/Footer";
 import getDayOfWeek from "../../functions/Reservation_Functions/ReservationHelperFunctions";
 import { useState, useEffect } from "react";
-
-//Bugos, 23:00 és 01:00 között, átalakítani a date inputot HU-hu formára, majd azt összehasonlítani/elküldeni
+import "./Reservation.css";
 
 function Reservation() {
   const GETROOMAPI = import.meta.env.VITE_API_RESERVATION_GETROOMS_URL;
@@ -389,208 +388,247 @@ function Reservation() {
   };
 
   return (
-    <>
+    <div className="app-container">
       <NavBar />
-      <h3>Foglalás menüpont</h3>
-      <form onSubmit={handleSubmit}>
-        <fieldset>
-          <label htmlFor="roomSelect">Szobaszám: </label>
-          <select
-            name="roomSelect"
-            id="roomSelect"
-            onChange={hanldeRoomIDChange}
-          >
-            {Object.entries(rooms).map(([key, value]) => (
-              <option key={key} value={key}>
-                {key + ". Szoba - " + value + " Fő"}
-              </option>
-            ))}
-          </select>
-          <label htmlFor="reservationDate">Foglalás dátuma: </label>
-          <input
-            type="date"
-            id="reservationDate"
-            name="reservationDate"
-            value={dateForReservation}
-            onChange={handleDateChange}
-            min={"2024-01-01"}
-            max={"2025-02-28"}
-          />
+      <div className="mainpage">
+        <h3 className="reservationNavbar">Foglalás menüpont</h3>
+        <form onSubmit={handleSubmit} className="formReservation">
+          <fieldset className="fieldsetReservation">
+            <label className="labelReservation" htmlFor="roomSelect">
+              Szobaszám:{" "}
+            </label>
+            <select
+              className="selectForReservation"
+              name="roomSelect"
+              id="roomSelect"
+              onChange={hanldeRoomIDChange}
+            >
+              {Object.entries(rooms).map(([key, value]) => (
+                <option key={key} value={key}>
+                  {key + ". Szoba - " + value + " Fő"}
+                </option>
+              ))}
+            </select>
+            <label className="labelReservation" htmlFor="reservationDate">
+              Foglalás dátuma:{" "}
+            </label>
+            <input
+              className="dateInputForReservation"
+              type="date"
+              id="reservationDate"
+              name="reservationDate"
+              value={dateForReservation}
+              onChange={handleDateChange}
+              min={"2024-01-01"}
+              max={"2025-02-28"}
+            />
 
-          <div className="reservationTable">
-            <div className="reservationTableHeader">
-              <label htmlFor="reservationStartHour">Kezdőóra: </label>
-              <select
-                name="reservationStartHour"
-                id="reservationStartHour"
-                onChange={handleStartHour}
-                value={startHour}
-              >
-                {startHours.map((startHour) => (
-                  <option key={startHour} value={startHour}>
-                    {startHour + ":00"}
-                  </option>
-                ))}
-              </select>
+            <div className="reservationTable">
+              <div className="reservationTableHeader">
+                <label
+                  className="labelReservation"
+                  htmlFor="reservationStartHour"
+                >
+                  Kezdőóra:{" "}
+                </label>
+                <select
+                  className="selectForReservation"
+                  name="reservationStartHour"
+                  id="reservationStartHour"
+                  onChange={handleStartHour}
+                  value={startHour}
+                >
+                  {startHours.map((startHour) => (
+                    <option key={startHour} value={startHour}>
+                      {startHour + ":00"}
+                    </option>
+                  ))}
+                </select>
 
-              <label htmlFor="reservationEndHour">Végóra: </label>
-              <select
-                name="reservationEndHour"
-                id="reservationEndHour"
-                onChange={handleEndHour}
-                value={endHour}
-              >
-                {endHours.map((endHour) => (
-                  <option key={endHour} value={endHour}>
-                    {endHour + ":00"}
-                  </option>
-                ))}
-              </select>
-              <>
-                {closedDates.includes(
-                  new Date(dateForReservation).toLocaleDateString("hu-HU")
-                ) ? (
-                  <h2>Ezen a napon zárva tartunk!</h2>
-                ) : dateForReservation <
-                  new Date().toISOString().split("T")[0] ? (
-                  <h2>Nem lehet múltbeli időpontot lefoglalni</h2>
-                ) : startHour >= endHour ? (
-                  <h2>
-                    A kezdőóra nem lehet nagyobb vagy egyenlő, mint a záró
-                    óra...
-                  </h2>
-                ) : groupedHours.every((x) => x.isReserved || x.isInThePast) ? (
-                  <h2>A mai napon már minden időpont foglalt!</h2>
-                ) : reservedStartHours.map((x) => x.hour).includes(startHour) ||
-                  reservedEndHours.map((x) => x.hour).includes(endHour) ? (
-                  <h2>A kijelölt időpont már foglalt!</h2>
-                ) : dateForReservation ===
-                    new Date().toISOString().split("T")[0] &&
-                  startHour < new Date().getHours() ? (
-                  <h2>
-                    Nem lehet olyan időpontot kijelölni, ami{" "}
-                    {new Date().getHours() +
-                      ":" +
-                      (new Date().getMinutes() < 10
-                        ? "0" + new Date().getMinutes()
-                        : new Date().getMinutes())}{" "}
-                    előtt van!
-                  </h2>
-                ) : alreadyHaveReservation ? (
-                  <h2>A mai napra már van foglalásod!</h2>
-                ) : null}
-              </>
-            </div>
-            {!loading &&
-            !closedDates.includes(
-              new Date(dateForReservation).toLocaleDateString("hu-HU")
-            ) ? (
-              <div className="reservationTableContent">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Időpont</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>Színmagyarázat: </td>
-                      <td>
-                        <div style={{ backgroundColor: "red", color: "white" }}>
-                          Foglalt
-                        </div>
-                        <div
-                          style={{ backgroundColor: "blue", color: "white" }}
-                        >
-                          Saját foglalás
-                        </div>
-                        <div
-                          style={{
-                            backgroundColor: "transparent",
-                            color: "black",
-                          }}
-                        >
-                          Szabad
-                        </div>
-                        <div
-                          style={{
-                            backgroundColor: "lightgreen",
-                            color: "white",
-                          }}
-                        >
-                          Aktuális kijelölés
-                        </div>
-                      </td>
-                    </tr>
-                    {groupedHours.map((hour) => {
-                      const isWithinRange =
-                        startHour < endHour &&
-                        hour["sHour"] >= startHour &&
-                        hour["eHour"] <= endHour;
-
-                      const style = hour.isInThePast
-                        ? { textDecoration: "line-through" }
-                        : {
-                            backgroundColor:
-                              hour["userID"] === user.userid
-                                ? "blue"
-                                : hour["isReserved"]
-                                ? "red"
-                                : isWithinRange
-                                ? "lightgreen"
-                                : "transparent",
-                            color:
-                              hour["isReserved"] || isWithinRange
-                                ? "white"
-                                : "black",
-                          };
-
-                      return (
-                        <tr key={hour["sHour"]}>
-                          <td value={hour} style={style}>
-                            {hour["sHour"] + ":00 - " + hour["eHour"] + ":00"}
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-                {!loading ? (
-                  !clicked ? (
-                    <button
-                      type="submit"
-                      disabled={
-                        closedDates.includes(
-                          new Date(dateForReservation).toLocaleDateString(
-                            "hu-HU"
-                          )
-                        ) ||
-                        alreadyHaveReservation ||
-                        startHour >= endHour ||
-                        reservedStartHours.some((x) => x.hour === startHour) ||
-                        reservedEndHours.some((x) => x.hour === endHour) ||
-                        new Date(dateForReservation) <
-                          new Date(new Date().toISOString().split("T")[0]) ||
-                        (dateForReservation ===
-                          new Date().toISOString().split("T")[0] &&
-                          startHour < new Date().getHours())
-                      }
-                    >
-                      Elküldés
-                    </button>
-                  ) : (
-                    <p>Foglalás feldolgozás alatt...</p>
-                  )
-                ) : null}
+                <label
+                  className="labelReservation"
+                  htmlFor="reservationEndHour"
+                >
+                  Végóra:{" "}
+                </label>
+                <select
+                  className="selectForReservation"
+                  name="reservationEndHour"
+                  id="reservationEndHour"
+                  onChange={handleEndHour}
+                  value={endHour}
+                >
+                  {endHours.map((endHour) => (
+                    <option key={endHour} value={endHour}>
+                      {endHour + ":00"}
+                    </option>
+                  ))}
+                </select>
+                <>
+                  {closedDates.includes(
+                    new Date(dateForReservation).toLocaleDateString("hu-HU")
+                  ) ? (
+                    <h2 className="figyelmeztetes">
+                      Ezen a napon zárva tartunk!
+                    </h2>
+                  ) : dateForReservation <
+                    new Date().toISOString().split("T")[0] ? (
+                    <h2 className="figyelmeztetes">
+                      Nem lehet múltbeli időpontot lefoglalni
+                    </h2>
+                  ) : startHour >= endHour ? (
+                    <h2 className="figyelmeztetes">
+                      A kezdőóra nem lehet nagyobb vagy egyenlő, mint a záró
+                      óra...
+                    </h2>
+                  ) : groupedHours.every(
+                      (x) => x.isReserved || x.isInThePast
+                    ) ? (
+                    <h2 className="figyelmeztetes">
+                      A mai napon már minden időpont foglalt!
+                    </h2>
+                  ) : reservedStartHours
+                      .map((x) => x.hour)
+                      .includes(startHour) ||
+                    reservedEndHours.map((x) => x.hour).includes(endHour) ? (
+                    <h2 className="figyelmeztetes">
+                      A kijelölt időpont már foglalt!
+                    </h2>
+                  ) : dateForReservation ===
+                      new Date().toISOString().split("T")[0] &&
+                    startHour < new Date().getHours() ? (
+                    <h2 className="figyelmeztetes">
+                      Nem lehet olyan időpontot kijelölni, ami{" "}
+                      {new Date().getHours() +
+                        ":" +
+                        (new Date().getMinutes() < 10
+                          ? "0" + new Date().getMinutes()
+                          : new Date().getMinutes())}{" "}
+                      előtt van!
+                    </h2>
+                  ) : alreadyHaveReservation ? (
+                    <h2 className="figyelmeztetes">
+                      A mai napra már van foglalásod!
+                    </h2>
+                  ) : null}
+                </>
               </div>
-            ) : (
-              ""
-            )}
-          </div>
-        </fieldset>
-      </form>
+              {!loading &&
+              !closedDates.includes(
+                new Date(dateForReservation).toLocaleDateString("hu-HU")
+              ) ? (
+                <div className="reservationTableContent">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Időpont</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Színmagyarázat: </td>
+                        <td>
+                          <div
+                            style={{ backgroundColor: "red", color: "white" }}
+                          >
+                            Foglalt
+                          </div>
+                          <div
+                            style={{ backgroundColor: "blue", color: "white" }}
+                          >
+                            Saját foglalás
+                          </div>
+                          <div
+                            style={{
+                              backgroundColor: "transparent",
+                              color: "black",
+                            }}
+                          >
+                            Szabad
+                          </div>
+                          <div
+                            style={{
+                              backgroundColor: "lightgreen",
+                              color: "white",
+                            }}
+                          >
+                            Aktuális kijelölés
+                          </div>
+                        </td>
+                      </tr>
+                      {groupedHours.map((hour) => {
+                        const isWithinRange =
+                          startHour < endHour &&
+                          hour["sHour"] >= startHour &&
+                          hour["eHour"] <= endHour;
+
+                        const style = hour.isInThePast
+                          ? { textDecoration: "line-through" }
+                          : {
+                              backgroundColor:
+                                hour["userID"] === user.userid
+                                  ? "blue"
+                                  : hour["isReserved"]
+                                  ? "red"
+                                  : isWithinRange
+                                  ? "lightgreen"
+                                  : "transparent",
+                              color:
+                                hour["isReserved"] || isWithinRange
+                                  ? "white"
+                                  : "black",
+                            };
+
+                        return (
+                          <tr key={hour["sHour"]}>
+                            <td value={hour} style={style}>
+                              {hour["sHour"] + ":00 - " + hour["eHour"] + ":00"}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                  {!loading ? (
+                    !clicked ? (
+                      <button
+                        type="submit"
+                        className="sendReservation"
+                        disabled={
+                          closedDates.includes(
+                            new Date(dateForReservation).toLocaleDateString(
+                              "hu-HU"
+                            )
+                          ) ||
+                          alreadyHaveReservation ||
+                          startHour >= endHour ||
+                          reservedStartHours.some(
+                            (x) => x.hour === startHour
+                          ) ||
+                          reservedEndHours.some((x) => x.hour === endHour) ||
+                          new Date(dateForReservation) <
+                            new Date(new Date().toISOString().split("T")[0]) ||
+                          (dateForReservation ===
+                            new Date().toISOString().split("T")[0] &&
+                            startHour < new Date().getHours())
+                        }
+                      >
+                        Elküldés
+                      </button>
+                    ) : (
+                      <p>Foglalás feldolgozás alatt...</p>
+                    )
+                  ) : null}
+                </div>
+              ) : (
+                ""
+              )}
+            </div>
+          </fieldset>
+        </form>
+      </div>
       <Footer />
-    </>
+    </div>
   );
 }
 
