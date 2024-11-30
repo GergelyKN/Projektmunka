@@ -189,14 +189,14 @@ async function deleteBoardGame(boardgameID) {
 async function addBoardGame(boardgame) {
   try {
     const { rowCount } = await pool.query(
-      "INSERT INTO boardgames (name, difficulty, minplayernum, maxplayernum, languageid, imagepath, categoryid) VALUES ($1,$2,$3,$4,$5,$6,$7)",
+      "INSERT INTO boardgames (name, difficulty, minplayernum, maxplayernum, languageid, description, categoryid) VALUES ($1,$2,$3,$4,$5,$6,$7)",
       [
         boardgame.name,
         boardgame.difficulty,
         boardgame.minplayernum,
         boardgame.maxplayernum,
         boardgame.languageid,
-        boardgame.imagepath,
+        boardgame.description,
         boardgame.categoryid,
       ]
     );
@@ -212,14 +212,14 @@ async function addBoardGame(boardgame) {
 async function updateBoardGame(boardgame) {
   try {
     const { rowCount } = await pool.query(
-      `UPDATE boardgames SET name = $1, difficulty = $2, minplayernum = $3, maxplayernum = $4, languageid = $5, imagepath = $6, categoryid = $7 WHERE boardgameid = $8`,
+      `UPDATE boardgames SET name = $1, difficulty = $2, minplayernum = $3, maxplayernum = $4, languageid = $5, description = $6, categoryid = $7 WHERE boardgameid = $8`,
       [
         boardgame.name,
         boardgame.difficulty,
         boardgame.minplayernum,
         boardgame.maxplayernum,
         boardgame.languageid,
-        boardgame.imagepath,
+        boardgame.description,
         boardgame.categoryid,
         boardgame.boardgameid,
       ]
