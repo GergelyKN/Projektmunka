@@ -1,6 +1,6 @@
 function Drink({ drink }) {
   return (
-    <div className={"drink-" + drink.drinkid}>
+    <div className="drink">
       <h4>
         {drink.name + " - " + drink.price + " Ft - " + drink.size + " Liter "}
       </h4>
