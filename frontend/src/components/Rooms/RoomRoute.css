@@ -1,0 +1,41 @@
+.mainpageRoomRouteReturned {
+  background-color: #f9f5f2;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 1200px;
+  min-height: 250px;
+  min-width: 350px;
+  margin: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.mainpageRoomRouteReturned h4 {
+  font-size: 1.8rem;
+  color: #6c5340;
+}
+
+.sendFormRoomRoute {
+  background-color: #8e735f;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 1.3rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.sendFormRoomRoute:hover {
+  background-color: #755e4d;
+}
+
+.sendFormRoomRoute:active {
+  background-color: #5f4a3d;
+  transform: scale(0.95);
+}
