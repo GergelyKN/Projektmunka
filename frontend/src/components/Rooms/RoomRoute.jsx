@@ -3,6 +3,8 @@ import NavBar from "../Helper_Components/NavBar";
 import Footer from "../Helper_Components/Footer";
 import { useNavigate } from "react-router-dom";
 
+import "./RoomRoute.css";
+
 export const ReservationIDContext = createContext(null);
 
 function RoomRoute({ children }) {
@@ -129,20 +131,24 @@ function RoomRoute({ children }) {
   if (!loading) {
     if (!activeReservation) {
       return (
-        <>
+        <div className="app-container">
           <NavBar />
-          <h4>Jelenleg nincs aktív foglalásod</h4>
-          <button onClick={handleClick}>Elfogadás</button>
+          <div className="mainpage mainpageRoomRouteReturned">
+            <h4>Jelenleg nincs aktív foglalásod</h4>
+            <button className="sendFormRoomRoute" onClick={handleClick}>
+              Elfogadás
+            </button>
+          </div>
           <Footer />
-        </>
+        </div>
+      );
+    } else {
+      return (
+        <ReservationIDContext.Provider value={ResID}>
+          {children}
+        </ReservationIDContext.Provider>
       );
     }
-
-    return (
-      <ReservationIDContext.Provider value={ResID}>
-        {children}
-      </ReservationIDContext.Provider>
-    );
   }
 }
 
