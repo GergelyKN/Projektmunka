@@ -863,6 +863,7 @@ function AdminDrinks() {
                 value={addSize}
                 min={0.1}
                 max={5}
+                step={0.1}
                 onChange={handleAddSizeChange}
                 required
               />
