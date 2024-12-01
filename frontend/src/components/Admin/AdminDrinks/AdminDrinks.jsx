@@ -861,6 +861,8 @@ function AdminDrinks() {
                 name="addedSize"
                 id="addedSize"
                 value={addSize}
+                min={0.1}
+                max={5}
                 onChange={handleAddSizeChange}
                 required
               />
@@ -963,7 +965,7 @@ function AdminDrinks() {
                 value={updateSize}
                 onChange={handleUpdateSizeChange}
                 required
-                min={0.0}
+                min={0.1}
                 max={5}
                 step={0.1}
               />
