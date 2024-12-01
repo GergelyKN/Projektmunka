@@ -408,7 +408,7 @@ function AdminBoardGames() {
         )[0]
       ),
     };
-    console.log(boardgame);
+
     try {
       const response = await fetch(ADMINBOARDGAMEAPI, {
         mode: "cors",
@@ -875,7 +875,7 @@ function AdminBoardGames() {
                 id="addedMaxPlayerNum"
                 value={addMaxPlayerNum}
                 onChange={handleAddMaxPlayerNumChange}
-                min={2}
+                min={addMinPlayerNum+1 || 2}
                 max={12}
                 step={1}
                 required
@@ -983,7 +983,7 @@ function AdminBoardGames() {
                 id="updatedMaxPlayerNum"
                 value={updateMaxPlayerNum}
                 onChange={handleUpdateMaxPlayerNumChange}
-                min={2}
+                min={Number(updateMinPlayerNum) + 1 || 2}
                 max={12}
                 step={1}
                 required
