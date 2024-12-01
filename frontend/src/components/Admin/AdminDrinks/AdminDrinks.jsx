@@ -282,7 +282,6 @@ function AdminDrinks() {
     if (firstCategoryValue) {
       setAddCategoryName(firstCategoryValue);
     }
-    console.log(firstCategoryValue);
   };
 
   const handleShowUpdateForm = (drinkID) => {
@@ -452,7 +451,6 @@ function AdminDrinks() {
   const handleRemoveCategory = async (event) => {
     event.preventDefault();
     const categoryname = selectedCategoryName;
-
     try {
       const response = await fetch(removeCategoryAPI, {
         mode: "cors",
@@ -527,7 +525,7 @@ function AdminDrinks() {
 
   const cleanupAfterUpdateCategory = () => {
     setUpdateDrinkCategory(false);
-    setSelectedUpdateCategoryName(initialCategoryUpdateValue);
+    setSelectedUpdateCategoryName("");
     setUpdatedDrinkCategoryName("");
     setUpdateDrinkCategoryAlcoholic(false);
   };
@@ -547,14 +545,9 @@ function AdminDrinks() {
     const updatedname =
       updatedDrinkCategoryName === "" ? categoryname : updatedDrinkCategoryName;
     const updatedalcoholic = updatedDrinkCategoryAlcoholic;
-    const updatedDrinks = Object.entries(groupedDrinks).filter(
-      ([key, value]) => key === categoryname
-    )[0][1];
-    console.log(categoryname);
-    console.log(updatedname);
-    console.log(updatedalcoholic);
-    console.log(updatedDrinks);
-
+    const updatedDrinks = Object.values(drinks).filter(
+      (x) => x.categoryname === categoryname
+    );
     try {
       const response = await fetch(updateCategoryAPI, {
         mode: "cors",
