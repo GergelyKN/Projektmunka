@@ -150,9 +150,7 @@ function AdminBoardGames() {
       setBoardGames(data);
       setGroupedBoardGames(groupedData);
       if (data) {
-        setDifficulties(
-          Array.from(new Set(data.map((bg) => bg.difficulty))).sort()
-        );
+        setDifficulties(["Könnyű", "Közepes", "Nehéz"]);
       }
     } catch (error) {
       console.error("Hiba történt a társasjátékok lekérdezése közben: ", error);
@@ -530,6 +528,11 @@ function AdminBoardGames() {
       console.error("Hiba történt a kapcsolódáskor: ", err);
     } finally {
       cleanupAfterRemoveCategory();
+      await Promise.all([
+        fetchBoardGames(),
+        fetchCategories(),
+        fetchLanguages(),
+      ]);
     }
   };
   const cleanupAfterRemoveCategory = () => {

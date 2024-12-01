@@ -123,6 +123,21 @@ async function updateDrinkCategory(
     throw err;
   }
 }
+
+async function updateDrinksForCategoryChange(drinks, alcoholic) {
+  try {
+    for (const drink of drinks) {
+      await pool.query(
+        "UPDATE Drinks SET containsalcohol = $1 WHERE drinkid = $2",
+        [alcoholic, drink["drinkid"]]
+      );
+    }
+  } catch (err) {
+    console.error("Hiba történt a kategória frissítésekor:", err);
+    throw err;
+  }
+}
+
 async function addBoardGameCategory(categoryname) {
   try {
     const { rowCount } = await pool.query(
@@ -325,4 +340,5 @@ module.exports = {
   addClosedDate,
   deleteClosedDate,
   getReservationsByReservationID,
+  updateDrinksForCategoryChange,
 };

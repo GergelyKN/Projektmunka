@@ -474,6 +474,7 @@ function AdminDrinks() {
       console.error("Hiba történt a kapcsolódáskor: ", err);
     } finally {
       cleanupAfterRemoveCategory();
+      await Promise.all([fetchDrinks(), fetchCategories()]);
     }
   };
   const cleanupAfterRemoveCategory = () => {
@@ -543,8 +544,17 @@ function AdminDrinks() {
     event.preventDefault();
 
     const categoryname = selectedUpdateCategoryName;
-    const updatedname = updatedDrinkCategoryName;
+    const updatedname =
+      updatedDrinkCategoryName === "" ? categoryname : updatedDrinkCategoryName;
     const updatedalcoholic = updatedDrinkCategoryAlcoholic;
+    const updatedDrinks = Object.entries(groupedDrinks).filter(
+      ([key, value]) => key === categoryname
+    )[0][1];
+    console.log(categoryname);
+    console.log(updatedname);
+    console.log(updatedalcoholic);
+    console.log(updatedDrinks);
+
     try {
       const response = await fetch(updateCategoryAPI, {
         mode: "cors",
@@ -552,7 +562,12 @@ function AdminDrinks() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ categoryname, updatedname, updatedalcoholic }),
+        body: JSON.stringify({
+          categoryname,
+          updatedname,
+          updatedalcoholic,
+          updatedDrinks,
+        }),
       });
 
       const data = await response.json();

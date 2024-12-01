@@ -134,7 +134,9 @@ async function removeDrinkCategory(req, res) {
   }
 }
 async function updateDrinkCategory(req, res) {
-  const { categoryname, updatedname, updatedalcoholic } = req.body;
+  const { categoryname, updatedname, updatedalcoholic, updatedDrinks } =
+    req.body;
+
   if (!categoryname || !updatedname) {
     return res.status(400).json({ error: "Nem érkezett adat a kliens felől!" });
   }
@@ -147,6 +149,7 @@ async function updateDrinkCategory(req, res) {
     if (!success) {
       return res.status(404).json({ error: "Nem található a kategórianév!" });
     } else {
+      await db.updateDrinksForCategoryChange(updatedDrinks, updatedalcoholic);
       return res.status(200).json({ message: "Sikeres frissítés!" });
     }
   } catch (err) {
